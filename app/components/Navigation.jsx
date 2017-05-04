@@ -13,17 +13,15 @@ var Navigation = () => {
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>
-            <Link className="navbar-brand nav-title" to="/" activeClassName="active-link">React Boilerplate</Link>
+            <Link className="navbar-brand nav-title" to="/" activeClassName="active-link">Logo</Link>
           </div>
 
           <div className="collapse navbar-collapse" id="navbar-collapse-1">
 
-            <ul className="nav navbar-nav">
+            <ul className="nav navbar-nav navbar-right">
               <li>
-                <IndexLink to="/" activeClassName="active-link">Link</IndexLink>
-              </li>
-              <li>
-                <Link to="/" activeClassName="active-link">Link</Link>
+
+                <IndexLink to="/" activeClassName="active-link"><span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Cart (0)</IndexLink>
               </li>
             </ul>
 

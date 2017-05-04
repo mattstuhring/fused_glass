@@ -3,7 +3,6 @@ var ReactDOM = require('react-dom');
 var { Route, Router, IndexRoute, hashHistory } = require('react-router');
 var Main = require('Main');
 
-
 // Load Bootstrap
 require('style!css!bootstrap/dist/css/bootstrap.min.css');
 
