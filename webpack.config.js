@@ -26,7 +26,7 @@ module.exports = {
       Navigation: 'app/components/Navigation.jsx',
       Header: 'app/components/Header.jsx',
       SideNav: 'app/components/SideNav.jsx',
-      SideCategory: 'app/components/SideCategory.jsx',
+      SideNavCategory: 'app/components/SideNavCategory.jsx',
       Item: 'app/components/Item.jsx',
       applicationStyles: 'app/styles/app.scss'
     },
