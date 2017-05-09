@@ -1,21 +1,3 @@
-// var express = require('express');
-//
-// var app = express();
-// const PORT = process.env.PORT || 3000;
-//
-// app.use(function(req, res, next) {
-//   if (req.headers['x-forwarded-proto'] === 'https') {
-//     res.redirect('http://' + req.hostname + req.url);
-//   } else {
-//     next();
-//   }
-// });
-//
-// app.use(express.static('public'));
-//
-// app.listen(PORT, function() {
-//   console.log('Express server is up on port ' + PORT);
-// });
 'use strict';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -26,6 +8,7 @@ const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 3000;
 const ev = require('express-validation');
+const morgan = require('morgan');
 
 // Middleware
 const bodyParser = require('body-parser');
@@ -33,7 +16,6 @@ const cookieSession = require('cookie-session');
 
 // Routes go here
 const products = require('./routes/products');
-
 
 const app = express();
 
@@ -51,14 +33,20 @@ switch (app.get('env')) {
   default:
 }
 
+app.use(express.static('public'));
+
 app.use(bodyParser.json());
 
-app.use(cookieSession({
-  name: 'fused_glass_dev',
-  secret: process.env.SESSION_SECRET
-}));
+// app.use(cookieSession({
+//   name: 'fused_glass_dev',
+//   secret: process.env.SESSION_SECRET
+// }));
 
-app.use(express.static('public'));
+app.use('/api', products);
+
+app.use((_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // error catch all 400
 app.use((_req, res, _next) => {

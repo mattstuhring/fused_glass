@@ -21,13 +21,13 @@ var Navigation = () => {
                 <IndexLink to="/" activeClassName="active-link">HOME</IndexLink>
               </li>
               <li>
-                <Link to="/" activeClassName="active-link">ABOUT</Link>
+                <Link to="/about" activeClassName="active-link">ABOUT</Link>
               </li>
               <li>
-                <Link to="/" activeClassName="active-link">GALLERY</Link>
+                <Link to="/gallery" activeClassName="active-link">GALLERY</Link>
               </li>
               <li>
-                <Link to="/" activeClassName="active-link">CONTACT</Link>
+                <Link to="/contact" activeClassName="active-link">CONTACT</Link>
               </li>
             </ul>
 
