@@ -29,6 +29,7 @@ module.exports = {
       About: 'app/components/About.jsx',
       Gallery: 'app/components/Gallery.jsx',
       Contact: 'app/components/Contact.jsx',
+      Cart: 'app/components/Cart.jsx',
       SideNav: 'app/components/SideNav.jsx',
       SideNavCategory: 'app/components/SideNavCategory.jsx',
       Item: 'app/components/Item.jsx',

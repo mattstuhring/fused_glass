@@ -6,10 +6,9 @@ exports.up = function(knex) {
     table.string('name').defaultTo('');
     table.string('price').defaultTo('');
     table.string('description').defaultTo('');
-    table.string('category').defaultTo('');
     table.string('color').defaultTo('');
     table.string('size').defaultTo('');
-    table.string('image').defaultTo('');    
+    table.string('image').defaultTo('');
     table.timestamps(true, true);
   })
 };

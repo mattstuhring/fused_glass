@@ -33,7 +33,7 @@ var Navigation = () => {
 
             <ul className="nav navbar-nav navbar-right">
               <li>
-                <Link to="/" activeClassName="active-link"><span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Cart (0)</Link>
+                <Link to="/cart" activeClassName="active-link"><span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Cart (0)</Link>
               </li>
             </ul>
 
