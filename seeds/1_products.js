@@ -63,7 +63,6 @@ exports.seed = function(knex) {
         name: 'Bracelet',
         price: '$52.50',
         description: 'Sterling silver dichro bracelet',
-        category: 'Jewelry',
         color: 'Dichro Purple',
         size: 'Adujustable',
         image: 'http://www.fillmurray.com/300/200',
