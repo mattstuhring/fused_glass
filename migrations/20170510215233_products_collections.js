@@ -3,10 +3,20 @@
 exports.up = function(knex) {
   return knex.schema.createTable('products_collections', (table) => {
     table.increments();
-    table.string('product_id').defaultTo('');
-    table.string('collection_id').defaultTo('');
+    table.integer('product_id')
+      .notNullable()
+      .references('id')
+      .inTable('products')
+      .onDelete('CASCADE')
+      .index();
+    table.integer('collection_id')
+      .notNullable()
+      .references('id')
+      .inTable('collections')
+      .onDelete('CASCADE')
+      .index();
     table.timestamps(true, true);
-  })
+  });
 };
 
 exports.down = function(knex) {

@@ -26,7 +26,7 @@ var Home = React.createClass({
         <div>
           {this.state.products.map(function(item) {
             return <div className="col-sm-4" key={item.id}>
-              <Item/>
+              <Item item={item}/>
             </div>
           })}
         </div>

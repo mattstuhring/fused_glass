@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.get('/products', (req, res, next) => {
   knex('products')
-    .then((products) => {
-      console.log(products, 'server products');
-      res.send(products);
+    .then((product) => {
+      console.log(product, 'server product');
+      res.send(product);
     })
     .catch((err) => {
       next(err);

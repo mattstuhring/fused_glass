@@ -7,6 +7,10 @@ var About = require('About');
 var Gallery = require('Gallery');
 var Contact = require('Contact');
 var Cart = require('Cart');
+var Decorative = require('Decorative');
+var Houseware = require('Houseware');
+var Jewelry = require('Jewelry');
+var Garden = require('Garden');
 
 // Load Bootstrap
 require('style!css!bootstrap/dist/css/bootstrap.min.css');
@@ -25,6 +29,10 @@ ReactDOM.render(
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
       <Route path="cart" component={Cart}/>
+      <Route path="decorative/:id" component={Decorative}/>
+      <Route path="houseware/:id" component={Houseware}/>
+      <Route path="jewelry/:id" component={Jewelry}/>
+      <Route path="garden/:id" component={Garden}/>
     </Route>
   </Router>,
   document.getElementById('app')

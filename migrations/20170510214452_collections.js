@@ -3,7 +3,12 @@
 exports.up = function(knex) {
   return knex.schema.createTable('collections', (table) => {
     table.increments();
-    table.string('name').defaultTo('');
+    table.string('collection_name').defaultTo('');
+    table.integer('category_id')
+      .references('id')
+      .inTable('categories')
+      .onDelete('CASCADE')
+      .index();
     table.timestamps(true, true);
   })
 };

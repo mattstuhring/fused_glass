@@ -5,25 +5,25 @@ exports.seed = function(knex) {
     .then(() => knex('categories').insert([
       {
         id: 1,
-        name: 'Decorative',
+        category_name: 'Decorative',
         created_at: new Date('2017-09-15 11:16:11 UTC'),
         updated_at: new Date('2017-09-15 11:16:11 UTC')
       },
       {
         id: 2,
-        name: 'Houseware',
+        category_name: 'Houseware',
         created_at: new Date('2017-09-16 12:46:12 UTC'),
         updated_at: new Date('2017-09-16 12:46:12 UTC')
       },
       {
         id: 3,
-        name: 'Jewelry',
+        category_name: 'Jewelry',
         created_at: new Date('2017-09-17 12:16:23 UTC'),
         updated_at: new Date('2017-09-17 12:16:23 UTC')
       },
       {
         id: 4,
-        name: 'Garden',
+        category_name: 'Garden',
         created_at: new Date('2017-09-18 12:26:54 UTC'),
         updated_at: new Date('2017-09-18 12:26:54 UTC')
       }])
