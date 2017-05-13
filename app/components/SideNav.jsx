@@ -2,11 +2,6 @@ var React = require('react');
 var axios = require('axios')
 var { Link } = require('react-router');
 var { Button, ListGroup, ListGroupItem, Panel } = require('react-bootstrap');
-// var SideNavCategory = require('SideNavCategory');
-// var SideNavDecorative = require('SideNavDecorative');
-// var SideNavHouseware = require('SideNavHouseware');
-// var SideNavJewelry = require('SideNavJewelry');
-// var SideNavGarden = require('SideNavGarden');
 
 var SideNav = React.createClass({
   getInitialState: function() {
@@ -68,13 +63,14 @@ var SideNav = React.createClass({
   },
 
   render: function() {
-
     return (
         <div className="panel panel-default">
           <div className="panel-heading">
             <h3 className="panel-title text-center">Art for Sale</h3>
           </div>
           <div className="panel-body">
+
+            {/* DECORATIVE */}
             <div>
               <Link to={`/decorative/${1}`} onClick={() => this.handleDecorative(1)}>
                 Decorative
@@ -92,6 +88,7 @@ var SideNav = React.createClass({
               </Panel>
             </div>
 
+            {/* HOUSEWARE */}
             <div>
               <Link to={`/houseware/${2}`} onClick={() => this.handleHouseware(2)}>
                 Houseware
@@ -109,6 +106,7 @@ var SideNav = React.createClass({
               </Panel>
             </div>
 
+            {/* JEWELRY */}
             <div>
               <Link to={`/jewelry/${3}`}  onClick={() => this.handleJewelry(3)}>
                 Jewelry
@@ -126,6 +124,7 @@ var SideNav = React.createClass({
               </Panel>
             </div>
 
+            {/* GARDEN */}
             <div>
               <Link to={`/houseware/${4}`} onClick={() => this.handleGarden(4)}>
                 Garden

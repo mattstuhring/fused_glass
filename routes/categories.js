@@ -23,6 +23,7 @@ router.get('/categories/:id', (req, res, next) => {
     .where('category_id', req.params.id)
     .innerJoin('products', 'products_categories.product_id', 'products.id')
     .then((product) => {
+      console.log(product, '$$$$$$$$$$');
       res.send(product);
     })
     .catch((err) => {
