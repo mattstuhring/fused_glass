@@ -6,7 +6,6 @@ var { Button, ListGroup, ListGroupItem, Panel } = require('react-bootstrap');
 var SideNav = React.createClass({
   getInitialState: function() {
     return {
-      products: [],
       decorative: [],
       houseware: [],
       jewelry: [],
@@ -18,44 +17,25 @@ var SideNav = React.createClass({
     };
   },
 
-  handleDecorative: function(id) {
+  handleCollections: function(id, category) {
     axios.get(`/api/categories/collections/${id}`)
       .then((res) => {
-        console.log(res.data, 'Decorative');
-        this.setState({ decorative: res.data, open1: !this.state.open1 });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+        console.log(category, 'category');
 
-  handleHouseware: function(id) {
-    axios.get(`/api/categories/collections/${id}`)
-      .then((res) => {
-        console.log(res.data, 'Houseware');
-        this.setState({ houseware: res.data, open2: !this.state.open2 });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
-
-  handleJewelry: function(id) {
-    axios.get(`/api/categories/collections/${id}`)
-      .then((res) => {
-        console.log(res.data, 'Jewelry');
-        this.setState({ jewelry: res.data, open3: !this.state.open3 });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
-
-  handleGarden: function(id) {
-    axios.get(`/api/categories/collections/${id}`)
-      .then((res) => {
-        console.log(res.data, 'Garden');
-        this.setState({ garden: res.data, open4: !this.state.open4 });
+        switch (category) {
+          case 'decorative':
+            this.setState({decorative: res.data, open1: !this.state.open1});
+            break;
+          case 'houseware':
+            this.setState({houseware: res.data, open2: !this.state.open2});
+            break;
+          case 'jewelry':
+            this.setState({jewelry: res.data, open3: !this.state.open3});
+            break;
+          case 'garden':
+            this.setState({garden: res.data, open4: !this.state.open4});
+            break;
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -72,7 +52,7 @@ var SideNav = React.createClass({
 
             {/* DECORATIVE */}
             <div>
-              <Link to={`/decorative/${1}`} onClick={() => this.handleDecorative(1)}>
+              <Link to={`/products/${1}/Decorative`} onClick={() => this.handleCollections(1, 'decorative')}>
                 Decorative
               </Link>
               <Panel collapsible expanded={this.state.open1} eventKey="1">
@@ -90,7 +70,7 @@ var SideNav = React.createClass({
 
             {/* HOUSEWARE */}
             <div>
-              <Link to={`/houseware/${2}`} onClick={() => this.handleHouseware(2)}>
+              <Link to={`/products/${2}/Houseware`} onClick={() => this.handleCollections(2, 'houseware')}>
                 Houseware
               </Link>
               <Panel collapsible expanded={this.state.open2} eventKey="2">
@@ -108,7 +88,7 @@ var SideNav = React.createClass({
 
             {/* JEWELRY */}
             <div>
-              <Link to={`/jewelry/${3}`}  onClick={() => this.handleJewelry(3)}>
+              <Link to={`/products/${3}/Jewelry`}  onClick={() => this.handleCollections(3, 'jewelry')}>
                 Jewelry
               </Link>
               <Panel collapsible expanded={this.state.open3} eventKey="3">
@@ -126,7 +106,7 @@ var SideNav = React.createClass({
 
             {/* GARDEN */}
             <div>
-              <Link to={`/houseware/${4}`} onClick={() => this.handleGarden(4)}>
+              <Link to={`/products/${4}/Garden`} onClick={() => this.handleCollections(4, 'garden')}>
                 Garden
               </Link>
               <Panel collapsible expanded={this.state.open4} eventKey="4">
@@ -148,14 +128,3 @@ var SideNav = React.createClass({
 });
 
 module.exports = SideNav;
-
-{/* {this.state.categories.map(function(category) {
-  console.log(category, 'category contents');
-  return <SideNavCategory
-    key={category.id}
-    id={category.id}
-    name={category.name}
-    collection_name={category.collection_name}
-    onCategoryProducts={this.handleCategoryProducts}
-  />
-}, this)} */}

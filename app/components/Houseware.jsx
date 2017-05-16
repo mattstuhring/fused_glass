@@ -9,7 +9,7 @@ var Houseware = React.createClass({
     }
   },
 
-  componentWillMount: function() {
+  componentDidMount: function() {
     axios.get(`/api/categories/${this.props.params.id}`)
       .then((res) => {
         console.log(res.data, 'products');
