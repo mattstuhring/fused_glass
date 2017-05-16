@@ -20,8 +20,6 @@ var SideNav = React.createClass({
   handleCollections: function(id, category) {
     axios.get(`/api/categories/collections/${id}`)
       .then((res) => {
-        console.log(category, 'category');
-
         switch (category) {
           case 'decorative':
             this.setState({decorative: res.data, open1: !this.state.open1});
@@ -55,15 +53,15 @@ var SideNav = React.createClass({
               <Link to={`/products/${1}/Decorative`} onClick={() => this.handleCollections(1, 'decorative')}>
                 Decorative
               </Link>
-              <Panel collapsible expanded={this.state.open1} eventKey="1">
+              <Panel collapsible expanded={this.state.open1}>
                 <ListGroup fill>
-                  {this.state.decorative.map(function(d) {
-                    return <ListGroupItem key={d.id}>
-                        <Link to="/">
-                          {d.collection_name}
+                  {this.state.decorative.map(function(e) {
+                    return <ListGroupItem key={e.id}>
+                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                          {e.collection_name}
                         </Link>
                       </ListGroupItem>
-                  })}
+                  }, this)}
                 </ListGroup>
               </Panel>
             </div>
@@ -73,15 +71,15 @@ var SideNav = React.createClass({
               <Link to={`/products/${2}/Houseware`} onClick={() => this.handleCollections(2, 'houseware')}>
                 Houseware
               </Link>
-              <Panel collapsible expanded={this.state.open2} eventKey="2">
+              <Panel collapsible expanded={this.state.open2}>
                 <ListGroup fill>
-                  {this.state.houseware.map(function(d) {
-                    return <ListGroupItem key={d.id}>
-                        <Link to="/">
-                          {d.collection_name}
+                  {this.state.houseware.map(function(e) {
+                    return <ListGroupItem key={e.id}>
+                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                          {e.collection_name}
                         </Link>
                       </ListGroupItem>
-                  })}
+                  }, this)}
                 </ListGroup>
               </Panel>
             </div>
@@ -91,15 +89,15 @@ var SideNav = React.createClass({
               <Link to={`/products/${3}/Jewelry`}  onClick={() => this.handleCollections(3, 'jewelry')}>
                 Jewelry
               </Link>
-              <Panel collapsible expanded={this.state.open3} eventKey="3">
+              <Panel collapsible expanded={this.state.open3}>
                 <ListGroup fill>
-                  {this.state.jewelry.map(function(d) {
-                    return <ListGroupItem key={d.id}>
-                        <Link to="/">
-                          {d.collection_name}
+                  {this.state.jewelry.map(function(e) {
+                    return <ListGroupItem key={e.id}>
+                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                          {e.collection_name}
                         </Link>
                       </ListGroupItem>
-                  })}
+                  }, this)}
                 </ListGroup>
               </Panel>
             </div>
@@ -109,15 +107,15 @@ var SideNav = React.createClass({
               <Link to={`/products/${4}/Garden`} onClick={() => this.handleCollections(4, 'garden')}>
                 Garden
               </Link>
-              <Panel collapsible expanded={this.state.open4} eventKey="4">
+              <Panel collapsible expanded={this.state.open4}>
                 <ListGroup fill>
-                  {this.state.garden.map(function(d) {
-                    return <ListGroupItem key={d.id}>
-                        <Link to="/">
-                          {d.collection_name}
+                  {this.state.garden.map(function(e) {
+                    return <ListGroupItem key={e.id}>
+                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                          {e.collection_name}
                         </Link>
                       </ListGroupItem>
-                  })}
+                  }, this)}
                 </ListGroup>
               </Panel>
             </div>

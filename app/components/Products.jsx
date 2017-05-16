@@ -5,19 +5,13 @@ var Item = require('Item');
 var Products = React.createClass({
   getInitialState: function() {
     return {
-      products: [],
-      id: null,
-      category: null
+      products: []
     };
   },
 
   componentDidMount: function() {
-    var id = this.props.params.id;
-    var category = this.props.params.category;
-
-    axios.get(`/api/categories/${id}`)
+    axios.get(`/api/categories/${this.props.params.id}`)
       .then((res) => {
-        console.log(res.data, 'products');
         this.setState({
           products: res.data
         });
@@ -31,7 +25,6 @@ var Products = React.createClass({
     if (this.props.params.id !== nextProps.params.id) {
       axios.get(`/api/categories/${nextProps.params.id}`)
         .then((res) => {
-          console.log(res.data, 'products');
           this.setState({
             products: res.data
           });
@@ -42,20 +35,8 @@ var Products = React.createClass({
     }
   },
 
-
-  // componentWillUnmount: function() {
-  //   var id = this.props.params.id;
-  //   var category = this.props.params.category;
-  //
-  //   this.setState({
-  //     products: [],
-  //     id: null,
-  //     category: null
-  //   });
-  // },
-
-
   render: function() {
+    console.log(this.props.params, 'params');
     return (
       <div>
         <h1 className="text-center">{this.props.params.category}</h1>
