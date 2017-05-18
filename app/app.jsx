@@ -10,6 +10,9 @@ var Cart = require('Cart');
 var Products = require('Products');
 var Collections = require('Collections');
 
+// trying out -> ES6 Component syntax for Admin
+import Admin from 'Admin';
+
 // Load Bootstrap
 require('style!css!bootstrap/dist/css/bootstrap.min.css');
 
@@ -26,6 +29,7 @@ ReactDOM.render(
       <Route path="about" component={About}/>
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
+      <Route path="admin" component={Admin}/>
       <Route path="cart" component={Cart}/>
       <Route path="products/:id/:category" component={Products}/>
       <Route path="collections/:id/:category" component={Collections}/>

@@ -1,6 +1,7 @@
 var React = require('react');
 var axios = require('axios');
 var Item = require('Item');
+var Header = require('Header');
 
 var Collections = React.createClass({
   getInitialState: function() {
@@ -38,7 +39,8 @@ var Collections = React.createClass({
   render: function() {
     return (
       <div>
-        <h1 className="text-center">{this.props.params.category}</h1>
+        <Header title={this.props.params.category}/>
+
         {this.state.products.map(function(item) {
           return <div className="col-sm-4" key={item.id}>
             <Item item={item}/>

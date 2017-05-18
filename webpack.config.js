@@ -29,6 +29,8 @@ module.exports = {
       About: 'app/components/About.jsx',
       Gallery: 'app/components/Gallery.jsx',
       Contact: 'app/components/Contact.jsx',
+      Admin: 'app/components/Admin.jsx',
+      FieldGroup: 'app/components/FieldGroup.jsx',
       Cart: 'app/components/Cart.jsx',
       SideNav: 'app/components/SideNav.jsx',
       Products: 'app/components/Products.jsx',

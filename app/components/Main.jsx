@@ -17,7 +17,9 @@ var Main = React.createClass({
               <div className="row">
                 {/* HEADER */}
                 <div className="col-sm-12">
-                  <Header/>
+                  <div className="page-header text-center">
+                    <h1>Fused Glass by Celeste</h1>
+                  </div>
                 </div>
               </div>
 
@@ -30,7 +32,9 @@ var Main = React.createClass({
                 {/* React router child components */}
                 <div className="col-sm-9">
                   <div className="row">
-                    {this.props.children}
+                    <div className="col-sm-12">
+                      {this.props.children}
+                    </div>
                   </div>
                 </div>
               </div>
