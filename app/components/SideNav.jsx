@@ -18,7 +18,7 @@ var SideNav = React.createClass({
   },
 
   handleCollections: function(id, category) {
-    axios.get(`/api/categories/collections/${id}`)
+    axios.get(`/api/categories/${id}/collections`)
       .then((res) => {
         switch (category) {
           case 'decorative':
@@ -42,7 +42,7 @@ var SideNav = React.createClass({
 
   render: function() {
     return (
-        <div className="panel panel-default">
+        <div className="panel panel-primary side-nav">
           <div className="panel-heading">
             <h3 className="panel-title text-center">Art for Sale</h3>
           </div>

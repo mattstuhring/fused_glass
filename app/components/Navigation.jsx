@@ -3,7 +3,7 @@ var { Link, IndexLink } = require('react-router');
 
 var Navigation = () => {
   return (
-    <div>
+    <div className="top-nav">
       <nav className="navbar navbar-fixed-top">
         <div className="container">
           <div className="navbar-header">

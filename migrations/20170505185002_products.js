@@ -9,6 +9,7 @@ exports.up = function(knex) {
     table.string('product_color').defaultTo('');
     table.string('product_size').defaultTo('');
     table.string('product_image').defaultTo('');
+    table.integer('category_id').notNullable();
     table.timestamps(true, true);
   })
 };

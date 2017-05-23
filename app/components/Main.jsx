@@ -6,7 +6,7 @@ var Header = require('Header');
 var Main = React.createClass({
   render: function() {
     return (
-      <div>
+      <div className="main">
         {/* TOP NAVBAR */}
         <Navigation/>
 

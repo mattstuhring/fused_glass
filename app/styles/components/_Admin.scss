@@ -1,8 +1,12 @@
-button.btn.btn-primary, button.btn.btn-danger {
-  width: 100%;
-}
+.admin {
 
-div.panel-body {
-  padding-top: 50px;
-  padding-bottom: 50px;
+  button.btn.btn-primary, button.btn.btn-danger {
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  div.panel-body {
+    padding: 50px 30px;
+  }
+
 }

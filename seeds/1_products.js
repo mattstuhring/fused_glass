@@ -11,6 +11,7 @@ exports.seed = function(knex) {
         product_color: 'Red',
         product_size: '8x4',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 1,
         created_at: new Date('2017-09-15 11:16:16 UTC'),
         updated_at: new Date('2017-09-15 11:16:16 UTC')
       },
@@ -22,6 +23,7 @@ exports.seed = function(knex) {
         product_color: 'Salmon',
         product_size: '10x6',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 2,
         created_at: new Date('2017-09-16 12:46:16 UTC'),
         updated_at: new Date('2017-09-16 12:46:16 UTC')
       },
@@ -33,6 +35,7 @@ exports.seed = function(knex) {
         product_color: 'Blue',
         product_size: '0.5x0.75',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 3,
         created_at: new Date('2017-09-17 12:16:26 UTC'),
         updated_at: new Date('2017-09-17 12:16:26 UTC')
       },
@@ -44,6 +47,7 @@ exports.seed = function(knex) {
         product_color: 'Red',
         product_size: '12X12',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 4,
         created_at: new Date('2017-09-18 12:26:50 UTC'),
         updated_at: new Date('2017-09-18 12:26:50 UTC')
       },
@@ -55,6 +59,7 @@ exports.seed = function(knex) {
         product_color: 'Neolavendar',
         product_size: '24x8',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 4,
         created_at: new Date('2017-09-19 12:36:46 UTC'),
         updated_at: new Date('2017-09-19 12:36:46 UTC')
       },
@@ -66,6 +71,7 @@ exports.seed = function(knex) {
         product_color: 'Purple',
         product_size: 'Adujustable',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 3,
         created_at: new Date('2017-09-20 12:26:27 UTC'),
         updated_at: new Date('2017-09-20 12:26:27 UTC')
       },
@@ -77,6 +83,7 @@ exports.seed = function(knex) {
         product_color: 'Blue',
         product_size: '5x3',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 1,
         created_at: new Date('2017-09-22 12:26:27 UTC'),
         updated_at: new Date('2017-09-22 12:26:27 UTC')
       },
@@ -88,6 +95,7 @@ exports.seed = function(knex) {
         product_color: 'Red',
         product_size: 'Wine cup',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 2,
         created_at: new Date('2017-09-23 12:26:27 UTC'),
         updated_at: new Date('2017-09-23 12:26:27 UTC')
       },
@@ -99,6 +107,7 @@ exports.seed = function(knex) {
         product_color: 'blue/green',
         product_size: '12x5',
         product_image: 'http://www.fillmurray.com/300/200',
+        category_id: 2,
         created_at: new Date('2017-09-24 12:26:27 UTC'),
         updated_at: new Date('2017-09-24 12:26:27 UTC')
       }])
