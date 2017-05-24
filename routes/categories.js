@@ -5,9 +5,6 @@ const express = require('express');
 const router = express.Router();
 
 
-// select * from products join categories on category_id = categories.id where categories.id = 1;
-
-
 // GET all products in category
 router.get('/categories/:id', (req, res, next) => {
   knex('categories')
@@ -36,36 +33,75 @@ router.get('/categories/:id/collections', (req, res, next) => {
     });
 });
 
-// ADD NEW PRODUCT POST METHOD
+// ADD NEW PRODUCT -> POST METHOD
 router.post('/categories/collections', (req, res, next) => {
-  const { category, categoryId, collectionId, name, description, price, size } = req.body.product;
+  const { category, categoryId, collections, name, description, price, size } = req.body.product;
 
-  knex('products')
-    .insert({
-      product_name: name,
-      product_price: price,
-      product_description: description,
-      product_size: size
-    })
-    .returning('id')
-    .then((res) => {
-      return knex('products_categories')
+
+  knex('collections')
+    .select('id')
+    .whereIn('collection_name', collections)
+    .then((collectionId) => {
+      return knex('products')
         .insert({
-          product_id: res[0],
+          product_name: name,
+          product_price: price,
+          product_description: description,
+          product_size: size,
           category_id: categoryId
         })
-        .returning('product_id')
-        .then((r) => {
-          return knex('products_collections')
-            .insert({
-              product_id: r[0],
-              collection_id: collectionId
-            }, '*')
+        .returning('id')
+        .then((res) => {
+
+          console.log(res, '*************** res'); // [12] -> product_id
+          console.log(collectionId, '************* collection id');
+          // [  { id: 1 },  { id: 8 } ]
+          let db = knex.table('products_collections')
+
+          var foo = [];
+          collectionId.forEach((item) => {
+            foo.push({
+              product_id: res[0],
+              collection_id: item.id
+            })
+          })
+
+          db.insert(foo)
+            .then((r) => {
+              console.log(r, '************* r');
+            })
+
+          // return knex('products_collections')
+          //   .insert({
+          //     product_id: res[0],
+          //     collection_id: collectionId
+          //   }, '*')
         })
     })
     .catch((err) => {
-      next(err);
+      console.log(err);
     });
+
+
+  // knex('products')
+  //   .insert({
+  //     product_name: name,
+  //     product_price: price,
+  //     product_description: description,
+  //     product_size: size,
+  //     category_id: categoryId
+  //   })
+  //   .returning('id')
+  //   .then((res) => {
+  //     return knex('products_collections')
+  //       .insert({
+  //         product_id: res[0],
+  //         collection_id: collectionId
+  //       }, '*')
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
 });
 
 module.exports = router;

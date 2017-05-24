@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel}
+import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox}
   from 'react-bootstrap';
 import FieldGroup from 'FieldGroup';
 import Header from 'Header';
-
+import Select from 'react-select';
 
 export default class Admin extends React.Component {
   constructor(props) {
@@ -14,18 +14,20 @@ export default class Admin extends React.Component {
       category: '',
       categoryId: null,
       collections: [],
-      collectionId: null,
       description: '',
       name: '',
       price: '',
-      size: ''
+      size: '',
+      options: null
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
-    this.handleCollection = this.handleCollection.bind(this);
+    this.handleCollections = this.handleCollections.bind(this);
   }
+
+
 
   // HANDLE CHANGE
   handleChange(event) {
@@ -36,6 +38,8 @@ export default class Admin extends React.Component {
       [name]: value
     });
   }
+
+
 
   // GET ALL COLLECTIONS FROM CATEGORY
   handleCategory(event) {
@@ -59,38 +63,40 @@ export default class Admin extends React.Component {
 
     axios.get(`/api/categories/${categoryId}/collections`)
       .then((res) => {
-        console.log(res.data, '********** res.data');
-        this.setState({collections: res.data, category: value, categoryId: categoryId})
+        var options = res.data.map((e) => {
+          return {
+            value: e.collection_name,
+            label: e.collection_name
+          }
+        });
+
+        this.setState({
+          category: value,
+          categoryId: categoryId,
+          options: options
+        });
       })
       .catch((err) => {
         console.log(err, 'error');
       });
   }
 
-  // HANDLE COLLECTIONS
-  handleCollection(event) {
-    console.log(event.target.value, '****** collection');
-    const id = event.target.value;
 
-    this.setState({
-      collectionId: id
-    });
-  }
 
   // HANDLE FORM SUBMIT
   handleSubmit(event) {
     event.preventDefault();
+    var collections = this.state.collections.split(',');
 
     const product = {
       category: this.state.category,
       categoryId: this.state.categoryId,
-      collectionId: this.state.collectionId,
+      collections: collections,
       name: this.state.name,
       description: this.state.description,
       price: this.state.price,
       size: this.state.size
     };
-    console.log(product, '****** product');
 
     axios({
       method: 'post',
@@ -101,14 +107,21 @@ export default class Admin extends React.Component {
     this.setState({
       category: '',
       categoryId: null,
-      collection: '',
-      collectionId: null,
+      collections: [],
       name: '',
       description: '',
       price: '',
       size: ''
     });
   }
+
+
+
+  // HANDLE COLLECTIONS
+  handleCollections(val) {
+    this.setState({collections: val})
+  }
+
 
 
   render() {
@@ -146,12 +159,11 @@ export default class Admin extends React.Component {
                       </FormControl>
                     </FormGroup>
                   </div>
-                  <div className="col-sm-6">
+                  {/* <div className="col-sm-6">
                     <FormGroup controlId="formControlsSelect">
                       <ControlLabel>Collection</ControlLabel>
                       <FormControl
                         componentClass="select"
-                        placeholder="select"
                         onChange={this.handleCollection}
                         value={this.state.collection}
                       >
@@ -166,8 +178,23 @@ export default class Admin extends React.Component {
                         }, this)}
                       </FormControl>
                     </FormGroup>
+                  </div> */}
+
+                  <div className="col-sm-6">
+                    <FormGroup controlId="formControlsSelect">
+                      <ControlLabel>Collection</ControlLabel>
+                      <Select
+                        multi={true}
+                        simpleValue={true}
+                        value={this.state.collections}
+                        options={this.state.options}
+                        onChange={this.handleCollections}
+                      />
+                    </FormGroup>
                   </div>
                 </div>
+
+
 
                 {/* NAME */}
                 <FieldGroup

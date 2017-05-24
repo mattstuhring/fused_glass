@@ -13,6 +13,9 @@ var Collections = require('Collections');
 // trying out -> ES6 Component syntax for Admin
 import Admin from 'Admin';
 
+// Be sure to include styles at some point, probably during your bootstrapping
+require('style!css!react-select/dist/react-select.css');
+
 // Load Bootstrap
 require('style!css!bootstrap/dist/css/bootstrap.min.css');
 
