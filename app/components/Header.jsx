@@ -7,9 +7,13 @@ var Header = React.createClass({
 
     var pageHeader = () => {
       if (this.props.collection) {
-        return <PageHeader>{this.props.title} <small>{this.props.collection}</small></PageHeader>;
+        return <PageHeader>
+          {this.props.category} <small>{this.props.collection}</small>
+        </PageHeader>;
       } else {
-        return <PageHeader>{this.props.title}</PageHeader>;
+        return <PageHeader>
+          {this.props.category}
+        </PageHeader>;
       }
     }
 

@@ -77,9 +77,9 @@ exports.seed = function(knex) {
       },
       {
         id: 7,
-        product_name: 'Space Needle Nigh Light',
-        product_price: '28.50',
-        product_description: 'Seattle Skyline',
+        product_name: 'Space Needle',
+        product_price: '$28.50',
+        product_description: 'Seattle skyline night light',
         product_color: 'Blue',
         product_size: '5x3',
         product_image: 'http://www.fillmurray.com/300/200',
@@ -90,7 +90,7 @@ exports.seed = function(knex) {
       {
         id: 8,
         product_name: 'Heart Wine Glass',
-        product_price: '15.50',
+        product_price: '$15.50',
         product_description: 'Dichro heart',
         product_color: 'Red',
         product_size: 'Wine cup',
@@ -102,7 +102,7 @@ exports.seed = function(knex) {
       {
         id: 9,
         product_name: 'Bowl',
-        product_price: '45.50',
+        product_price: '$45.50',
         product_description: 'Bowl of the sea',
         product_color: 'blue/green',
         product_size: '12x5',

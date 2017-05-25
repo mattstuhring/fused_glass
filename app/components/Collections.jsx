@@ -39,7 +39,7 @@ var Collections = React.createClass({
   render: function() {
     return (
       <div>
-        <Header title={this.props.params.category}/>
+        <Header category={this.props.params.category} collection={this.props.params.collection}/>
 
         {this.state.products.map(function(item) {
           return <div className="col-sm-4" key={item.id}>

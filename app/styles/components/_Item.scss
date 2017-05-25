@@ -1,0 +1,14 @@
+.thumbnail {
+
+  .btn-wrap {
+    margin-bottom: 5px;
+  }
+
+  .caption {
+    h4, p {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+}

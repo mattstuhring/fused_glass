@@ -37,10 +37,9 @@ var Products = React.createClass({
   },
 
   render: function() {
-    console.log(this.props.params, 'params');
     return (
       <div>
-        <Header title={this.props.params.category}/>
+        <Header category={this.props.params.category}/>
 
         {this.state.products.map(function(item) {
           return <div className="col-sm-4" key={item.id}>

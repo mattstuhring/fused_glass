@@ -57,7 +57,7 @@ var SideNav = React.createClass({
                 <ListGroup fill>
                   {this.state.decorative.map(function(e) {
                     return <ListGroupItem key={e.id}>
-                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                        <Link to={`/collections/Decorative/${e.id}/${e.collection_name}`}>
                           {e.collection_name}
                         </Link>
                       </ListGroupItem>
@@ -75,7 +75,7 @@ var SideNav = React.createClass({
                 <ListGroup fill>
                   {this.state.houseware.map(function(e) {
                     return <ListGroupItem key={e.id}>
-                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                        <Link to={`/collections/Houseware/${e.id}/${e.collection_name}`}>
                           {e.collection_name}
                         </Link>
                       </ListGroupItem>
@@ -93,7 +93,7 @@ var SideNav = React.createClass({
                 <ListGroup fill>
                   {this.state.jewelry.map(function(e) {
                     return <ListGroupItem key={e.id}>
-                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                        <Link to={`/collections/Jewelry/${e.id}/${e.collection_name}`}>
                           {e.collection_name}
                         </Link>
                       </ListGroupItem>
@@ -111,7 +111,7 @@ var SideNav = React.createClass({
                 <ListGroup fill>
                   {this.state.garden.map(function(e) {
                     return <ListGroupItem key={e.id}>
-                        <Link to={`/collections/${e.id}/${e.collection_name}`}>
+                        <Link to={`/collections/Garden/${e.id}/${e.collection_name}`}>
                           {e.collection_name}
                         </Link>
                       </ListGroupItem>

@@ -10,8 +10,8 @@ var Cart = require('Cart');
 var Products = require('Products');
 var Collections = require('Collections');
 
-// trying out -> ES6 Component syntax for Admin
-import Admin from 'Admin';
+// trying out -> ES6 Component syntax for ProductForm
+import ProductForm from 'ProductForm';
 
 // Be sure to include styles at some point, probably during your bootstrapping
 require('style!css!react-select/dist/react-select.css');
@@ -32,10 +32,10 @@ ReactDOM.render(
       <Route path="about" component={About}/>
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
-      <Route path="admin" component={Admin}/>
+      <Route path="productform/:action(/:id)" component={ProductForm}/>
       <Route path="cart" component={Cart}/>
       <Route path="products/:id/:category" component={Products}/>
-      <Route path="collections/:id/:category" component={Collections}/>
+      <Route path="collections/:category/:id/:collection" component={Collections}/>
     </Route>
   </Router>,
   document.getElementById('app')

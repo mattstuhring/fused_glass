@@ -1,6 +1,5 @@
 var React = require('react');
 var axios = require('axios');
-var Item = require('Item');
 
 var Home = React.createClass({
 
