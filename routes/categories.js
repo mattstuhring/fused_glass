@@ -52,10 +52,6 @@ router.post('/categories/collections', (req, res, next) => {
         })
         .returning('id')
         .then((res) => {
-
-          console.log(res, '*************** res'); // [12] -> product_id
-          console.log(collectionId, '************* collection id');
-          // [  { id: 1 },  { id: 8 } ]
           let db = knex.table('products_collections')
 
           var foo = [];
@@ -70,38 +66,36 @@ router.post('/categories/collections', (req, res, next) => {
             .then((r) => {
               console.log(r, '************* r');
             })
-
-          // return knex('products_collections')
-          //   .insert({
-          //     product_id: res[0],
-          //     collection_id: collectionId
-          //   }, '*')
         })
     })
     .catch((err) => {
       console.log(err);
     });
+});
 
 
-  // knex('products')
-  //   .insert({
-  //     product_name: name,
-  //     product_price: price,
-  //     product_description: description,
-  //     product_size: size,
-  //     category_id: categoryId
-  //   })
-  //   .returning('id')
-  //   .then((res) => {
-  //     return knex('products_collections')
-  //       .insert({
-  //         product_id: res[0],
-  //         collection_id: collectionId
-  //       }, '*')
-  //   })
-  //   .catch((err) => {
-  //     next(err);
-  //   });
+router.post('/categories/collection', (req, res, next) => {
+  const { name, categoryId } = req.body;
+
+  knex('collections')
+    .insert({
+      collection_name: name,
+      category_id: categoryId
+    }, '*')
+    .then(() => {
+      return knex('collections')
+        .select('*')
+        .where('category_id', categoryId)
+        .then((collections) => {
+          res.send(collections);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 module.exports = router;

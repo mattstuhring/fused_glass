@@ -1,32 +1,49 @@
 var React = require('react');
-var {Button, Modal} = require('react-bootstrap');
+var {Button, Modal, Tooltip, OverlayTrigger} = require('react-bootstrap');
 var {Link} = require('react-router');
 
 var Item = React.createClass({
   getInitialState() {
-    return { showModal: false };
+    return {
+      showModal: false,
+      name: '',
+      description: '',
+      price: ''
+    };
   },
 
   close() {
-    this.setState({ showModal: false });
+    this.setState({ showModal: false, name: '', description: '', price: '' });
   },
 
-  open() {
-    this.setState({ showModal: true });
+  open(name, description, price) {
+    this.setState({ showModal: true, name, description, price });
   },
 
   render: function() {
     var { product_name, product_description, product_price, product_image } = this.props.item;
 
+    const edit = (
+      <Tooltip id="tooltip"><strong>Edit</strong></Tooltip>
+    );
+
+    const remove = (
+      <Tooltip id="tooltip"><strong>Delete</strong></Tooltip>
+    );
+
     return (
       <div>
 
+        {/* DELETE PRODUCT MODAL */}
         <Modal show={this.state.showModal} onHide={this.close}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Product</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>Are you sure you want to delete this product?</p>
+            <h4>{this.state.name}</h4>
+            <p>{this.state.description}</p>
+            <p>{this.state.price}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.close}>Yes</Button>
@@ -36,24 +53,22 @@ var Item = React.createClass({
 
         <div className="thumbnail">
           <div className="row btn-wrap">
-            <div className="col-sm-6">
-              <Button
-                bsStyle="success"
-              >
-
-                {/* Link contains test (ID = 1) as URL param */}
+            <div className="col-sm-12 text-right">
+              <OverlayTrigger placement="top" overlay={edit}>
                 <Link to={`/productform/Update%20product/1`}>
-                  <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                  <Button bsStyle="success">
+                    <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                  </Button>
                 </Link>
-              </Button>
-            </div>
-            <div className="col-sm-6 text-right">
-              <Button
-                bsStyle="danger"
-                onClick={this.open}
-              >
-                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              </Button>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={remove}>
+                <Button
+                  bsStyle="danger"
+                  onClick={() => this.open(product_name, product_description, product_price)}
+                >
+                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </Button>
+              </OverlayTrigger>
             </div>
           </div>
 

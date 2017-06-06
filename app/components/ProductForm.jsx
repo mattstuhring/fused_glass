@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox}
+import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup}
   from 'react-bootstrap';
 import FieldGroup from 'FieldGroup';
 import Header from 'Header';
@@ -25,7 +25,6 @@ export default class ProductForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
-    this.goBack = this.goBack.bind(this);
   }
 
 
@@ -124,10 +123,6 @@ export default class ProductForm extends React.Component {
   }
 
 
-  goBack() {
-    window.history.back();
-  }
-
 
   render() {
     const title = (
@@ -137,7 +132,13 @@ export default class ProductForm extends React.Component {
     const buttonAction = () => {
       if (this.props.params.id) {
         return <div className="col-sm-3">
-          <Button bsStyle="danger" type="button" onClick={this.goBack}>Cancel</Button>
+          <Button
+            bsStyle="danger"
+            type="button"
+            onClick={() => window.history.back()}
+          >
+            Cancel
+          </Button>
         </div>;
       } else {
         return <div className="col-sm-3">
@@ -157,38 +158,34 @@ export default class ProductForm extends React.Component {
             <div className="row">
               <div className="col-sm-6">
 
+
                 {/* CATEGORY & COLLECTION */}
-                <div className="row">
-                  <div className="col-sm-6">
-                    <FormGroup controlId="formControlsSelect">
-                      <ControlLabel>Category</ControlLabel>
-                      <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleCategory}
-                        value={this.state.category}
-                      >
-                        <option>select...</option>
-                        <option value="decorative">Decorative</option>
-                        <option value="houseware">Houseware</option>
-                        <option value="jewelry">Jewelry</option>
-                        <option value="garden">Garden</option>
-                      </FormControl>
-                    </FormGroup>
-                  </div>
-                  <div className="col-sm-6">
-                    <FormGroup controlId="formControlsSelect">
-                      <ControlLabel>Collection</ControlLabel>
-                      <Select
-                        multi={true}
-                        simpleValue={true}
-                        value={this.state.collections}
-                        options={this.state.options}
-                        onChange={this.handleCollections}
-                      />
-                    </FormGroup>
-                  </div>
-                </div>
+                <FormGroup controlId="formControlsSelect">
+                  <ControlLabel>Category</ControlLabel>
+                  <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    onChange={this.handleCategory}
+                    value={this.state.category}
+                  >
+                    <option>select...</option>
+                    <option value="decorative">Decorative</option>
+                    <option value="houseware">Houseware</option>
+                    <option value="jewelry">Jewelry</option>
+                    <option value="garden">Garden</option>
+                  </FormControl>
+                </FormGroup>
+
+                <FormGroup controlId="formControlsSelect">
+                  <ControlLabel>Collection</ControlLabel>
+                  <Select
+                    multi={true}
+                    simpleValue={true}
+                    value={this.state.collections}
+                    options={this.state.options}
+                    onChange={this.handleCollections}
+                  />
+                </FormGroup>
 
 
 
@@ -218,7 +215,7 @@ export default class ProductForm extends React.Component {
                 {/* PRICE & SIZE */}
                 <div className="row">
                   <div className="col-sm-6">
-                    <FieldGroup
+                    {/* <FieldGroup
                       id="formControlsText"
                       type="text"
                       label="Price"
@@ -226,8 +223,24 @@ export default class ProductForm extends React.Component {
                       name="price"
                       value={this.state.price}
                       onChange={this.handleChange}
-                    />
+                    /> */}
+
+
+                    <FormGroup controlId="formControlsText">
+                      <ControlLabel>Price</ControlLabel>
+                      <InputGroup>
+                        <InputGroup.Addon>$</InputGroup.Addon>
+                        <FormControl
+                          type="text"
+                          placeholder="Enter price"
+                          name="price"
+                          value={this.state.price}
+                          onChange={this.handleChange}
+                        />
+                      </InputGroup>
+                    </FormGroup>
                   </div>
+
                   <div className="col-sm-6">
                     <FieldGroup
                       id="formControlsText"
