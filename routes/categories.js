@@ -19,6 +19,7 @@ router.get('/categories/:id', (req, res, next) => {
     });
 });
 
+
 // GET all collections in category
 router.get('/categories/:id/collections', (req, res, next) => {
   knex('categories')
@@ -33,10 +34,10 @@ router.get('/categories/:id/collections', (req, res, next) => {
     });
 });
 
+
 // ADD NEW PRODUCT -> POST METHOD
 router.post('/categories/collections', (req, res, next) => {
   const { category, categoryId, collections, name, description, price, size } = req.body.product;
-
 
   knex('collections')
     .select('id')
@@ -73,7 +74,7 @@ router.post('/categories/collections', (req, res, next) => {
     });
 });
 
-
+// INSERT NEW COLLECTION INTO CATEGORY
 router.post('/categories/collection', (req, res, next) => {
   const { name, categoryId } = req.body;
 
@@ -97,5 +98,59 @@ router.post('/categories/collection', (req, res, next) => {
       console.log(err);
     });
 });
+
+
+// DELETE COLLECTION FROM CATEGORY
+router.delete('/categories/:categoryId/collection/:collectionId', (req, res, next) => {
+  const { categoryId, collectionId } = req.params;
+  console.log(categoryId, '*********** catID');
+  console.log(collectionId, '********** colID');
+
+  // const collection = collections.id;
+
+  knex('collections')
+    .where('category_id', categoryId)
+    .where('collections.id', collectionId)
+    .del()
+    .then(() => {
+      return knex('collections')
+        .select('*')
+        .where('category_id', categoryId)
+        .then((collections) => {
+          res.send(collections);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  // knex('sms')
+  //   .where('id', req.params.id)
+  //   .first()
+  //   .then((text) => {
+  //     return knex('sms')
+  //       .del()
+  //       .where('id', req.params.id)
+  //       .then(() => {
+  //         delete text.id;
+  //         res.send(text);
+  //       });
+  //   })
+  //   .then(() => {
+  //     knex('sms')
+  //       .select()
+  //       .where('sms_id', req.token.userId)
+  //       .then((response) => {
+  //         res.send(response);
+  //       })
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
+});
+
 
 module.exports = router;

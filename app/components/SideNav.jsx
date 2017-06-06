@@ -19,6 +19,8 @@ var SideNav = React.createClass({
     };
   },
 
+
+  // GET ALL COLLECTIONS FOR EACH CATEGORIES
   handleCollections: function(id, category) {
     axios.get(`/api/categories/${id}/collections`)
       .then((res) => {
@@ -42,6 +44,32 @@ var SideNav = React.createClass({
       });
   },
 
+  // DELETE COLLECTION
+  handleCollectionDelete(categoryId, collectionId) {
+    axios.delete(`/api/categories/${categoryId}/collection/${collectionId}`)
+      .then((res) => {
+        switch (categoryId) {
+          case 1:
+            this.setState({ decoratives: res.data });
+            break;
+          case 2:
+            this.setState({ housewares: res.data });
+            break;
+          case 3:
+            this.setState({ jewelrys: res.data });
+            break;
+          case 4:
+            this.setState({ gardens: res.data });
+            break;
+        }
+      })
+      .catch((err) => {
+        console.log(error);
+      });
+  },
+
+
+  // UPDATE STATE ON FORM INPUT CHANGE
   handleChange(event) {
     const value = event.target.value;
     const id = event.target.name;
@@ -49,6 +77,8 @@ var SideNav = React.createClass({
     this.setState({ collection: value, categoryId: id });
   },
 
+
+  // FORM TO SUBMIT A NEW COLLECTION
   handleSubmit(event) {
     event.preventDefault();
     const id = this.state.categoryId.toString();
@@ -80,6 +110,9 @@ var SideNav = React.createClass({
     this.setState({ collection: '', categoryId: null });
   },
 
+
+
+  // **************************  RENDER  ************************************
   render: function() {
     return (
       <div className="panel panel-primary side-nav">
@@ -126,9 +159,12 @@ var SideNav = React.createClass({
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Link>
+                            <Button
+                              bsStyle="link"
+                              onClick={() => this.handleCollectionDelete(e.category_id, e.id)}
+                            >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
+                            </Button>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -174,9 +210,9 @@ var SideNav = React.createClass({
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Link>
+                            <Button bsStyle="link">
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
+                            </Button>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -222,9 +258,9 @@ var SideNav = React.createClass({
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Link>
+                            <Button bsStyle="link">
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
+                            </Button>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -270,9 +306,9 @@ var SideNav = React.createClass({
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Link>
+                            <Button bsStyle="link">
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
+                            </Button>
                           </div>
                         </div>
                       </ListGroupItem>
