@@ -1,13 +1,11 @@
 var React = require('react');
 
-var Cart = React.createClass({
-  render: function() {
+export default class Cart extends React.Component {
+  render() {
     return (
       <div>
         <h1 className="text-center">Cart</h1>
       </div>
     );
   }
-});
-
-module.exports = Cart;
+}

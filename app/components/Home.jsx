@@ -1,15 +1,11 @@
 var React = require('react');
-var axios = require('axios');
 
-var Home = React.createClass({
-
-  render: function() {
+export default class Home extends React.Component {
+  render() {
     return (
       <div>
         <h1 className="text-center">Home</h1>
       </div>
     );
   }
-});
-
-module.exports = Home;
+}

@@ -1,10 +1,14 @@
 var React = require('react');
 var Navigation = require('Navigation');
-var SideNav = require('SideNav');
-var Header = require('Header');
+import SideNav from 'SideNav';
+import Header from 'Header';
 
-var Main = React.createClass({
-  render: function() {
+export default class Main extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return (
       <div className="main">
         {/* TOP NAVBAR */}
@@ -44,6 +48,4 @@ var Main = React.createClass({
       </div>
     );
   }
-});
-
-module.exports = Main;
+}

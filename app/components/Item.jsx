@@ -2,25 +2,27 @@ var React = require('react');
 var {Button, Modal, Tooltip, OverlayTrigger} = require('react-bootstrap');
 var {Link} = require('react-router');
 
-var Item = React.createClass({
-  getInitialState() {
-    return {
+export default class Item extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showModal: false,
       name: '',
       description: '',
       price: ''
     };
-  },
+  }
 
   close() {
     this.setState({ showModal: false, name: '', description: '', price: '' });
-  },
+  }
 
   open(name, description, price) {
     this.setState({ showModal: true, name, description, price });
-  },
+  }
 
-  render: function() {
+  render() {
     var { product_name, product_description, product_price, product_image } = this.props.item;
 
     const edit = (
@@ -83,6 +85,4 @@ var Item = React.createClass({
       </div>
     );
   }
-});
-
-module.exports = Item;
+}

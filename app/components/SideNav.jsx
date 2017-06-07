@@ -3,9 +3,11 @@ var axios = require('axios')
 var { Link } = require('react-router');
 var { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup } = require('react-bootstrap');
 
-var SideNav = React.createClass({
-  getInitialState: function() {
-    return {
+export default class SideNav extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       decoratives: [],
       housewares: [],
       jewelrys: [],
@@ -17,11 +19,16 @@ var SideNav = React.createClass({
       open3: false,
       open4: false
     };
-  },
+
+    this.handleCollections = this.handleCollections.bind(this);
+    this.handleCollectionDelete = this.handleCollectionDelete.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
 
   // GET ALL COLLECTIONS FOR EACH CATEGORIES
-  handleCollections: function(id, category) {
+  handleCollections(id, category) {
     axios.get(`/api/categories/${id}/collections`)
       .then((res) => {
         switch (category) {
@@ -42,7 +49,8 @@ var SideNav = React.createClass({
       .catch((err) => {
         console.log(err);
       });
-  },
+  }
+
 
   // DELETE COLLECTION
   handleCollectionDelete(categoryId, collectionId) {
@@ -66,7 +74,7 @@ var SideNav = React.createClass({
       .catch((err) => {
         console.log(error);
       });
-  },
+  }
 
 
   // UPDATE STATE ON FORM INPUT CHANGE
@@ -75,7 +83,7 @@ var SideNav = React.createClass({
     const id = event.target.name;
 
     this.setState({ collection: value, categoryId: id });
-  },
+  }
 
 
   // FORM TO SUBMIT A NEW COLLECTION
@@ -108,12 +116,11 @@ var SideNav = React.createClass({
     });
 
     this.setState({ collection: '', categoryId: null });
-  },
-
+  }
 
 
   // **************************  RENDER  ************************************
-  render: function() {
+  render() {
     return (
       <div className="panel panel-primary side-nav">
         <div className="panel-heading">
@@ -321,6 +328,4 @@ var SideNav = React.createClass({
       </div>
     );
   }
-});
-
-module.exports = SideNav;
+}

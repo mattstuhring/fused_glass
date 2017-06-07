@@ -1,10 +1,12 @@
 var React = require('react');
 var {PageHeader} = require('react-bootstrap');
 
-var Header = React.createClass({
+export default class Header extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
-  render: function() {
-
+  render() {
     var pageHeader = () => {
       if (this.props.collection) {
         return <PageHeader>
@@ -23,6 +25,4 @@ var Header = React.createClass({
       </div>
     );
   }
-});
-
-module.exports = Header;
+}

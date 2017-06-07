@@ -123,7 +123,7 @@ export default class ProductForm extends React.Component {
   }
 
 
-
+  // **************************   RENDER   ***********************************
   render() {
     const title = (
       <h3>{this.props.params.action}</h3>

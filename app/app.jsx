@@ -1,17 +1,15 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var { Route, Router, IndexRoute, hashHistory } = require('react-router');
-var Main = require('Main');
-var Home = require('Home');
-var About = require('About');
-var Gallery = require('Gallery');
-var Contact = require('Contact');
-var Cart = require('Cart');
-var Products = require('Products');
-var Collections = require('Collections');
-
-// trying out -> ES6 Component syntax for ProductForm
+import About from 'About';
+import Cart from 'Cart';
+import Collections from 'Collections';
+import Contact from 'Contact';
+import Gallery from 'Gallery';
+import Home from 'Home';
+import Main from 'Main';
 import ProductForm from 'ProductForm';
+import Products from 'Products';
 
 // Be sure to include styles at some point, probably during your bootstrapping
 require('style!css!react-select/dist/react-select.css');

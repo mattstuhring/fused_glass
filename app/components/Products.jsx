@@ -1,16 +1,18 @@
 var React = require('react');
 var axios = require('axios');
-var Item = require('Item');
-var Header = require('Header');
+import Item from 'Item';
+import Header from 'Header';
 
-var Products = React.createClass({
-  getInitialState: function() {
-    return {
+export default class Products extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       products: []
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     axios.get(`/api/categories/${this.props.params.id}`)
       .then((res) => {
         this.setState({
@@ -20,9 +22,9 @@ var Products = React.createClass({
       .catch((err) => {
         console.log(err);
       });
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.params.id !== nextProps.params.id) {
       axios.get(`/api/categories/${nextProps.params.id}`)
         .then((res) => {
@@ -34,9 +36,9 @@ var Products = React.createClass({
           console.log(err);
         });
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div>
         <Header category={this.props.params.category}/>
@@ -49,8 +51,4 @@ var Products = React.createClass({
       </div>
     );
   }
-});
-
-
-
-module.exports = Products;
+}
