@@ -1,6 +1,8 @@
-# Boilerplate React App
+# Fused Glass by Celeste
 
-## Tools:
+## eCommerce website
+
+### Tools:
   - React
   - Webpack v1
   - Bootstrap
