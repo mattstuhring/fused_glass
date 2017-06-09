@@ -10,9 +10,13 @@ import Home from 'Home';
 import Main from 'Main';
 import ProductForm from 'ProductForm';
 import Products from 'Products';
+import Playground from 'Playground';
 
 // Be sure to include styles at some point, probably during your bootstrapping
 require('style!css!react-select/dist/react-select.css');
+
+// react-dropzone-component CSS
+require('style!css!react-dropzone-component/styles/filepicker.css'); require('style!css!dropzone/dist/min/dropzone.min.css');
 
 // Load Bootstrap
 require('style!css!bootstrap/dist/css/bootstrap.min.css');
@@ -34,6 +38,7 @@ ReactDOM.render(
       <Route path="cart" component={Cart}/>
       <Route path="products/:id/:category" component={Products}/>
       <Route path="collections/:category/:id/:collection" component={Collections}/>
+      <Route path="playground" component={Playground} />
     </Route>
   </Router>,
   document.getElementById('app')

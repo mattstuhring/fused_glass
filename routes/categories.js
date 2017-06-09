@@ -2,6 +2,7 @@
 
 const knex = require('../knex');
 const express = require('express');
+const multer  = require('multer');
 const router = express.Router();
 
 
@@ -35,10 +36,38 @@ router.get('/categories/:id/collections', (req, res, next) => {
 });
 
 
+
+// STORAGE LOCATION OF IMAGE FILES
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + '.jpg');
+  }
+});
+
+const upload = multer({ storage: storage }).array('images');
+
+
+
+
 // ADD NEW PRODUCT -> POST METHOD
 router.post('/categories/collections', (req, res, next) => {
   const { category, categoryId, collections, name, description, price, size } = req.body.product;
 
+  // MULTER UPLOAD FUNC
+  upload(req, res, function (err) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    // Everything went fine
+    res.send({success: true});
+  });
+
+  // INSERT FORM DATA INTO DB
   knex('collections')
     .select('id')
     .whereIn('collection_name', collections)
@@ -70,7 +99,7 @@ router.post('/categories/collections', (req, res, next) => {
         })
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
 

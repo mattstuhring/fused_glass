@@ -5,6 +5,8 @@ import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, C
 import FieldGroup from 'FieldGroup';
 import Header from 'Header';
 import Select from 'react-select';
+import DropzoneComponent from 'react-dropzone-component';
+
 
 export default class ProductForm extends React.Component {
   constructor(props) {
@@ -15,6 +17,7 @@ export default class ProductForm extends React.Component {
       categoryId: null,
       collections: [],
       description: '',
+      images: [],
       name: '',
       price: '',
       size: '',
@@ -25,8 +28,9 @@ export default class ProductForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
+    this.handleImages = this.handleImages.bind(this);
+    // this.removeImage = this.removeImage.bind(this);
   }
-
 
 
   // HANDLE CHANGE
@@ -38,7 +42,6 @@ export default class ProductForm extends React.Component {
       [name]: value
     });
   }
-
 
 
   // GET ALL COLLECTIONS FROM CATEGORY
@@ -82,7 +85,6 @@ export default class ProductForm extends React.Component {
   }
 
 
-
   // HANDLE FORM SUBMIT
   handleSubmit(event) {
     event.preventDefault();
@@ -116,10 +118,22 @@ export default class ProductForm extends React.Component {
   }
 
 
-
   // HANDLE COLLECTIONS
   handleCollections(val) {
     this.setState({collections: val})
+  }
+
+  // removeImage(event) {
+  //   event.preventDefault();
+  //
+  //   let updatedImages = Object.assign([], this.state.images);
+  //   updatedImages.splice(event.target.id, 1);
+  //
+  //   this.setState({ images: updatedImages });
+  // }
+
+  handleImages(images) {
+    console.log(images);
   }
 
 
@@ -146,6 +160,7 @@ export default class ProductForm extends React.Component {
         </div>;
       }
     };
+
 
     return (
       <div className="admin">
@@ -215,17 +230,6 @@ export default class ProductForm extends React.Component {
                 {/* PRICE & SIZE */}
                 <div className="row">
                   <div className="col-sm-6">
-                    {/* <FieldGroup
-                      id="formControlsText"
-                      type="text"
-                      label="Price"
-                      placeholder="Enter price"
-                      name="price"
-                      value={this.state.price}
-                      onChange={this.handleChange}
-                    /> */}
-
-
                     <FormGroup controlId="formControlsText">
                       <ControlLabel>Price</ControlLabel>
                       <InputGroup>
@@ -257,13 +261,14 @@ export default class ProductForm extends React.Component {
 
               {/* IMAGE & FILE */}
               <div className="col-sm-6 text-center">
-                <Thumbnail src="http://www.fillmurray.com/300/200">
-                  <FieldGroup
-                    id="formControlsFile"
-                    type="file"
-                    help="Example block-level help text here."
-                  />
-                </Thumbnail>
+                <DropzoneComponent
+                  config={{
+                    showFiletypeIcon: true,
+                    postUrl: 'no-url'
+                  }}
+                  eventHandlers={{addedfile: (file) => this.handleImages(file)}}
+                  djsConfig={{addRemoveLinks: true}}
+                />
               </div>
             </div>
 
@@ -272,9 +277,6 @@ export default class ProductForm extends React.Component {
               <div className="col-sm-3 col-sm-offset-3">
                 <Button bsStyle="primary" type="submit">Submit</Button>
               </div>
-              {/* <div className="col-sm-3">
-                <Button bsStyle="danger" type="button">Cancel</Button>
-              </div> */}
               {buttonAction()}
             </div>
           </form>
