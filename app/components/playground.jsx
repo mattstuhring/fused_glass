@@ -21,12 +21,12 @@ export default class Playground extends React.Component {
     event.preventDefault();
 
     const files = this.state.images;
-    console.log(files, '*************** files');
+    const req = superagent.post('/api/categories/collections');
 
-    var req = superagent.post('/api/categories/collections');
     files.forEach((file)=> {
        req.attach('images', file)
     });
+    
     req.end((err, res) => {
       if (err) console.log(err);
       alert('File uploaded!');

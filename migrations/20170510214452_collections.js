@@ -2,13 +2,13 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('collections', (table) => {
-    table.increments();
+    table.increments('id').primary();
     table.string('collection_name').defaultTo('');
     table.integer('category_id')
+      .unsigned()
+      .notNullable()
       .references('id')
-      .inTable('categories')
-      .onDelete('CASCADE')
-      .index();
+      .inTable('categories');
     table.timestamps(true, true);
   })
 };

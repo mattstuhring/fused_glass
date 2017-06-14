@@ -24,6 +24,7 @@ export default class Products extends React.Component {
       });
   }
 
+  // GET ALL PRODUCTS WHEN NEW SIDENAV CATEGORY IS CLICKED
   componentWillReceiveProps(nextProps) {
     if (this.props.params.id !== nextProps.params.id) {
       axios.get(`/api/categories/${nextProps.params.id}`)

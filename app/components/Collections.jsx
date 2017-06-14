@@ -24,6 +24,7 @@ export default class Collections extends React.Component {
       });
   }
 
+  // GET ALL COLLECTIONS WHEN NEW SIDENAV COLLECTION IS CLICKED
   componentWillReceiveProps(nextProps) {
     if (this.props.params.id !== nextProps.params.id) {
       axios.get(`/api/collections/${nextProps.params.id}`)

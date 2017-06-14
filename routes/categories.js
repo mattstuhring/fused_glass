@@ -50,8 +50,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).array('images');
 
 
-
-
 // ADD NEW PRODUCT -> POST METHOD
 router.post('/categories/collections', (req, res, next) => {
   const { category, categoryId, collections, name, description, price, size } = req.body.product;
@@ -135,8 +133,6 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
   console.log(categoryId, '*********** catID');
   console.log(collectionId, '********** colID');
 
-  // const collection = collections.id;
-
   knex('collections')
     .where('category_id', categoryId)
     .where('collections.id', collectionId)
@@ -150,36 +146,26 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
         })
         .catch((err) => {
           console.log(err);
-        })
+        });
     })
     .catch((err) => {
       console.log(err);
     });
 
-  // knex('sms')
-  //   .where('id', req.params.id)
-  //   .first()
-  //   .then((text) => {
-  //     return knex('sms')
-  //       .del()
-  //       .where('id', req.params.id)
-  //       .then(() => {
-  //         delete text.id;
-  //         res.send(text);
-  //       });
-  //   })
-  //   .then(() => {
-  //     knex('sms')
-  //       .select()
-  //       .where('sms_id', req.token.userId)
-  //       .then((response) => {
-  //         res.send(response);
-  //       })
-  //   })
-  //   .catch((err) => {
-  //     next(err);
-  //   });
+  knex('products')
+    .where('products.category_id', categoryId)
+    .whereIn('products.id', function() {
+      this.select('product_id')
+        .from('products_collections')
+        .where('products_collections.collection_id', collectionId);
+    })
+    .del()
+    .then((products) => {
+      console.log(products, '****************** products');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
-
 
 module.exports = router;

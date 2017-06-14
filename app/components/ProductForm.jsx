@@ -29,7 +29,6 @@ export default class ProductForm extends React.Component {
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
     this.handleImages = this.handleImages.bind(this);
-    // this.removeImage = this.removeImage.bind(this);
   }
 
 

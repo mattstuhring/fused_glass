@@ -1,7 +1,7 @@
 var React = require('react');
 var axios = require('axios')
 var { Link } = require('react-router');
-var { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup } = require('react-bootstrap');
+var { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup, Modal } = require('react-bootstrap');
 
 export default class SideNav extends React.Component {
   constructor(props) {
@@ -17,15 +17,33 @@ export default class SideNav extends React.Component {
       open1: false,
       open2: false,
       open3: false,
-      open4: false
+      open4: false,
+      showModal: false,
+      delete: {
+        categoryId: null,
+        collectionId: null
+      },
+      products: []
     };
 
     this.handleCollections = this.handleCollections.bind(this);
     this.handleCollectionDelete = this.handleCollectionDelete.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.close = this.close.bind(this);
+    this.open = this.open.bind(this);
   }
 
+  close() {
+    this.setState({ showModal: false });
+  }
+
+  open(categoryId, collectionId) {
+    this.setState({
+      showModal: true,
+      delete: { categoryId, collectionId }
+    });
+  }
 
   // GET ALL COLLECTIONS FOR EACH CATEGORIES
   handleCollections(id, category) {
@@ -58,6 +76,7 @@ export default class SideNav extends React.Component {
       .then((res) => {
         switch (categoryId) {
           case 1:
+            console.log(res.data, '********* res data sid nav');
             this.setState({ decoratives: res.data });
             break;
           case 2:
@@ -74,6 +93,8 @@ export default class SideNav extends React.Component {
       .catch((err) => {
         console.log(error);
       });
+
+    this.setState({showModal: false})
   }
 
 
@@ -123,6 +144,28 @@ export default class SideNav extends React.Component {
   render() {
     return (
       <div className="panel panel-primary side-nav">
+
+        {/* DELETE COLLECTION MODAL */}
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Product</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete this product?</p>
+            <p>Category ID: {this.state.delete.categoryId}</p>
+            <p>Collection ID: {this.state.delete.collectionId}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => this.handleCollectionDelete(
+              this.state.delete.categoryId,
+              this.state.delete.collectionId
+            )}>Yes</Button>
+            <Button onClick={this.close}>No</Button>
+          </Modal.Footer>
+        </Modal>
+
+
         <div className="panel-heading">
           <h3 className="panel-title text-center">Art for Sale</h3>
         </div>
@@ -168,7 +211,7 @@ export default class SideNav extends React.Component {
                           <div className="col-sm-4 text-right">
                             <Button
                               bsStyle="link"
-                              onClick={() => this.handleCollectionDelete(e.category_id, e.id)}
+                              onClick={() => this.open(e.category_id, e.id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Button>

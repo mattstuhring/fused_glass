@@ -12,6 +12,9 @@ export default class Item extends React.Component {
       description: '',
       price: ''
     };
+
+    this.close = this.close.bind(this);
+    this.open = this.open.bind(this);
   }
 
   close() {
