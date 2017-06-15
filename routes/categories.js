@@ -160,8 +160,19 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
         .where('products_collections.collection_id', collectionId);
     })
     .del()
-    .then((products) => {
-      console.log(products, '****************** products');
+    .then((prods) => {
+      console.log(prods, '****************** products deleted');
+
+      return knex('products')
+        .select()
+        .innerJoin('products_collections', 'products.id', 'products_collections.product_id')
+        .where('products_collections.collection_id', collectionId)
+        .then((products) => {
+          console.log(products, '**************** products');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       console.log(err);

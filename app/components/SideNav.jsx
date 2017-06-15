@@ -22,8 +22,7 @@ export default class SideNav extends React.Component {
       delete: {
         categoryId: null,
         collectionId: null
-      },
-      products: []
+      }
     };
 
     this.handleCollections = this.handleCollections.bind(this);
@@ -94,7 +93,12 @@ export default class SideNav extends React.Component {
         console.log(error);
       });
 
-    this.setState({showModal: false})
+    this.setState({
+      showModal: false,
+      delete: { categoryId: null, collectionId: null }
+    });
+
+    location.reload();
   }
 
 
@@ -260,7 +264,10 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button bsStyle="link">
+                            <Button
+                              bsStyle="link"
+                              onClick={() => this.open(e.category_id, e.id)}
+                            >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Button>
                           </div>
@@ -308,7 +315,10 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button bsStyle="link">
+                            <Button
+                              bsStyle="link"
+                              onClick={() => this.open(e.category_id, e.id)}
+                            >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Button>
                           </div>
@@ -356,7 +366,10 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button bsStyle="link">
+                            <Button
+                              bsStyle="link"
+                              onClick={() => this.open(e.category_id, e.id)}
+                            >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Button>
                           </div>
