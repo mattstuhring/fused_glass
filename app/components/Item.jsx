@@ -25,6 +25,8 @@ export default class Item extends React.Component {
     this.setState({ showModal: true, name, description, price });
   }
 
+
+  // ********************** RENDER ****************************
   render() {
     var { product_name, product_description, product_price, product_image } = this.props.item;
 

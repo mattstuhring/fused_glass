@@ -5,9 +5,9 @@ exports.seed = function(knex) {
     .then(() => knex('products').insert([
       {
         id: 1,
-        product_name: 'Jelly Fish',
+        product_name: 'Tropical Fish',
         product_price: '$48.50',
-        product_description: 'Jelly fish votive',
+        product_description: 'Fish night light',
         product_color: 'Red',
         product_size: '8x4',
         product_image: 'http://www.fillmurray.com/300/200',

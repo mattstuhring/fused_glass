@@ -4,7 +4,13 @@ exports.up = function(knex) {
   return knex.schema.createTable('images', (table) => {
     table.increments('id').primary();
     table.string('image_name').defaultTo('');
-    table.integer('product_id');
+    table.integer('product_id')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('products')
+      .onDelete('CASCADE')
+      .index();
     table.timestamps(true, true);
   })
 };

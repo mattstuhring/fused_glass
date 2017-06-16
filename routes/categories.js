@@ -152,31 +152,30 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
       console.log(err);
     });
 
-  knex('products')
-    .where('products.category_id', categoryId)
-    .whereIn('products.id', function() {
-      this.select('product_id')
-        .from('products_collections')
-        .where('products_collections.collection_id', collectionId);
-    })
-    .del()
-    .then((prods) => {
-      console.log(prods, '****************** products deleted');
-
-      return knex('products')
-        .select()
-        .innerJoin('products_collections', 'products.id', 'products_collections.product_id')
-        .where('products_collections.collection_id', collectionId)
-        .then((products) => {
-          console.log(products, '**************** products');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  // knex('products_collections')
+  //   .where('products_collections.collection_id', collectionId)
+  //   .del()
+  //   .then((prods) => {
+  //     console.log(prods, '****************** connect deleted');
+  //
+  //     return knex('products')
+  //       .where('products.category_id', categoryId)
+  //       .whereIn('products.id', function() {
+  //         this.select('product_id')
+  //           .from('products_collections')
+  //           .where('products_collections.collection_id', collectionId);
+  //       })
+  //       .del()
+  //       .then((prods) => {
+  //         console.log(prods, '****************** products deleted');
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 });
 
 module.exports = router;

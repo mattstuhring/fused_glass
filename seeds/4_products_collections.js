@@ -65,6 +65,13 @@ exports.seed = function(knex) {
         collection_id: 6,
         created_at: new Date('2017-09-16 11:16:16 UTC'),
         updated_at: new Date('2017-09-16 11:16:16 UTC')
+      },
+      {
+        id: 10,
+        product_id: 1,
+        collection_id: 8,
+        created_at: new Date('2017-09-16 12:16:16 UTC'),
+        updated_at: new Date('2017-09-16 12:16:16 UTC')
       }])
     )
     .then(() => knex.raw(

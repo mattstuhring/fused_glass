@@ -75,7 +75,6 @@ export default class SideNav extends React.Component {
       .then((res) => {
         switch (categoryId) {
           case 1:
-            console.log(res.data, '********* res data sid nav');
             this.setState({ decoratives: res.data });
             break;
           case 2:
@@ -95,10 +94,9 @@ export default class SideNav extends React.Component {
 
     this.setState({
       showModal: false,
-      delete: { categoryId: null, collectionId: null }
+      delete: { categoryId: null, collectionId: null },
+      open1: true
     });
-
-    location.reload();
   }
 
 
@@ -213,12 +211,12 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button
-                              bsStyle="link"
+                            <Link
+                              to={`/products/${1}/Decorative`}
                               onClick={() => this.open(e.category_id, e.id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Button>
+                            </Link>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -264,12 +262,12 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button
-                              bsStyle="link"
+                            <Link
+                              to={`/products/${2}/Houseware`}
                               onClick={() => this.open(e.category_id, e.id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Button>
+                            </Link>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -315,12 +313,12 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button
-                              bsStyle="link"
+                            <Link
+                              to={`/products/${3}/Jewelry`}
                               onClick={() => this.open(e.category_id, e.id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Button>
+                            </Link>
                           </div>
                         </div>
                       </ListGroupItem>
@@ -366,12 +364,12 @@ export default class SideNav extends React.Component {
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
-                            <Button
-                              bsStyle="link"
+                            <Link
+                              to={`/products/${4}/Garden`}
                               onClick={() => this.open(e.category_id, e.id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Button>
+                            </Link>
                           </div>
                         </div>
                       </ListGroupItem>
