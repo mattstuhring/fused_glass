@@ -32,7 +32,7 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // HANDLE CHANGE
+  // HANDLE ALL FORM INPUT CHANGE EVENTS
   handleChange(event) {
     const value = event.target.value;
     const name = event.target.name;
@@ -84,7 +84,7 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // HANDLE FORM SUBMIT
+  // SUBMIT NEW PRODUCT TO DATABASE
   handleSubmit(event) {
     event.preventDefault();
     var collections = this.state.collections.split(',');
@@ -117,7 +117,7 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // HANDLE COLLECTIONS
+  // HANDLE NEW COLLECTION INPUT CHANGE EVENTS
   handleCollections(val) {
     this.setState({collections: val})
   }
@@ -142,20 +142,31 @@ export default class ProductForm extends React.Component {
       <h3>{this.props.params.action}</h3>
     );
 
+    // CONDITIONAL TO DISPLAY ADD OR UPDATE PRODUCT BUTTON CONFIG
     const buttonAction = () => {
       if (this.props.params.id) {
-        return <div className="col-sm-3">
-          <Button
-            bsStyle="danger"
-            type="button"
-            onClick={() => window.history.back()}
-          >
-            Cancel
-          </Button>
+        return <div className="row">
+          <div className="col-sm-3 col-sm-offset-3">
+            <Button bsStyle="primary" type="submit">Save</Button>
+          </div>
+          <div className="col-sm-3">
+            <Button
+              bsStyle="danger"
+              type="button"
+              onClick={() => window.history.back()}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>;
       } else {
-        return <div className="col-sm-3">
-          <Button bsStyle="danger" type="button">Clear</Button>
+        return <div className="row">
+          <div className="col-sm-3 col-sm-offset-3">
+            <Button bsStyle="primary" type="submit">Add</Button>
+          </div>
+          <div className="col-sm-3">
+            <Button bsStyle="danger" type="button">Clear</Button>
+          </div>
         </div>;
       }
     };
@@ -189,7 +200,6 @@ export default class ProductForm extends React.Component {
                     <option value="garden">Garden</option>
                   </FormControl>
                 </FormGroup>
-
                 <FormGroup controlId="formControlsSelect">
                   <ControlLabel>Collection</ControlLabel>
                   <Select
@@ -200,7 +210,6 @@ export default class ProductForm extends React.Component {
                     onChange={this.handleCollections}
                   />
                 </FormGroup>
-
 
 
                 {/* NAME */}
@@ -214,6 +223,7 @@ export default class ProductForm extends React.Component {
                   onChange={this.handleChange}
                 />
 
+
                 {/* DESCRIPTION */}
                 <FieldGroup
                   id="formControlsText"
@@ -225,6 +235,7 @@ export default class ProductForm extends React.Component {
                   value={this.state.description}
                   onChange={this.handleChange}
                 />
+
 
                 {/* PRICE & SIZE */}
                 <div className="row">
@@ -243,7 +254,6 @@ export default class ProductForm extends React.Component {
                       </InputGroup>
                     </FormGroup>
                   </div>
-
                   <div className="col-sm-6">
                     <FieldGroup
                       id="formControlsText"
@@ -258,6 +268,7 @@ export default class ProductForm extends React.Component {
                 </div>
               </div>
 
+
               {/* IMAGE & FILE */}
               <div className="col-sm-6 text-center">
                 <DropzoneComponent
@@ -271,13 +282,9 @@ export default class ProductForm extends React.Component {
               </div>
             </div>
 
+
             {/* SUBMIT & CANCEL BTN */}
-            <div className="row">
-              <div className="col-sm-3 col-sm-offset-3">
-                <Button bsStyle="primary" type="submit">Submit</Button>
-              </div>
-              {buttonAction()}
-            </div>
+            {buttonAction()}
           </form>
         </Panel>
       </div>

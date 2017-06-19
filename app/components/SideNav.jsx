@@ -50,16 +50,16 @@ export default class SideNav extends React.Component {
       .then((res) => {
         switch (category) {
           case 'decorative':
-            this.setState({decoratives: res.data, open1: !this.state.open1});
+            this.setState({ decoratives: res.data, open1: true, open2: false, open3: false, open4: false });
             break;
           case 'houseware':
-            this.setState({housewares: res.data, open2: !this.state.open2});
+            this.setState({ housewares: res.data, open2: true, open1: false, open3: false, open4: false });
             break;
           case 'jewelry':
-            this.setState({jewelrys: res.data, open3: !this.state.open3});
+            this.setState({jewelrys: res.data, open3: true, open2: false, open1: false, open4: false });
             break;
           case 'garden':
-            this.setState({gardens: res.data, open4: !this.state.open4});
+            this.setState({ gardens: res.data, open4: true, open2: false, open3: false, open1: false });
             break;
         }
       })
@@ -75,16 +75,16 @@ export default class SideNav extends React.Component {
       .then((res) => {
         switch (categoryId) {
           case 1:
-            this.setState({ decoratives: res.data });
+            this.setState({ decoratives: res.data, open1: true });
             break;
           case 2:
-            this.setState({ housewares: res.data });
+            this.setState({ housewares: res.data, open2: true });
             break;
           case 3:
-            this.setState({ jewelrys: res.data });
+            this.setState({ jewelrys: res.data, open4: true });
             break;
           case 4:
-            this.setState({ gardens: res.data });
+            this.setState({ gardens: res.data, open4: true });
             break;
         }
       })
@@ -94,8 +94,7 @@ export default class SideNav extends React.Component {
 
     this.setState({
       showModal: false,
-      delete: { categoryId: null, collectionId: null },
-      open1: true
+      delete: { categoryId: null, collectionId: null }
     });
   }
 

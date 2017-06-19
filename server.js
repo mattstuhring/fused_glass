@@ -17,6 +17,7 @@ const cookieSession = require('cookie-session');
 // Routes go here
 const categories = require('./routes/categories');
 const collections = require('./routes/collections');
+const products = require('./routes/products');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use(bodyParser.json());
 
 app.use('/api', categories);
 app.use('/api', collections);
+app.use('/api', products);
 
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

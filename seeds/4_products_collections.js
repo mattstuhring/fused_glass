@@ -69,7 +69,7 @@ exports.seed = function(knex) {
       {
         id: 10,
         product_id: 1,
-        collection_id: 8,
+        collection_id: 2,
         created_at: new Date('2017-09-16 12:16:16 UTC'),
         updated_at: new Date('2017-09-16 12:16:16 UTC')
       }])

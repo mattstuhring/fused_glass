@@ -9,7 +9,7 @@ import Gallery from 'Gallery';
 import Home from 'Home';
 import Main from 'Main';
 import ProductForm from 'ProductForm';
-import Products from 'Products';
+import Categories from 'Categories';
 import Playground from 'Playground';
 
 // Be sure to include styles at some point, probably during your bootstrapping
@@ -36,7 +36,7 @@ ReactDOM.render(
       <Route path="contact" component={Contact}/>
       <Route path="productform/:action(/:id)" component={ProductForm}/>
       <Route path="cart" component={Cart}/>
-      <Route path="products/:id/:category" component={Products}/>
+      <Route path="products/:id/:category" component={Categories}/>
       <Route path="collections/:category/:id/:collection" component={Collections}/>
       <Route path="playground" component={Playground} />
     </Route>

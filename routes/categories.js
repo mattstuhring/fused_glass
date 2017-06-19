@@ -127,7 +127,7 @@ router.post('/categories/collection', (req, res, next) => {
 });
 
 
-// DELETE COLLECTION FROM CATEGORY
+// DELETE COLLECTION FROM SIDE NAV CATEGORY & PRODUCTS_COLLECTIONS RELATIONSHIP
 router.delete('/categories/:categoryId/collection/:collectionId', (req, res, next) => {
   const { categoryId, collectionId } = req.params;
   console.log(categoryId, '*********** catID');
@@ -151,31 +151,6 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
     .catch((err) => {
       console.log(err);
     });
-
-  // knex('products_collections')
-  //   .where('products_collections.collection_id', collectionId)
-  //   .del()
-  //   .then((prods) => {
-  //     console.log(prods, '****************** connect deleted');
-  //
-  //     return knex('products')
-  //       .where('products.category_id', categoryId)
-  //       .whereIn('products.id', function() {
-  //         this.select('product_id')
-  //           .from('products_collections')
-  //           .where('products_collections.collection_id', collectionId);
-  //       })
-  //       .del()
-  //       .then((prods) => {
-  //         console.log(prods, '****************** products deleted');
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
 });
 
 module.exports = router;

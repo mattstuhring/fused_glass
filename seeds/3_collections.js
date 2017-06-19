@@ -12,8 +12,8 @@ exports.seed = function(knex) {
       },
       {
         id: 2,
-        collection_name: 'Dishes',
-        category_id: 2,
+        collection_name: 'Night Lights',
+        category_id: 1,
         created_at: new Date('2017-09-17 11:16:16 UTC'),
         updated_at: new Date('2017-09-17 11:16:16 UTC')
       },
@@ -54,8 +54,8 @@ exports.seed = function(knex) {
       },
       {
         id: 8,
-        collection_name: 'Night Lights',
-        category_id: 1,
+        collection_name: 'Dishes',
+        category_id: 2,
         created_at: new Date('2017-09-23 11:16:16 UTC'),
         updated_at: new Date('2017-09-23 11:16:16 UTC')
       }])
