@@ -47,22 +47,26 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage }).array('images');
+const upload = multer({ storage: storage });
 
+const cpUpload = upload.fields([{ name: 'primary', maxCount: 1 }]);
 
 // ADD NEW PRODUCT -> POST METHOD
-router.post('/categories/collections', (req, res, next) => {
-  const { category, categoryId, collections, name, description, price, size } = req.body.product;
+router.post('/categories/collections', cpUpload, (req, res, next) => {
+  const { category, categoryId, name, description, price, size } = req.body;
+  const primaryImage = req.files['primary'][0].filename;
+
+  let { collections } = req.body;
+  collections = collections.split(',');
 
   // MULTER UPLOAD FUNC
-  upload(req, res, function (err) {
+  cpUpload(req, res, function (err) {
     if (err) {
       next(err);
       return;
     }
 
-    // Everything went fine
-    res.send({success: true});
+    // res.send({success: true});
   });
 
   // INSERT FORM DATA INTO DB
@@ -76,16 +80,17 @@ router.post('/categories/collections', (req, res, next) => {
           product_price: price,
           product_description: description,
           product_size: size,
+          product_image: primaryImage,
           category_id: categoryId
         })
         .returning('id')
-        .then((res) => {
+        .then((id) => {
           let db = knex.table('products_collections')
 
           var foo = [];
           collectionId.forEach((item) => {
             foo.push({
-              product_id: res[0],
+              product_id: id[0],
               collection_id: item.id
             })
           })
@@ -94,12 +99,18 @@ router.post('/categories/collections', (req, res, next) => {
             .then((r) => {
               console.log(r, '************* r');
             })
+            .catch((err) => {
+              console.log(err);
+            });
+
+          res.send(id);
         })
     })
     .catch((err) => {
       next(err);
     });
 });
+
 
 // INSERT NEW COLLECTION INTO CATEGORY
 router.post('/categories/collection', (req, res, next) => {

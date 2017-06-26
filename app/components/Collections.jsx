@@ -65,8 +65,6 @@ export default class Collections extends React.Component {
 
   // DELETE PRODUCT FROM DATABASE BY ID
   handleProductDelete(productId) {
-    console.log(productId, 'prod ID');
-
     axios.delete(`/api/products/${productId}`)
       .then((res) => {
         console.log(res, '******** res product delete');
@@ -92,7 +90,6 @@ export default class Collections extends React.Component {
 
   // *********************  RENDER  ****************************
   render() {
-    console.log(this.props.params.collection, '******* collection');
     const {collection} = this.props.params;
 
     const edit = (

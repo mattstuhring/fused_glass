@@ -6,6 +6,7 @@ import FieldGroup from 'FieldGroup';
 import Header from 'Header';
 import Select from 'react-select';
 import DropzoneComponent from 'react-dropzone-component';
+import superagent from 'superagent';
 
 
 export default class ProductForm extends React.Component {
@@ -17,18 +18,25 @@ export default class ProductForm extends React.Component {
       categoryId: null,
       collections: [],
       description: '',
-      images: [],
+      primaryImage: [],
+      secondaryImages: [],
       name: '',
       price: '',
       size: '',
-      options: null
+      options: null,
+      primaryDropzone: null,
+      secondaryDropzone: null
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
-    this.handleImages = this.handleImages.bind(this);
+    this.handlePrimaryImage = this.handlePrimaryImage.bind(this);
+    this.handleSecondaryImages = this.handleSecondaryImages.bind(this);
+    this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
+    this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
+    this.removeAllFiles = this.removeAllFiles.bind(this);
   }
 
 
@@ -87,8 +95,10 @@ export default class ProductForm extends React.Component {
   // SUBMIT NEW PRODUCT TO DATABASE
   handleSubmit(event) {
     event.preventDefault();
-    var collections = this.state.collections.split(',');
 
+    const primary = this.state.primaryImage;
+    const secondary = this.state.secondaryImages;
+    const collections = this.state.collections.split(',');
     const product = {
       category: this.state.category,
       categoryId: this.state.categoryId,
@@ -99,11 +109,42 @@ export default class ProductForm extends React.Component {
       size: this.state.size
     };
 
-    axios({
-      method: 'post',
-      url: '/api/categories/collections',
-      data: { product }
-    });
+    superagent
+      .post('/api/categories/collections')
+      .field('category', this.state.category)
+      .field('categoryId', this.state.categoryId)
+      .field('collections', this.state.collections)
+      .field('name', this.state.name)
+      .field('description', this.state.description)
+      .field('price', this.state.price)
+      .field('size', this.state.size)
+      .attach('primary', primary)
+      .set('Accept', 'application/json')
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        const req = superagent.post('/api/products/images');
+
+        // POST ALL SECONDARY IMAGES
+        secondary.forEach((img)=> {
+          req.attach('images', img).field('id', res.body[0])
+        });
+
+        req.end((err, res) => {
+         if (err) {
+           console.log(err);
+           return;
+         }
+
+         console.log(res.body, '********** SUCCESS');
+        });
+      });
+
+    this.removeAllFiles(this.state.primaryDropzone);
+    this.removeAllFiles(this.state.secondaryDropzone);
 
     this.setState({
       category: '',
@@ -112,7 +153,9 @@ export default class ProductForm extends React.Component {
       name: '',
       description: '',
       price: '',
-      size: ''
+      size: '',
+      primaryDropzone: null,
+      secondaryDropzone: null
     });
   }
 
@@ -122,17 +165,34 @@ export default class ProductForm extends React.Component {
     this.setState({collections: val})
   }
 
-  // removeImage(event) {
-  //   event.preventDefault();
-  //
-  //   let updatedImages = Object.assign([], this.state.images);
-  //   updatedImages.splice(event.target.id, 1);
-  //
-  //   this.setState({ images: updatedImages });
-  // }
+  // ASSIGN PRIMARY DROPZONE OBJECT TO STATE
+  handlePrimaryDropzone(obj) {
+    this.setState({ primaryDropzone: obj });
+  }
 
-  handleImages(images) {
-    console.log(images);
+  // ASSIGN SECONDARY DROPZONE OBJECT TO STATE
+  handleSecondaryDropzone(obj) {
+    this.setState({ secondaryDropzone: obj });
+  }
+
+  // REMOVE ALL FILES FROM DROPZONE COMPONENT ON FORM SUBMIT
+  removeAllFiles(dropzone) {
+    if (dropzone) {
+      dropzone.removeAllFiles();
+    }
+  }
+
+  // UPDATE PRIMARY IMAGE STATE
+  handlePrimaryImage(file) {
+    this.setState({ primaryImage: file })
+  }
+
+  // UPDATE SECONDARY IMAGES STATE
+  handleSecondaryImages(files) {
+    let images = Object.assign([], this.state.secondaryImages);
+    images.push(files);
+
+    this.setState({ secondaryImages: images });
   }
 
 
@@ -142,7 +202,7 @@ export default class ProductForm extends React.Component {
       <h3>{this.props.params.action}</h3>
     );
 
-    // CONDITIONAL TO DISPLAY ADD OR UPDATE PRODUCT BUTTON CONFIG
+    // CONDITIONAL TO DISPLAY THE ADD OR UPDATE PRODUCT BUTTON CONFIG
     const buttonAction = () => {
       if (this.props.params.id) {
         return <div className="row">
@@ -183,6 +243,9 @@ export default class ProductForm extends React.Component {
             <div className="row">
               <div className="col-sm-6">
 
+                <div className="page-header text-center">
+                  <h4>Product Details</h4>
+                </div>
 
                 {/* CATEGORY & COLLECTION */}
                 <FormGroup controlId="formControlsSelect">
@@ -269,14 +332,38 @@ export default class ProductForm extends React.Component {
               </div>
 
 
-              {/* IMAGE & FILE */}
+              {/* IMAGES */}
               <div className="col-sm-6 text-center">
+                <div className="page-header">
+                  <h4>Primary Image <small>(Max: 1)</small></h4>
+                </div>
                 <DropzoneComponent
                   config={{
+                    iconFiletypes: ['.jpg', '.png'],
+                    showFiletypeIcon: true,
+                    postUrl: 'no-url',
+                    maxFiles: 1
+                  }}
+                  eventHandlers={{
+                    addedfile: (file) => this.handlePrimaryImage(file),
+                    init: (obj) => this.handlePrimaryDropzone(obj)
+                  }}
+                  djsConfig={{addRemoveLinks: true}}
+                />
+
+                <div className="page-header">
+                  <h4>Secondary Images <small>(Max: 4)</small></h4>
+                </div>
+                <DropzoneComponent
+                  config={{
+                    iconFiletypes: ['.jpg', '.png'],
                     showFiletypeIcon: true,
                     postUrl: 'no-url'
                   }}
-                  eventHandlers={{addedfile: (file) => this.handleImages(file)}}
+                  eventHandlers={{
+                    addedfile: (file) => this.handleSecondaryImages(file),
+                    init: (obj) => this.handleSecondaryDropzone(obj)
+                  }}
                   djsConfig={{addRemoveLinks: true}}
                 />
               </div>

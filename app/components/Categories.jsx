@@ -2,7 +2,6 @@ var React = require('react');
 var axios = require('axios');
 var {Button, Modal, Tooltip, OverlayTrigger} = require('react-bootstrap');
 var {Link} = require('react-router');
-// import Product from 'Product';
 import Header from 'Header';
 
 export default class Categories extends React.Component {
@@ -65,11 +64,8 @@ export default class Categories extends React.Component {
 
   // DELETE PRODUCT FROM DATABASE BY ID
   handleProductDelete(productId) {
-    console.log(productId, 'prod ID');
-
     axios.delete(`/api/products/${productId}`)
       .then((res) => {
-        console.log(res, '******** res product delete');
         return;
       })
       .then(() => {
