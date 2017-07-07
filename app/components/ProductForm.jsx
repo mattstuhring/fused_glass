@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup}
   from 'react-bootstrap';
-import FieldGroup from 'FieldGroup';
 import Header from 'Header';
 import Select from 'react-select';
 import DropzoneComponent from 'react-dropzone-component';
@@ -24,8 +23,8 @@ export default class ProductForm extends React.Component {
       price: '',
       size: '',
       options: null,
-      primaryDropzone: null,
-      secondaryDropzone: null
+      primaryDropzone: {},
+      secondaryDropzone: {}
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -37,6 +36,9 @@ export default class ProductForm extends React.Component {
     this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
     this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
     this.removeAllFiles = this.removeAllFiles.bind(this);
+    this.categoryValidation = this.categoryValidation.bind(this);
+    this.collectionValidation = this.collectionValidation.bind(this);
+    this.textValidation = this.textValidation.bind(this);
   }
 
 
@@ -196,6 +198,22 @@ export default class ProductForm extends React.Component {
   }
 
 
+  categoryValidation() {
+    if (this.state.category === '') return null;
+    else if (this.state.category.length > 0) return 'success';
+  }
+
+  collectionValidation() {
+    if (this.state.collections === []) return null;
+    else if (this.state.collections.length > 0) return 'success';
+  }
+
+  textValidation(field) {
+    if (field === '') return null;
+    else if (field.length > 0) return 'success';
+  }
+
+
   // **************************   RENDER   ***********************************
   render() {
     const title = (
@@ -248,7 +266,10 @@ export default class ProductForm extends React.Component {
                 </div>
 
                 {/* CATEGORY & COLLECTION */}
-                <FormGroup controlId="formControlsSelect">
+                <FormGroup
+                  controlId="formControlsSelect"
+                  validationState={this.categoryValidation()}
+                >
                   <ControlLabel>Category</ControlLabel>
                   <FormControl
                     componentClass="select"
@@ -263,7 +284,10 @@ export default class ProductForm extends React.Component {
                     <option value="garden">Garden</option>
                   </FormControl>
                 </FormGroup>
-                <FormGroup controlId="formControlsSelect">
+                <FormGroup
+                  controlId="formControlsSelect"
+                  validationState={this.collectionValidation()}
+                >
                   <ControlLabel>Collection</ControlLabel>
                   <Select
                     multi={true}
@@ -276,34 +300,44 @@ export default class ProductForm extends React.Component {
 
 
                 {/* NAME */}
-                <FieldGroup
-                  id="formControlsText"
-                  type="text"
-                  label="Name"
-                  placeholder="Enter name"
-                  name="name"
-                  value={this.state.name}
-                  onChange={this.handleChange}
-                />
+                <FormGroup
+                  controlId="formControlsText"
+                  validationState={this.textValidation(this.state.name)}
+                >
+                  <ControlLabel>Name</ControlLabel>
+                  <FormControl
+                    type="text"
+                    placeholder="Enter name"
+                    name="name"
+                    value={this.state.name}
+                    onChange={this.handleChange}
+                  />
+                </FormGroup>
 
 
                 {/* DESCRIPTION */}
-                <FieldGroup
-                  id="formControlsText"
-                  type="text"
-                  componentClass="textarea"
-                  label="Description"
-                  placeholder="Enter description"
-                  name="description"
-                  value={this.state.description}
-                  onChange={this.handleChange}
-                />
+                <FormGroup
+                  controlId="formControlsTextarea"
+                  validationState={this.textValidation(this.state.description)}
+                >
+                  <ControlLabel>Description</ControlLabel>
+                  <FormControl
+                    componentClass="textarea"
+                    placeholder="textarea"
+                    name="description"
+                    value={this.state.description}
+                    onChange={this.handleChange}
+                  />
+                </FormGroup>
 
 
                 {/* PRICE & SIZE */}
                 <div className="row">
                   <div className="col-sm-6">
-                    <FormGroup controlId="formControlsText">
+                    <FormGroup
+                      controlId="formControlsText"
+                      validationState={this.textValidation(this.state.price)}
+                    >
                       <ControlLabel>Price</ControlLabel>
                       <InputGroup>
                         <InputGroup.Addon>$</InputGroup.Addon>
@@ -318,15 +352,19 @@ export default class ProductForm extends React.Component {
                     </FormGroup>
                   </div>
                   <div className="col-sm-6">
-                    <FieldGroup
-                      id="formControlsText"
-                      type="text"
-                      label="Size"
-                      placeholder="Enter size"
-                      name="size"
-                      value={this.state.size}
-                      onChange={this.handleChange}
-                    />
+                    <FormGroup
+                      controlId="formControlsText"
+                      validationState={this.textValidation(this.state.size)}
+                    >
+                      <ControlLabel>Size</ControlLabel>
+                      <FormControl
+                        type="text"
+                        placeholder="Enter size"
+                        name="size"
+                        value={this.state.size}
+                        onChange={this.handleChange}
+                      />
+                    </FormGroup>
                   </div>
                 </div>
               </div>

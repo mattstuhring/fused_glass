@@ -2,7 +2,6 @@ var React = require('react');
 var axios = require('axios');
 var {Button, Modal, Tooltip, OverlayTrigger} = require('react-bootstrap');
 var {Link} = require('react-router');
-// import Product from 'Product';
 import Header from 'Header';
 
 export default class Collections extends React.Component {
@@ -67,7 +66,6 @@ export default class Collections extends React.Component {
   handleProductDelete(productId) {
     axios.delete(`/api/products/${productId}`)
       .then((res) => {
-        console.log(res, '******** res product delete');
         return;
       })
       .then(() => {
@@ -141,7 +139,7 @@ export default class Collections extends React.Component {
                     <OverlayTrigger placement="top" overlay={remove}>
                       <Button
                         bsStyle="danger"
-                        onClick={() => this.open(p.product_name, p.product_description, p.product_price, p.id)}
+                        onClick={() => this.open(p.product_name, p.product_description, p.product_price, p.product_id)}
                       >
                         <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                       </Button>
@@ -154,7 +152,9 @@ export default class Collections extends React.Component {
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>
                   <p>{p.product_price}</p>
-                  <p><a href="#" className="btn btn-primary" role="button">Buy</a></p>
+                  <Link to={`/productdetails/${p.product_id}`}>
+                    <Button bsStyle="primary">Buy</Button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -5,15 +5,16 @@ const express = require('express');
 const multer  = require('multer');
 const router = express.Router();
 
-// DELETE PRODUCT BY ID
-router.delete('/products/:id', (req, res, next) => {
-  console.log(req.params.id, 'req params id');
+// GET PRODUCT BY ID
+router.get('/products/:id', (req, res, next) => {
+  console.log(req.params.id, '****** ID');
+  const productId = req.params.id;
 
   knex('products')
-    .where('products.id', req.params.id)
-    .del()
-    .then((products) => {
-      res.sendStatus(200);
+    .select('*')
+    .where('products.id', productId)
+    .then((product) => {
+      res.send(product);
     })
     .catch((err) => {
       console.log(err);
@@ -23,7 +24,7 @@ router.delete('/products/:id', (req, res, next) => {
 
 
 
-// STORAGE LOCATION OF IMAGE FILES
+// ***********  MULTER -> STORAGE LOCATION OF IMAGE FILES ***********
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -35,6 +36,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
+// ************************  MULTER END  ********************************
+
 
 // ADD NEW PRODUCT -> POST METHOD
 router.post('/products/images', cpUpload, (req, res, next) => {
@@ -74,6 +77,28 @@ router.post('/products/images', cpUpload, (req, res, next) => {
 });
 
 
+// DELETE PRODUCT BY ID
+router.delete('/products/:id', (req, res, next) => {
+  console.log(req.params.id, 'req params id');
+
+  knex('products')
+    .where('products.id', req.params.id)
+    .del()
+    .then((products) => {
+      return knex('images')
+        .where('product_id', req.params.id)
+        .del()
+        .then(() => {
+          res.sendStatus(200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 
 

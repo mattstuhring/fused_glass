@@ -8,6 +8,7 @@ import Contact from 'Contact';
 import Gallery from 'Gallery';
 import Home from 'Home';
 import Main from 'Main';
+import ProductDetails from 'ProductDetails';
 import ProductForm from 'ProductForm';
 import Categories from 'Categories';
 import Playground from 'Playground';
@@ -38,6 +39,8 @@ ReactDOM.render(
       <Route path="cart" component={Cart}/>
       <Route path="products/:id/:category" component={Categories}/>
       <Route path="collections/:category/:id/:collection" component={Collections}/>
+      <Route path="productdetails/:id" component={ProductDetails} />
+
       <Route path="playground" component={Playground} />
     </Route>
   </Router>,
