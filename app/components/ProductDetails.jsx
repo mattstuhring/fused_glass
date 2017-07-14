@@ -9,7 +9,9 @@ export default class ProductDetails extends React.Component {
 
     this.state = {
       description: '',
-      image: 'http://www.fillmurray.com/300/200',
+      image: '',
+      primaryImage: '',
+      secondaryImages: [],
       name: '',
       price: '',
       size: ''
@@ -27,33 +29,50 @@ export default class ProductDetails extends React.Component {
 
         this.setState({
           description: data.product_description,
+          primaryImage: data.product_image,
           image: data.product_image,
           name: data.product_name,
           price: data.product_price,
           size: data.product_size
         });
       })
+      .then(() => {
+        axios.get(`api/images/${this.props.params.id}`)
+          .then((r) => {
+            console.log(r.data, '********* secondary images');
+
+            let images = Object.assign([], this.state.secondaryImages);
+
+            r.data.forEach((img) => {
+              return images.push(img.image_name);
+            });
+
+            this.setState({ secondaryImages: images });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
       .catch((err) => {
         console.log(err);
       });
   }
 
+
   componentWillUnmount() {
-    this.setState({description: '', image: '', name: '', price: '', size: ''});
+    this.setState({description: '', primaryImage: '', name: '', price: '', size: ''});
   }
 
   handleImage(img) {
-    console.log(img, '********** image');
     this.setState({ image: img });
   }
 
 
   // *************************  RENDER  *************************
   render() {
-    const {description, image, name, price, size} = this.state;
+    const {description, primaryImage, name, price, size} = this.state;
 
     return <div className="row details">
-
       {/* HEADER */}
       <div className="col-sm-12">
         <Header category="Product Details"/>
@@ -64,15 +83,19 @@ export default class ProductDetails extends React.Component {
           <div className="row">
             <div className="col-sm-12">
               <Panel>
-                <Image className="primary-image" src={this.state.image} rounded responsive/>
+                <Image className="primary-image" src={`images/uploads/${this.state.image}`} rounded responsive/>
               </Panel>
             </div>
           </div>
 
           <div className="row">
-            {this.props.images.map((img, i) => {
+            <div className="col-sm-3">
+              <Thumbnail href="#" src={`images/uploads/${this.state.primaryImage}`} onClick={() => this.handleImage(this.state.primaryImage)}/>
+            </div>
+
+            {this.state.secondaryImages.map((img, i) => {
               return <div className="col-sm-3" key={i}>
-                <Thumbnail href="#" src={img} onClick={() => this.handleImage(img)}/>
+                <Thumbnail href="#" src={`images/uploads/${img}`} onClick={() => this.handleImage(img)}/>
               </div>
             })}
           </div>
@@ -89,12 +112,3 @@ export default class ProductDetails extends React.Component {
     </div>
   }
 }
-
-ProductDetails.defaultProps = {
-  images: [
-    'http://www.fillmurray.com/300/200',
-    'https://placebear.com/300/200',
-    'http://baconmockup.com/300/200',
-    'http://lorempizza.com/300/200'
-  ]
-};

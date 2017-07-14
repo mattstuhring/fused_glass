@@ -7,7 +7,6 @@ const router = express.Router();
 
 // GET PRODUCT DETAILS BY ID
 router.get('/products/:id', (req, res, next) => {
-  console.log(req.params.id, '****** ID');
   const productId = req.params.id;
 
   knex('products')
@@ -46,8 +45,6 @@ const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
 router.post('/products/images', cpUpload, (req, res, next) => {
   const { id } = req.body;
   const secondaryImages = req.files['images'];
-  console.log(id, '************* ID');
-  console.log(secondaryImages, '************ SECONDARY');
 
   // MULTER UPLOAD FUNC
   cpUpload(req, res, function (err) {
@@ -80,8 +77,6 @@ router.post('/products/images', cpUpload, (req, res, next) => {
 
 // DELETE PRODUCT BY ID
 router.delete('/products/:id', (req, res, next) => {
-  console.log(req.params.id, 'req params id');
-
   knex('products')
     .where('products.id', req.params.id)
     .del()
