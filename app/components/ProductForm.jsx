@@ -94,9 +94,18 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // SUBMIT NEW PRODUCT TO DATABASE
+  // ADD NEW PRODUCT TO DATABASE
   handleSubmit(event) {
     event.preventDefault();
+
+    // let request;
+    //
+    // if (this.props.params.id) {
+    //   request = superagent.put('/api/products/update')
+    //     .field('productId', this.props.params.id);
+    // } else {
+    //   request = superagent.post('/api/categories/collections');
+    // }
 
     const primary = this.state.primaryImage;
     const secondary = this.state.secondaryImages;
@@ -212,6 +221,18 @@ export default class ProductForm extends React.Component {
     if (field === '') return null;
     else if (field.length > 0) return 'success';
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // **************************   RENDER   ***********************************

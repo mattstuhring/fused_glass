@@ -1,6 +1,6 @@
 var React = require('react');
 var axios = require('axios');
-var {Button, Modal, Tooltip, OverlayTrigger} = require('react-bootstrap');
+var {Button, Modal, Tooltip, OverlayTrigger, Image} = require('react-bootstrap');
 var {Link} = require('react-router');
 import Header from 'Header';
 
@@ -147,7 +147,7 @@ export default class Collections extends React.Component {
                   </div>
                 </div>
 
-                <img src={p.product_image} alt="..." />
+                <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}}/>
                 <div className="caption">
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>

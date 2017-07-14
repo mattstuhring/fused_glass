@@ -5,13 +5,16 @@ const express = require('express');
 const multer  = require('multer');
 const router = express.Router();
 
-// GET PRODUCT BY ID
+// GET PRODUCT DETAILS BY ID
 router.get('/products/:id', (req, res, next) => {
   console.log(req.params.id, '****** ID');
   const productId = req.params.id;
 
   knex('products')
     .select('*')
+    .innerJoin('products_collections', 'products.id', 'products_collections.product_id')
+    .innerJoin('collections', 'products_collections.collection_id', 'collections.id')
+    .innerJoin('categories', 'products.category_id', 'categories.id')
     .where('products.id', productId)
     .then((product) => {
       res.send(product);
@@ -24,10 +27,10 @@ router.get('/products/:id', (req, res, next) => {
 
 
 
-// ***********  MULTER -> STORAGE LOCATION OF IMAGE FILES ***********
+// ***********  MULTER -> STORAGE LOCATION OF SECONDARY IMAGE FILES ***********
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, 'public/images/uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + '.jpg');
@@ -39,7 +42,7 @@ const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
 // ************************  MULTER END  ********************************
 
 
-// ADD NEW PRODUCT -> POST METHOD
+// ADD NEW PRODUCT SECONDARY IMAGES
 router.post('/products/images', cpUpload, (req, res, next) => {
   const { id } = req.body;
   const secondaryImages = req.files['images'];
@@ -54,16 +57,14 @@ router.post('/products/images', cpUpload, (req, res, next) => {
     }
   });
 
-
   let db = knex.table('images')
-
-  var foo = [];
+  let foo = [];
   secondaryImages.forEach((img) => {
     foo.push({
       image_name: img.filename,
       product_id: parseInt(id)
     })
-  })
+  });
 
   db.insert(foo)
     .then((r) => {

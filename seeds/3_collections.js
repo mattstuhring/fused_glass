@@ -33,7 +33,7 @@ exports.seed = function(knex) {
       },
       {
         id: 5,
-        collection_name: 'Bracelets',
+        collection_name: 'Rings',
         category_id: 3,
         created_at: new Date('2017-09-20 11:16:16 UTC'),
         updated_at: new Date('2017-09-20 11:16:16 UTC')
@@ -54,7 +54,7 @@ exports.seed = function(knex) {
       },
       {
         id: 8,
-        collection_name: 'Dishes',
+        collection_name: 'Lotion Bottle',
         category_id: 2,
         created_at: new Date('2017-09-23 11:16:16 UTC'),
         updated_at: new Date('2017-09-23 11:16:16 UTC')

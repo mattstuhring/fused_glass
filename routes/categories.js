@@ -6,7 +6,7 @@ const multer  = require('multer');
 const router = express.Router();
 
 
-// GET all products in category
+// GET ALL PRODUCTS IN CATEGORY
 router.get('/categories/:id', (req, res, next) => {
   knex('categories')
     .select()
@@ -21,7 +21,7 @@ router.get('/categories/:id', (req, res, next) => {
 });
 
 
-// GET all collections in category
+// GET ALL COLLECTIONS IN CATEGORY
 router.get('/categories/:id/collections', (req, res, next) => {
   knex('categories')
     .select()
@@ -37,10 +37,10 @@ router.get('/categories/:id/collections', (req, res, next) => {
 
 
 
-// STORAGE LOCATION OF IMAGE FILES
+// ***********  MULTER -> STORAGE LOCATION OF PRIMARY IMAGE FILES ***********
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, 'public/images/uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + '.jpg');
@@ -48,10 +48,11 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
 const cpUpload = upload.fields([{ name: 'primary', maxCount: 1 }]);
+// ************************  MULTER END  ********************************
 
-// ADD NEW PRODUCT -> POST METHOD
+
+// ADD NEW PRODUCT DETAILS
 router.post('/categories/collections', cpUpload, (req, res, next) => {
   const { category, categoryId, name, description, price, size } = req.body;
   const primaryImage = req.files['primary'][0].filename;
