@@ -261,9 +261,9 @@ export default class ProductForm extends React.Component {
           });
 
           const img = data.product_image;
-
-
           const file = {name: img}
+          console.log(file, '******** prime');
+
           this.state.primaryDropzone.emit("addedfile", file);
           this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
           this.state.primaryDropzone.emit("complete", file);
@@ -279,6 +279,26 @@ export default class ProductForm extends React.Component {
             price: data.product_price,
             size: data.product_size
           });
+        })
+        .then(() => {
+          axios.get(`api/images/${this.props.params.id}`)
+            .then((r) => {
+              let images = Object.assign([], this.state.secondaryImages);
+
+              r.data.forEach((img) => {
+                images.push(img.image_name);
+                const secondFile = {name: img.image_name};
+
+                this.state.secondaryDropzone.emit("addedfile", secondFile);
+                this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+                this.state.secondaryDropzone.emit("complete", secondFile);
+              });
+
+              this.setState({ secondaryImages: images });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .catch((err) => {
           console.log(err);
