@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Header from 'Header';
-import {Image, Thumbnail, Panel} from 'react-bootstrap';
+import {Image, Thumbnail, Panel, Button} from 'react-bootstrap';
 
 export default class ProductDetails extends React.Component {
   constructor(props) {
@@ -103,10 +103,22 @@ export default class ProductDetails extends React.Component {
 
 
         <div className="col-sm-6">
-          <h3>Name: <small>{name}</small></h3>
-          <h3>Description: <small>{description}</small></h3>
-          <h3>Size: <small>{size}</small></h3>
-          <h3>Price: <small>{price}</small></h3>
+          <div className="row">
+            <div className="col-sm-12">
+              <h3>Name: <small>{name}</small></h3>
+              <h3>Description: <small>{description}</small></h3>
+              <h3>Size: <small>{size}</small></h3>
+              <h3>Price: <small>{price}</small></h3>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-sm-12">
+              <Button bsStyle="primary">
+                Add to Cart
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

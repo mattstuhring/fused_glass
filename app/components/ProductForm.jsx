@@ -39,6 +39,7 @@ export default class ProductForm extends React.Component {
     this.categoryValidation = this.categoryValidation.bind(this);
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
+    this.getCategory = this.getCategory.bind(this);
   }
 
 
@@ -54,7 +55,7 @@ export default class ProductForm extends React.Component {
 
 
   // GET ALL COLLECTIONS FROM CATEGORY
-  handleCategory(event) {
+  handleCategory(event, val) {
     const value = event.target.value;
     let categoryId;
 
@@ -207,31 +208,106 @@ export default class ProductForm extends React.Component {
   }
 
 
+  // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
+  getCategory(categoryName, categoryId) {
+    axios.get(`/api/categories/${categoryId}/collections`)
+      .then((res) => {
+        var options = res.data.map((e) => {
+          return {
+            value: e.collection_name,
+            label: e.collection_name
+          }
+        });
+
+        this.setState({
+          category: categoryName,
+          categoryId: categoryId,
+          options: options
+        });
+      })
+      .catch((err) => {
+        console.log(err, 'error');
+      });
+  }
+
+
+  componentDidMount() {
+    if (this.props.params.id) {
+      axios.get(`api/products/${this.props.params.id}`)
+        .then((res) => {
+          const data = res.data[0];
+          const categoryName = data.category_name.toLowerCase();
+
+          this.getCategory(categoryName, data.category_id);
+
+          let collectionsArray = [];
+          res.data.forEach((p) => {
+            return collectionsArray.push(p.collection_name);
+          });
+
+          const img = data.product_image;
+          const file = {name: img}
+
+          this.state.primaryDropzone.emit("addedfile", file);
+          this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
+          this.state.primaryDropzone.emit("complete", file);
+          const existingFileCount = 1;
+          this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
+
+
+          this.setState({
+            collections: collectionsArray,
+            description: data.product_description,
+            primaryImage: data.product_image,
+            name: data.product_name,
+            price: data.product_price,
+            size: data.product_size
+          });
+        })
+        .then(() => {
+          axios.get(`api/images/${this.props.params.id}`)
+            .then((r) => {
+              let images = Object.assign([], this.state.secondaryImages);
+
+              r.data.forEach((img) => {
+                images.push(img.image_name);
+                const secondFile = {name: img.image_name};
+
+                this.state.secondaryDropzone.emit("addedfile", secondFile);
+                this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+                this.state.secondaryDropzone.emit("complete", secondFile);
+              });
+
+              this.setState({ secondaryImages: images });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
+
+  // CATEGORY FORM VALIDATION
   categoryValidation() {
     if (this.state.category === '') return null;
     else if (this.state.category.length > 0) return 'success';
   }
 
+  // COLLECTIONS FORM VALIDATION
   collectionValidation() {
     if (this.state.collections === []) return null;
     else if (this.state.collections.length > 0) return 'success';
   }
 
+  // TEXT FORM VALIDATION
   textValidation(field) {
     if (field === '') return null;
     else if (field.length > 0) return 'success';
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -391,7 +467,7 @@ export default class ProductForm extends React.Component {
               </div>
 
 
-              {/* IMAGES */}
+              {/* PRIMARY & SECONDARY IMAGE DROPZONES */}
               <div className="col-sm-6 text-center">
                 <div className="page-header">
                   <h4>Primary Image <small>(Max: 1)</small></h4>

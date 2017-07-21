@@ -19,14 +19,12 @@ router.get('/products/:id', (req, res, next) => {
       res.send(product);
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
 
 
-
-
-// ***********  MULTER -> STORAGE LOCATION OF SECONDARY IMAGE FILES ***********
+// ***********  MULTER -> STORAGE LOCATION OF PRIMARY IMAGE FILES ***********
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/images/uploads/');
@@ -37,14 +35,17 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
+const cpUpload = upload.fields([{ name: 'primary', maxCount: 1 }]);
 // ************************  MULTER END  ********************************
 
 
-// ADD NEW PRODUCT SECONDARY IMAGES
-router.post('/products/images', cpUpload, (req, res, next) => {
-  const { id } = req.body;
-  const secondaryImages = req.files['images'];
+// ADD NEW PRODUCT DETAILS & PRIMARY IMAGE
+router.post('/products', cpUpload, (req, res, next) => {
+  const { category, categoryId, name, description, price, size } = req.body;
+  const primaryImage = req.files['primary'][0].filename;
+
+  let { collections } = req.body;
+  collections = collections.split(',');
 
   // MULTER UPLOAD FUNC
   cpUpload(req, res, function (err) {
@@ -52,27 +53,61 @@ router.post('/products/images', cpUpload, (req, res, next) => {
       next(err);
       return;
     }
+
+    // res.send({success: true});
   });
 
-  let db = knex.table('images')
-  let foo = [];
-  secondaryImages.forEach((img) => {
-    foo.push({
-      image_name: img.filename,
-      product_id: parseInt(id)
-    })
-  });
+  // INSERT FORM DATA INTO DB
+  knex('collections')
+    .select('id')
+    .whereIn('collection_name', collections)
+    .then((collectionId) => {
+      return knex('products')
+        .insert({
+          product_name: name,
+          product_price: price,
+          product_description: description,
+          product_size: size,
+          product_image: primaryImage,
+          category_id: categoryId
+        })
+        .returning('id')
+        .then((id) => {
+          let db = knex.table('products_collections')
 
-  db.insert(foo)
-    .then((r) => {
-      console.log(r, '************* r');
+          var foo = [];
+          collectionId.forEach((item) => {
+            foo.push({
+              product_id: id[0],
+              collection_id: item.id
+            })
+          })
+
+          db.insert(foo)
+            .then((r) => {
+              console.log(r, '************* r');
+            })
+            .catch((err) => {
+              next(err);
+            });
+
+          res.send(id);
+        })
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
-
-  res.send({ success: true });
 });
+
+
+
+// UPDATE PRODUCT BY ID
+router.put('/products', cpUpload, (req, res, next) => {
+  console.log(req.body, '*************** update');
+  console.log(req.files, '*********** files');
+  res.send({data: 'SUCCESS'});
+});
+
 
 
 // DELETE PRODUCT BY ID
@@ -88,11 +123,11 @@ router.delete('/products/:id', (req, res, next) => {
           res.sendStatus(200);
         })
         .catch((err) => {
-          console.log(err);
+          next(err);
         });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
 

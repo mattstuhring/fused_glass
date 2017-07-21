@@ -40,6 +40,7 @@ export default class ProductForm extends React.Component {
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.getCategory = this.getCategory.bind(this);
+    this.handleRemoveImage = this.handleRemoveImage.bind(this);
   }
 
 
@@ -99,30 +100,20 @@ export default class ProductForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    // let request;
-    //
-    // if (this.props.params.id) {
-    //   request = superagent.put('/api/products/update')
-    //     .field('productId', this.props.params.id);
-    // } else {
-    //   request = superagent.post('/api/categories/collections');
-    // }
-
     const primary = this.state.primaryImage;
     const secondary = this.state.secondaryImages;
-    const collections = this.state.collections.split(',');
-    const product = {
-      category: this.state.category,
-      categoryId: this.state.categoryId,
-      collections: collections,
-      name: this.state.name,
-      description: this.state.description,
-      price: this.state.price,
-      size: this.state.size
-    };
+    // console.log(primary, '******* primary');
+    // console.log(secondary, '******* secondary');
+    let request;
 
-    superagent
-      .post('/api/categories/collections')
+    if (this.props.params.id) {
+      request = superagent.put('/api/products')
+        .field('productId', this.props.params.id);
+    } else {
+      request = superagent.post('/api/products');
+    }
+
+    request
       .field('category', this.state.category)
       .field('categoryId', this.state.categoryId)
       .field('collections', this.state.collections)
@@ -138,20 +129,29 @@ export default class ProductForm extends React.Component {
           return;
         }
 
-        const req = superagent.post('/api/products/images');
+        let productId;
+        let reqImg;
+
+        if (this.props.params.id) {
+          productId = this.props.params.id;
+          reqImg = superagent.put('/api/images');
+        } else {
+          productId = res.body[0];
+          reqImg = superagent.post('/api/images');
+        }
 
         // POST ALL SECONDARY IMAGES
         secondary.forEach((img)=> {
-          req.attach('images', img).field('id', res.body[0])
+          reqImg.attach('images', img).field('id', productId)
         });
 
-        req.end((err, res) => {
-         if (err) {
-           console.log(err);
-           return;
-         }
+        reqImg.end((err, res) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
 
-         console.log(res.body, '********** SUCCESS');
+          console.log(res.body, '********** done');
         });
       });
 
@@ -208,22 +208,7 @@ export default class ProductForm extends React.Component {
   }
 
 
-  categoryValidation() {
-    if (this.state.category === '') return null;
-    else if (this.state.category.length > 0) return 'success';
-  }
-
-  collectionValidation() {
-    if (this.state.collections === []) return null;
-    else if (this.state.collections.length > 0) return 'success';
-  }
-
-  textValidation(field) {
-    if (field === '') return null;
-    else if (field.length > 0) return 'success';
-  }
-
-
+  // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
   getCategory(categoryName, categoryId) {
     axios.get(`/api/categories/${categoryId}/collections`)
       .then((res) => {
@@ -246,6 +231,22 @@ export default class ProductForm extends React.Component {
   }
 
 
+  handleRemoveImage(file, component) {
+    if (this.props.params.id) {
+      const id = this.props.params.id;
+      console.log(file, '********** file');
+
+      axios.delete(`/api/images/${file.name}/${component}/${id}`)
+        .then((res) => {
+          console.log(res.data, '********** remove image');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
+
   componentDidMount() {
     if (this.props.params.id) {
       axios.get(`api/products/${this.props.params.id}`)
@@ -255,24 +256,26 @@ export default class ProductForm extends React.Component {
 
           this.getCategory(categoryName, data.category_id);
 
-          let arr = [];
+          let collectionsArray = [];
           res.data.forEach((p) => {
-            return arr.push(p.collection_name);
+            return collectionsArray.push(p.collection_name);
           });
 
-          const img = data.product_image;
-          const file = {name: img}
-          console.log(file, '******** prime');
+          if (data.product_image !== '') {
+            const img = data.product_image;
+            const file = {name: img}
 
-          this.state.primaryDropzone.emit("addedfile", file);
-          this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
-          this.state.primaryDropzone.emit("complete", file);
-          // var existingFileCount = 1;
-          // this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
+            this.state.primaryDropzone.emit("addedfile", file);
+            this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
+            this.state.primaryDropzone.emit("complete", file);
+            const existingFileCount = 1;
+            this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
 
+            this.setState({primaryImage: file})
+          }
 
           this.setState({
-            collections: arr,
+            collections: collectionsArray,
             description: data.product_description,
             primaryImage: data.product_image,
             name: data.product_name,
@@ -286,12 +289,14 @@ export default class ProductForm extends React.Component {
               let images = Object.assign([], this.state.secondaryImages);
 
               r.data.forEach((img) => {
-                images.push(img.image_name);
-                const secondFile = {name: img.image_name};
+                if (img.image_name !== '') {
+                  const secondFile = {name: img.image_name};
+                  images.push(secondFile);
 
-                this.state.secondaryDropzone.emit("addedfile", secondFile);
-                this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
-                this.state.secondaryDropzone.emit("complete", secondFile);
+                  this.state.secondaryDropzone.emit("addedfile", secondFile);
+                  this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+                  this.state.secondaryDropzone.emit("complete", secondFile);
+                }
               });
 
               this.setState({ secondaryImages: images });
@@ -307,6 +312,21 @@ export default class ProductForm extends React.Component {
   }
 
 
+  // CATEGORY FORM VALIDATION
+  categoryValidation() {
+    if (this.state.category === '') return null;
+    else if (this.state.category.length > 0) return 'success';
+  }
+  // COLLECTIONS FORM VALIDATION
+  collectionValidation() {
+    if (this.state.collections === []) return null;
+    else if (this.state.collections.length > 0) return 'success';
+  }
+  // TEXT FORM VALIDATION
+  textValidation(field) {
+    if (field === '') return null;
+    else if (field.length > 0) return 'success';
+  }
 
 
 
@@ -480,6 +500,7 @@ export default class ProductForm extends React.Component {
                   }}
                   eventHandlers={{
                     addedfile: (file) => this.handlePrimaryImage(file),
+                    removedfile: (file) => this.handleRemoveImage(file, 'primary'),
                     init: (obj) => this.handlePrimaryDropzone(obj)
                   }}
                   djsConfig={{addRemoveLinks: true}}
@@ -496,6 +517,7 @@ export default class ProductForm extends React.Component {
                   }}
                   eventHandlers={{
                     addedfile: (file) => this.handleSecondaryImages(file),
+                    removedfile: (file) => this.handleRemoveImage(file, 'secondary'),
                     init: (obj) => this.handleSecondaryDropzone(obj)
                   }}
                   djsConfig={{addRemoveLinks: true}}

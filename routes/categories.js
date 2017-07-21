@@ -2,7 +2,6 @@
 
 const knex = require('../knex');
 const express = require('express');
-const multer  = require('multer');
 const router = express.Router();
 
 
@@ -36,83 +35,6 @@ router.get('/categories/:id/collections', (req, res, next) => {
 });
 
 
-
-// ***********  MULTER -> STORAGE LOCATION OF PRIMARY IMAGE FILES ***********
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/images/uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.jpg');
-  }
-});
-
-const upload = multer({ storage: storage });
-const cpUpload = upload.fields([{ name: 'primary', maxCount: 1 }]);
-// ************************  MULTER END  ********************************
-
-
-// ADD NEW PRODUCT DETAILS
-router.post('/categories/collections', cpUpload, (req, res, next) => {
-  const { category, categoryId, name, description, price, size } = req.body;
-  const primaryImage = req.files['primary'][0].filename;
-
-  let { collections } = req.body;
-  collections = collections.split(',');
-
-  // MULTER UPLOAD FUNC
-  cpUpload(req, res, function (err) {
-    if (err) {
-      next(err);
-      return;
-    }
-
-    // res.send({success: true});
-  });
-
-  // INSERT FORM DATA INTO DB
-  knex('collections')
-    .select('id')
-    .whereIn('collection_name', collections)
-    .then((collectionId) => {
-      return knex('products')
-        .insert({
-          product_name: name,
-          product_price: price,
-          product_description: description,
-          product_size: size,
-          product_image: primaryImage,
-          category_id: categoryId
-        })
-        .returning('id')
-        .then((id) => {
-          let db = knex.table('products_collections')
-
-          var foo = [];
-          collectionId.forEach((item) => {
-            foo.push({
-              product_id: id[0],
-              collection_id: item.id
-            })
-          })
-
-          db.insert(foo)
-            .then((r) => {
-              console.log(r, '************* r');
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-
-          res.send(id);
-        })
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
-
-
 // INSERT NEW COLLECTION INTO CATEGORY
 router.post('/categories/collection', (req, res, next) => {
   const { name, categoryId } = req.body;
@@ -130,11 +52,11 @@ router.post('/categories/collection', (req, res, next) => {
           res.send(collections);
         })
         .catch((err) => {
-          console.log(err);
+          next(err);
         })
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
 
@@ -157,11 +79,11 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
           res.send(collections);
         })
         .catch((err) => {
-          console.log(err);
+          next(err);
         });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
 
