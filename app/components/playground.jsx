@@ -16,6 +16,7 @@ export default class ProductForm extends React.Component {
       category: '',
       categoryId: null,
       collections: [],
+      collectionIds: [],
       description: '',
       primaryImage: [],
       secondaryImages: [],
@@ -41,6 +42,7 @@ export default class ProductForm extends React.Component {
     this.textValidation = this.textValidation.bind(this);
     this.getCategory = this.getCategory.bind(this);
     this.handleRemoveImage = this.handleRemoveImage.bind(this);
+    this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
   }
 
 
@@ -96,85 +98,13 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // ADD NEW PRODUCT TO DATABASE
-  handleSubmit(event) {
-    event.preventDefault();
-
-    const primary = this.state.primaryImage;
-    const secondary = this.state.secondaryImages;
-    // console.log(primary, '******* primary');
-    // console.log(secondary, '******* secondary');
-    let request;
-
-    if (this.props.params.id) {
-      request = superagent.put('/api/products')
-        .field('productId', this.props.params.id);
-    } else {
-      request = superagent.post('/api/products');
-    }
-
-    request
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', this.state.collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
-      .attach('primary', primary)
-      .set('Accept', 'application/json')
-      .end((err, res) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-
-        let productId;
-        let reqImg;
-
-        if (this.props.params.id) {
-          productId = this.props.params.id;
-          reqImg = superagent.put('/api/images');
-        } else {
-          productId = res.body[0];
-          reqImg = superagent.post('/api/images');
-        }
-
-        // POST ALL SECONDARY IMAGES
-        secondary.forEach((img)=> {
-          reqImg.attach('images', img).field('id', productId)
-        });
-
-        reqImg.end((err, res) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-
-          console.log(res.body, '********** done');
-        });
-      });
-
-    this.removeAllFiles(this.state.primaryDropzone);
-    this.removeAllFiles(this.state.secondaryDropzone);
-
-    this.setState({
-      category: '',
-      categoryId: null,
-      collections: [],
-      name: '',
-      description: '',
-      price: '',
-      size: '',
-      primaryDropzone: null,
-      secondaryDropzone: null
-    });
-  }
-
-
   // HANDLE NEW COLLECTION INPUT CHANGE EVENTS
   handleCollections(val) {
     this.setState({collections: val})
+  }
+
+  handleRemoveCollection(val) {
+    console.log(val, '************ val');
   }
 
   // ASSIGN PRIMARY DROPZONE OBJECT TO STATE
@@ -208,6 +138,22 @@ export default class ProductForm extends React.Component {
   }
 
 
+  // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
+  handleRemoveImage(file, component) {
+    if (this.props.params.id) {
+      const id = this.props.params.id;
+
+      axios.delete(`/api/images/${file.name}/${component}/${id}`)
+        .then((res) => {
+          console.log(res.data, '********** remove image');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
+
   // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
   getCategory(categoryName, categoryId) {
     axios.get(`/api/categories/${categoryId}/collections`)
@@ -231,22 +177,6 @@ export default class ProductForm extends React.Component {
   }
 
 
-  handleRemoveImage(file, component) {
-    if (this.props.params.id) {
-      const id = this.props.params.id;
-      console.log(file, '********** file');
-
-      axios.delete(`/api/images/${file.name}/${component}/${id}`)
-        .then((res) => {
-          console.log(res.data, '********** remove image');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-
-
   componentDidMount() {
     if (this.props.params.id) {
       axios.get(`api/products/${this.props.params.id}`)
@@ -256,9 +186,12 @@ export default class ProductForm extends React.Component {
 
           this.getCategory(categoryName, data.category_id);
 
-          let collectionsArray = [];
+          let collectionNames = [];
+          let collectionIds = [];
           res.data.forEach((p) => {
-            return collectionsArray.push(p.collection_name);
+            collectionNames.push(p.collection_name);
+            collectionIds.push(p.collection_id);
+            return;
           });
 
           if (data.product_image !== '') {
@@ -275,9 +208,9 @@ export default class ProductForm extends React.Component {
           }
 
           this.setState({
-            collections: collectionsArray,
+            collections: collectionNames,
+            collectionIds: collectionIds,
             description: data.product_description,
-            primaryImage: data.product_image,
             name: data.product_name,
             price: data.product_price,
             size: data.product_size
@@ -309,6 +242,81 @@ export default class ProductForm extends React.Component {
           console.log(err);
         });
     }
+  }
+
+
+  // FORM SUBMIT NEW PRODUCT TO DATABASE
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const primary = this.state.primaryImage;
+    const secondary = this.state.secondaryImages;
+    let request;
+
+    if (this.props.params.id) {
+      request = superagent.put('/api/products')
+        .field('productId', this.props.params.id);
+    } else {
+      request = superagent.post('/api/products');
+    }
+
+    request
+      .field('category', this.state.category)
+      .field('categoryId', this.state.categoryId)
+      .field('collections', this.state.collections)
+      .field('name', this.state.name)
+      .field('description', this.state.description)
+      .field('price', this.state.price)
+      .field('size', this.state.size)
+      .attach('primary', primary)
+      .set('Accept', 'application/json')
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        // let productId;
+        // let reqImg;
+        //
+        // if (this.props.params.id) {
+        //   productId = this.props.params.id;
+        //   reqImg = superagent.put('/api/images');
+        // } else {
+        //   productId = res.body[0];
+        //   reqImg = superagent.post('/api/images');
+        // }
+        //
+        // // POST ALL SECONDARY IMAGES
+        // secondary.forEach((img)=> {
+        //   reqImg.attach('images', img).field('id', productId)
+        // });
+        //
+        // reqImg.end((err, res) => {
+        //   if (err) {
+        //     console.log(err);
+        //     return;
+        //   }
+        //
+        //   console.log(res.text);
+        // });
+        console.log(res.text);
+      });
+
+    this.removeAllFiles(this.state.primaryDropzone);
+    this.removeAllFiles(this.state.secondaryDropzone);
+
+    this.setState({
+      category: '',
+      categoryId: null,
+      collections: [],
+      name: '',
+      description: '',
+      price: '',
+      size: '',
+      primaryDropzone: null,
+      secondaryDropzone: null
+    });
   }
 
 

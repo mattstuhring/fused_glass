@@ -37,7 +37,8 @@ router.get('/categories/:id/collections', (req, res, next) => {
 
 // INSERT NEW COLLECTION INTO CATEGORY
 router.post('/categories/collection', (req, res, next) => {
-  const { name, categoryId } = req.body;
+  const { name } = req.body;
+  const categoryId = parseInt(req.body.categoryId);
 
   knex('collections')
     .insert({

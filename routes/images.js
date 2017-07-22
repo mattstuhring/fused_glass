@@ -46,7 +46,7 @@ router.post('/images', cpUpload, (req, res, next) => {
   // MULTER UPLOAD FUNC
   cpUpload(req, res, function (err) {
     if (err) {
-      next(err);
+      console.log(err);
       return;
     }
   });
@@ -72,12 +72,28 @@ router.post('/images', cpUpload, (req, res, next) => {
 });
 
 
+
+
+
+
+
+
+
 // UPDATE PRODUCT SECONDARY IMAGES
 router.put('/images', cpUpload, (req, res, next) => {
-  console.log(req.body, '********* put images');
+  console.log(req.body, '********* update images');
   console.log(req.files, '*********** files');
-  res.send({data: 'SUCCESS'});
+
+  // update image name column by product id
+
+  res.send('SUCCESS');
 });
+
+
+
+
+
+
 
 
 
@@ -87,40 +103,42 @@ router.delete('/images/:name/:component/:id', (req, res, next) => {
   const component = req.params.component;
   const productId = req.params.id;
 
-  if (component === 'primary') {
-    fs.unlink(`public/images/uploads/${name}`, (err) => {
-      if (err) {
-        next(err);
-      }
+  // if (component === 'primary') {
+  //   fs.unlink(`public/images/uploads/${name}`, (err) => {
+  //     if (err) {
+  //       next(err);
+  //     }
+  //
+  //     knex('products')
+  //       .where('products.id', productId)
+  //       .update('product_image', '')
+  //       .then((product) => {
+  //         res.send('success');
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //   });
+  // }
+  // else {
+  //   fs.unlink(`public/images/uploads/${name}`, (err) => {
+  //     if (err) {
+  //       next(err);
+  //     }
+  //
+  //     knex('images')
+  //       .where('product_id', productId)
+  //       .update('image_name', '')
+  //       .then((product) => {
+  //         res.send('success');
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //   });
+  // }
 
-      knex('products')
-        .where('products.id', productId)
-        .update('product_image', '')
-        .then((product) => {
-          res.send('success');
-        })
-        .catch((err) => {
-          next(err);
-        });
-    });
-  }
-  else {
-    fs.unlink(`public/images/uploads/${name}`, (err) => {
-      if (err) {
-        next(err);
-      }
-
-      knex('images')
-        .where('product_id', productId)
-        .update('image_name', '')
-        .then((product) => {
-          res.send('success');
-        })
-        .catch((err) => {
-          next(err);
-        });
-    });
-  }
+  res.send('SUCCESS')
 });
 
 
