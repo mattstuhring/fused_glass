@@ -276,31 +276,30 @@ export default class ProductForm extends React.Component {
           return;
         }
 
-        // let productId;
-        // let reqImg;
-        //
-        // if (this.props.params.id) {
-        //   productId = this.props.params.id;
-        //   reqImg = superagent.put('/api/images');
-        // } else {
-        //   productId = res.body[0];
-        //   reqImg = superagent.post('/api/images');
-        // }
-        //
-        // // POST ALL SECONDARY IMAGES
-        // secondary.forEach((img)=> {
-        //   reqImg.attach('images', img).field('id', productId)
-        // });
-        //
-        // reqImg.end((err, res) => {
-        //   if (err) {
-        //     console.log(err);
-        //     return;
-        //   }
-        //
-        //   console.log(res.text);
-        // });
-        console.log(res.text);
+        let productId;
+        let reqImg;
+
+        if (this.props.params.id) {
+          productId = this.props.params.id;
+          reqImg = superagent.post('/api/images');
+        } else {
+          productId = res.body[0];
+          reqImg = superagent.post('/api/images');
+        }
+
+        // POST OR UPDATE SECONDARY IMAGES
+        secondary.forEach((img)=> {
+          reqImg.attach('images', img).field('id', productId)
+        });
+
+        reqImg.end((err, res) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+
+          console.log(res.text);
+        });
       });
 
     this.removeAllFiles(this.state.primaryDropzone);

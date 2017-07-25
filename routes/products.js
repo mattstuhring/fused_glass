@@ -5,6 +5,8 @@ const express = require('express');
 const multer  = require('multer');
 const router = express.Router();
 
+
+
 // GET PRODUCT DETAILS BY ID
 router.get('/products/:id', (req, res, next) => {
   const productId = req.params.id;
@@ -24,7 +26,8 @@ router.get('/products/:id', (req, res, next) => {
 });
 
 
-// ***********  MULTER -> STORAGE LOCATION OF PRIMARY IMAGE FILES ***********
+
+// ***********  MULTER -> STORAGE LOCATION OF PRIMARY IMAGE FILE ***********
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/images/uploads/');
@@ -36,7 +39,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 const cpUpload = upload.fields([{ name: 'primary', maxCount: 1 }]);
-// ************************  MULTER END  ********************************
+// ***************************  MULTER END  ********************************
 
 
 
@@ -102,11 +105,6 @@ router.post('/products', cpUpload, (req, res, next) => {
 
 
 
-
-
-
-
-
 // UPDATE PRODUCT BY ID
 router.put('/products', cpUpload, (req, res, next) => {
   const { category, collections, name, description, price, size } = req.body;
@@ -114,109 +112,105 @@ router.put('/products', cpUpload, (req, res, next) => {
   const categoryId = parseInt(req.body.categoryId);
   let request;
 
+  res.send('SUCCESS');
 
-  // FOR SOME UNKNOWN REASON THE LOGIC ON THE IF & ELSE STATEMENT IS BACKWARDS
-  // NEED TO FIND OUT WHY THIS IS HAPPENING BUT FOR NOW IT WILL WORK
-  if (req.files === {}) {
-    // MULTER UPLOAD IMAGE TO FILE SYSTEM
-    cpUpload(req, res, function (err) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-
-      const filename = req.files['primary'][0].filename;
-
-      request = knex('products')
-        .where('products.id', productId)
-        .update({
-          product_name: name,
-          product_price: price,
-          product_description: description,
-          product_size: size,
-          product_image: filename,
-          category_id: categoryId
-        });
-    });
-  }
-  else {
-    request = knex('products')
-      .where('products.id', productId)
-      .update({
-        product_name: name,
-        product_price: price,
-        product_description: description,
-        product_size: size,
-        category_id: categoryId
-      });
-  }
-
-  request
-    .then(() => {
-      return knex('products_collections')
-        .where('product_id', productId)
-        .del()
-        .then(() => {
-          if (Array.isArray(collections) === true) {
-            collections.forEach((c) => {
-              return knex('collections')
-                .select('collections.id')
-                .where('collection_name', c)
-                .then((collectionId) => {
-                  knex('products_collections')
-                    .insert({
-                      product_id: productId,
-                      collection_id: collectionId[0].id
-                    })
-                    .then(() => {
-                      res.send('SUCCESS')
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            });
-          }
-          else {
-            return knex('collections')
-              .select('collections.id')
-              .where('collection_name', collections)
-              .then((collectionId) => {
-                return knex('products_collections')
-                  .insert({
-                    product_id: productId,
-                    collection_id: collectionId[0].id
-                  })
-                  .then(() => {
-                    res.send('SUCCESS')
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        })
-        .catch((err) => {
-          next(err);
-        });
-
-      res.send('SUCCESS')
-    })
-    .catch((err) => {
-      next(err);
-    });
+  // // FOR SOME UNKNOWN REASON THE LOGIC ON THE IF & ELSE STATEMENT IS BACKWARDS
+  // // NEED TO FIND OUT WHY THIS IS HAPPENING BUT FOR NOW IT WILL WORK
+  // if (req.files === {}) {
+  //   // MULTER UPLOAD IMAGE TO FILE SYSTEM
+  //   cpUpload(req, res, function (err) {
+  //     if (err) {
+  //       console.log(err);
+  //       return;
+  //     }
+  //
+  //     const filename = req.files['primary'][0].filename;
+  //
+  //     request = knex('products')
+  //       .where('products.id', productId)
+  //       .update({
+  //         product_name: name,
+  //         product_price: price,
+  //         product_description: description,
+  //         product_size: size,
+  //         product_image: filename,
+  //         category_id: categoryId
+  //       });
+  //   });
+  // }
+  // else {
+  //   request = knex('products')
+  //     .where('products.id', productId)
+  //     .update({
+  //       product_name: name,
+  //       product_price: price,
+  //       product_description: description,
+  //       product_size: size,
+  //       category_id: categoryId
+  //     });
+  // }
+  //
+  // request
+  //   .then(() => {
+  //     return knex('products_collections')
+  //       .where('product_id', productId)
+  //       .del()
+  //       .then(() => {
+  //         if (Array.isArray(collections) === true) {
+  //           collections.forEach((c) => {
+  //             return knex('collections')
+  //               .select('collections.id')
+  //               .where('collection_name', c)
+  //               .then((collectionId) => {
+  //                 knex('products_collections')
+  //                   .insert({
+  //                     product_id: productId,
+  //                     collection_id: collectionId[0].id
+  //                   })
+  //                   .then(() => {
+  //                     res.send('SUCCESS')
+  //                   })
+  //                   .catch((err) => {
+  //                     console.log(err);
+  //                   });
+  //               })
+  //               .catch((err) => {
+  //                 console.log(err);
+  //               });
+  //           });
+  //         }
+  //         else {
+  //           return knex('collections')
+  //             .select('collections.id')
+  //             .where('collection_name', collections)
+  //             .then((collectionId) => {
+  //               return knex('products_collections')
+  //                 .insert({
+  //                   product_id: productId,
+  //                   collection_id: collectionId[0].id
+  //                 })
+  //                 .then(() => {
+  //                   res.send('SUCCESS')
+  //                 })
+  //                 .catch((err) => {
+  //                   console.log(err);
+  //                 });
+  //             })
+  //             .catch((err) => {
+  //               console.log(err);
+  //             });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //
+  //     res.send('SUCCESS')
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
 });
-
-
-
-
-
 
 
 

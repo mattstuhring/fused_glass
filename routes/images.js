@@ -40,61 +40,51 @@ const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
 
 // ADD PRODUCT SECONDARY IMAGES
 router.post('/images', cpUpload, (req, res, next) => {
-  const { id } = req.body;
+  const id = parseInt(req.body.id);
   const secondaryImages = req.files['images'];
 
-  // MULTER UPLOAD FUNC
-  cpUpload(req, res, function (err) {
-    if (err) {
-      console.log(err);
-      return;
+  console.log(id, '******** id');
+
+  if (req.files !== {}) {
+    let productId;
+
+    if (Array.isArray(id) === true) {
+      productId = id[0];
+    } else {
+      productId = id;
     }
-  });
 
-  let db = knex.table('images')
-  let foo = [];
-  secondaryImages.forEach((img) => {
-    foo.push({
-      image_name: img.filename,
-      product_id: parseInt(id)
-    })
-  });
-
-  db.insert(foo)
-    .then((r) => {
-      console.log(r, '************* r');
-    })
-    .catch((err) => {
-      next(err);
+    // MULTER UPLOAD
+    cpUpload(req, res, function (err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
     });
 
-  res.send({ success: true });
+    let db = knex.table('images')
+    let imgArr = [];
+    secondaryImages.forEach((img) => {
+      imgArr.push({
+        image_name: img.filename,
+        product_id: productId
+      })
+    });
+
+    db.insert(imgArr)
+      .then((r) => {
+        console.log(r, '************* r');
+      })
+      .catch((err) => {
+        next(err);
+      });
+
+    res.send('SUCCESS')
+  }
+  else {
+    res.send('SUCCESS');
+  }
 });
-
-
-
-
-
-
-
-
-
-// UPDATE PRODUCT SECONDARY IMAGES
-router.put('/images', cpUpload, (req, res, next) => {
-  console.log(req.body, '********* update images');
-  console.log(req.files, '*********** files');
-
-  // update image name column by product id
-
-  res.send('SUCCESS');
-});
-
-
-
-
-
-
-
 
 
 // UPDATE PRIMARY & SECONDARY DROPZONE IMAGE TO AN EMPTY STRING
@@ -126,15 +116,18 @@ router.delete('/images/:name/:component/:id', (req, res, next) => {
   //       next(err);
   //     }
   //
-  //     knex('images')
-  //       .where('product_id', productId)
-  //       .update('image_name', '')
-  //       .then((product) => {
-  //         res.send('success');
-  //       })
-  //       .catch((err) => {
-  //         next(err);
-  //       });
+      // knex('images')
+      //   .where({
+      //     product_id: productId,
+      //     image_name: name
+      //   })
+      //   .del()
+      //   .then((product) => {
+      //     res.send('success');
+      //   })
+      //   .catch((err) => {
+      //     next(err);
+      //   });
   //   });
   // }
 
