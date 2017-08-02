@@ -131,7 +131,7 @@ export default class Categories extends React.Component {
                     <OverlayTrigger placement="top" overlay={edit}>
 
                       {/* LINK TO UPDATE PRODUCT FORM */}
-                      <Link to={`/playground/Update%20product/${p.id}`}>
+                      <Link to={`/productform/Update%20product/${p.id}`}>
 
                         <Button bsStyle="success">
                           <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>

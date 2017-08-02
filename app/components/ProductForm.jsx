@@ -16,6 +16,7 @@ export default class ProductForm extends React.Component {
       category: '',
       categoryId: null,
       collections: [],
+      collectionIds: [],
       description: '',
       primaryImage: [],
       secondaryImages: [],
@@ -40,6 +41,8 @@ export default class ProductForm extends React.Component {
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.getCategory = this.getCategory.bind(this);
+    this.handleRemoveImage = this.handleRemoveImage.bind(this);
+    this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
   }
 
 
@@ -95,86 +98,13 @@ export default class ProductForm extends React.Component {
   }
 
 
-  // ADD NEW PRODUCT TO DATABASE
-  handleSubmit(event) {
-    event.preventDefault();
-
-    // let request;
-    //
-    // if (this.props.params.id) {
-    //   request = superagent.put('/api/products/update')
-    //     .field('productId', this.props.params.id);
-    // } else {
-    //   request = superagent.post('/api/categories/collections');
-    // }
-
-    const primary = this.state.primaryImage;
-    const secondary = this.state.secondaryImages;
-    const collections = this.state.collections.split(',');
-    const product = {
-      category: this.state.category,
-      categoryId: this.state.categoryId,
-      collections: collections,
-      name: this.state.name,
-      description: this.state.description,
-      price: this.state.price,
-      size: this.state.size
-    };
-
-    superagent
-      .post('/api/categories/collections')
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', this.state.collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
-      .attach('primary', primary)
-      .set('Accept', 'application/json')
-      .end((err, res) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-
-        const req = superagent.post('/api/products/images');
-
-        // POST ALL SECONDARY IMAGES
-        secondary.forEach((img)=> {
-          req.attach('images', img).field('id', res.body[0])
-        });
-
-        req.end((err, res) => {
-         if (err) {
-           console.log(err);
-           return;
-         }
-
-         console.log(res.body, '********** SUCCESS');
-        });
-      });
-
-    this.removeAllFiles(this.state.primaryDropzone);
-    this.removeAllFiles(this.state.secondaryDropzone);
-
-    this.setState({
-      category: '',
-      categoryId: null,
-      collections: [],
-      name: '',
-      description: '',
-      price: '',
-      size: '',
-      primaryDropzone: null,
-      secondaryDropzone: null
-    });
-  }
-
-
   // HANDLE NEW COLLECTION INPUT CHANGE EVENTS
   handleCollections(val) {
     this.setState({collections: val})
+  }
+
+  handleRemoveCollection(val) {
+    console.log(val, '************ val');
   }
 
   // ASSIGN PRIMARY DROPZONE OBJECT TO STATE
@@ -205,6 +135,22 @@ export default class ProductForm extends React.Component {
     images.push(files);
 
     this.setState({ secondaryImages: images });
+  }
+
+
+  // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
+  handleRemoveImage(file, component) {
+    if (this.props.params.id) {
+      const id = this.props.params.id;
+
+      axios.delete(`/api/images/${file.name}/${component}/${id}`)
+        .then((res) => {
+          console.log(res.data, '********** remove image');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 
 
@@ -240,25 +186,31 @@ export default class ProductForm extends React.Component {
 
           this.getCategory(categoryName, data.category_id);
 
-          let collectionsArray = [];
+          let collectionNames = [];
+          let collectionIds = [];
           res.data.forEach((p) => {
-            return collectionsArray.push(p.collection_name);
+            collectionNames.push(p.collection_name);
+            collectionIds.push(p.collection_id);
+            return;
           });
 
-          const img = data.product_image;
-          const file = {name: img}
+          if (data.product_image !== '') {
+            const img = data.product_image;
+            const file = {name: img}
 
-          this.state.primaryDropzone.emit("addedfile", file);
-          this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
-          this.state.primaryDropzone.emit("complete", file);
-          const existingFileCount = 1;
-          this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
+            this.state.primaryDropzone.emit("addedfile", file);
+            this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
+            this.state.primaryDropzone.emit("complete", file);
+            const existingFileCount = 1;
+            this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
 
+            this.setState({primaryImage: file})
+          }
 
           this.setState({
-            collections: collectionsArray,
+            collections: collectionNames,
+            collectionIds: collectionIds,
             description: data.product_description,
-            primaryImage: data.product_image,
             name: data.product_name,
             price: data.product_price,
             size: data.product_size
@@ -270,12 +222,14 @@ export default class ProductForm extends React.Component {
               let images = Object.assign([], this.state.secondaryImages);
 
               r.data.forEach((img) => {
-                images.push(img.image_name);
-                const secondFile = {name: img.image_name};
+                if (img.image_name !== '') {
+                  const secondFile = {name: img.image_name};
+                  images.push(secondFile);
 
-                this.state.secondaryDropzone.emit("addedfile", secondFile);
-                this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
-                this.state.secondaryDropzone.emit("complete", secondFile);
+                  this.state.secondaryDropzone.emit("addedfile", secondFile);
+                  this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+                  this.state.secondaryDropzone.emit("complete", secondFile);
+                }
               });
 
               this.setState({ secondaryImages: images });
@@ -291,18 +245,90 @@ export default class ProductForm extends React.Component {
   }
 
 
+  // FORM SUBMIT NEW PRODUCT TO DATABASE
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const primary = this.state.primaryImage;
+    const secondary = this.state.secondaryImages;
+    let request;
+
+    if (this.props.params.id) {
+      request = superagent.put('/api/products')
+        .field('productId', this.props.params.id);
+    } else {
+      request = superagent.post('/api/products');
+    }
+
+    request
+      .field('category', this.state.category)
+      .field('categoryId', this.state.categoryId)
+      .field('collections', this.state.collections)
+      .field('name', this.state.name)
+      .field('description', this.state.description)
+      .field('price', this.state.price)
+      .field('size', this.state.size)
+      .attach('primary', primary)
+      .set('Accept', 'application/json')
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        let productId;
+        let reqImg;
+
+        if (this.props.params.id) {
+          productId = this.props.params.id;
+          reqImg = superagent.post('/api/images');
+        } else {
+          productId = res.body[0];
+          reqImg = superagent.post('/api/images');
+        }
+
+        // POST OR UPDATE SECONDARY IMAGES
+        secondary.forEach((img)=> {
+          reqImg.attach('images', img).field('id', productId)
+        });
+
+        reqImg.end((err, res) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+
+          console.log(res.text);
+        });
+      });
+
+    this.removeAllFiles(this.state.primaryDropzone);
+    this.removeAllFiles(this.state.secondaryDropzone);
+
+    this.setState({
+      category: '',
+      categoryId: null,
+      collections: [],
+      name: '',
+      description: '',
+      price: '',
+      size: '',
+      primaryDropzone: null,
+      secondaryDropzone: null
+    });
+  }
+
+
   // CATEGORY FORM VALIDATION
   categoryValidation() {
     if (this.state.category === '') return null;
     else if (this.state.category.length > 0) return 'success';
   }
-
   // COLLECTIONS FORM VALIDATION
   collectionValidation() {
     if (this.state.collections === []) return null;
     else if (this.state.collections.length > 0) return 'success';
   }
-
   // TEXT FORM VALIDATION
   textValidation(field) {
     if (field === '') return null;
@@ -481,6 +507,7 @@ export default class ProductForm extends React.Component {
                   }}
                   eventHandlers={{
                     addedfile: (file) => this.handlePrimaryImage(file),
+                    removedfile: (file) => this.handleRemoveImage(file, 'primary'),
                     init: (obj) => this.handlePrimaryDropzone(obj)
                   }}
                   djsConfig={{addRemoveLinks: true}}
@@ -497,6 +524,7 @@ export default class ProductForm extends React.Component {
                   }}
                   eventHandlers={{
                     addedfile: (file) => this.handleSecondaryImages(file),
+                    removedfile: (file) => this.handleRemoveImage(file, 'secondary'),
                     init: (obj) => this.handleSecondaryDropzone(obj)
                   }}
                   djsConfig={{addRemoveLinks: true}}

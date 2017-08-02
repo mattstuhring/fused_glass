@@ -54,7 +54,7 @@ router.post('/products', cpUpload, (req, res, next) => {
   // MULTER UPLOAD IMAGE TO FILE SYSTEM
   cpUpload(req, res, function (err) {
     if (err) {
-      next(err);
+      console.log(err);
       return;
     }
 

@@ -1,13 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import Header from 'Header';
-import {Image, Thumbnail, Panel, Button} from 'react-bootstrap';
+import { Link } from 'react-router';
+import { Image, Thumbnail, Panel, Button } from 'react-bootstrap';
 
 export default class ProductDetails extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      productId: null,
       description: '',
       image: '',
       primaryImage: '',
@@ -28,6 +30,7 @@ export default class ProductDetails extends React.Component {
         const data = res.data[0];
 
         this.setState({
+          productId: this.props.params.id,
           description: data.product_description,
           primaryImage: data.product_image,
           image: data.product_image,
@@ -39,8 +42,6 @@ export default class ProductDetails extends React.Component {
       .then(() => {
         axios.get(`api/images/${this.props.params.id}`)
           .then((r) => {
-            console.log(r.data, '********* secondary images');
-
             let images = Object.assign([], this.state.secondaryImages);
 
             r.data.forEach((img) => {
@@ -60,8 +61,9 @@ export default class ProductDetails extends React.Component {
 
 
   componentWillUnmount() {
-    this.setState({description: '', primaryImage: '', name: '', price: '', size: ''});
+    this.setState({ productId: null, description: '', primaryImage: '', name: '', price: '', size: '' });
   }
+
 
   handleImage(img) {
     this.setState({ image: img });
@@ -70,7 +72,7 @@ export default class ProductDetails extends React.Component {
 
   // *************************  RENDER  *************************
   render() {
-    const {description, primaryImage, name, price, size} = this.state;
+    const {productId, description, primaryImage, name, price, size} = this.state;
 
     return <div className="row details">
       {/* HEADER */}
@@ -90,7 +92,7 @@ export default class ProductDetails extends React.Component {
 
           <div className="row">
             <div className="col-sm-3">
-              <Thumbnail href="#" src={`images/uploads/${this.state.primaryImage}`} onClick={() => this.handleImage(this.state.primaryImage)}/>
+              <Thumbnail href="#" src={`images/uploads/${primaryImage}`} onClick={() => this.handleImage(primaryImage)}/>
             </div>
 
             {this.state.secondaryImages.map((img, i) => {
@@ -114,9 +116,11 @@ export default class ProductDetails extends React.Component {
 
           <div className="row">
             <div className="col-sm-12">
-              <Button bsStyle="primary">
-                Add to Cart
-              </Button>
+              <Link to={`/cart/${productId}`}>
+                <Button bsStyle="primary">
+                  Add to Cart
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

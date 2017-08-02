@@ -36,7 +36,7 @@ ReactDOM.render(
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
       <Route path="productform/:action(/:id)" component={ProductForm}/>
-      <Route path="cart" component={Cart}/>
+      <Route path="cart(/:id)" component={Cart}/>
       <Route path="products/:id/:category" component={Categories}/>
       <Route path="collections/:category/:id/:collection" component={Collections}/>
       <Route path="productdetails/:id" component={ProductDetails} />

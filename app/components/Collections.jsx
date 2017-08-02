@@ -130,7 +130,7 @@ export default class Collections extends React.Component {
                 <div className="row btn-wrap">
                   <div className="col-sm-12 text-right">
                     <OverlayTrigger placement="top" overlay={edit}>
-                      <Link to={`/productform/Update%20product/1`}>
+                      <Link to={`/productform/Update%20product/${p.product_id}`}>
                         <Button bsStyle="success">
                           <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                         </Button>

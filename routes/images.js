@@ -43,8 +43,6 @@ router.post('/images', cpUpload, (req, res, next) => {
   const id = parseInt(req.body.id);
   const secondaryImages = req.files['images'];
 
-  console.log(id, '******** id');
-
   if (req.files !== {}) {
     let productId;
 
@@ -60,24 +58,25 @@ router.post('/images', cpUpload, (req, res, next) => {
         console.log(err);
         return;
       }
-    });
 
-    let db = knex.table('images')
-    let imgArr = [];
-    secondaryImages.forEach((img) => {
-      imgArr.push({
-        image_name: img.filename,
-        product_id: productId
-      })
-    });
+      let db = knex.table('images')
+      let imgArr = [];
 
-    db.insert(imgArr)
-      .then((r) => {
-        console.log(r, '************* r');
-      })
-      .catch((err) => {
-        next(err);
+      secondaryImages.forEach((img) => {
+        imgArr.push({
+          image_name: img.filename,
+          product_id: productId
+        })
       });
+
+      db.insert(imgArr)
+        .then((r) => {
+          console.log(r, '************* r');
+        })
+        .catch((err) => {
+          next(err);
+        });
+    });
 
     res.send('SUCCESS')
   }
@@ -116,25 +115,23 @@ router.delete('/images/:name/:component/:id', (req, res, next) => {
   //       next(err);
   //     }
   //
-      // knex('images')
-      //   .where({
-      //     product_id: productId,
-      //     image_name: name
-      //   })
-      //   .del()
-      //   .then((product) => {
-      //     res.send('success');
-      //   })
-      //   .catch((err) => {
-      //     next(err);
-      //   });
+  //     knex('images')
+  //       .where({
+  //         product_id: productId,
+  //         image_name: name
+  //       })
+  //       .del()
+  //       .then((product) => {
+  //         res.send('success');
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
   //   });
   // }
 
   res.send('SUCCESS')
 });
-
-
 
 
 module.exports = router;
