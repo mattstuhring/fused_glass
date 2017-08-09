@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Header from 'Header';
-import { Table, Image } from 'react-bootstrap';
+import { Table, Image, Button } from 'react-bootstrap';
 
 
 export default class Cart extends React.Component {
@@ -11,6 +11,8 @@ export default class Cart extends React.Component {
     this.state = {
       products: []
     }
+
+    this.removeProduct = this.removeProduct.bind(this);
   }
 
 
@@ -45,7 +47,8 @@ export default class Cart extends React.Component {
 
           if (exists === true) {
             this.setState({products: JSON.parse(sessionStorage.getItem("allEntries"))});
-            
+            console.log('Product already in shopping cart!');
+
             return;
           }
         }
@@ -64,6 +67,21 @@ export default class Cart extends React.Component {
   }
 
 
+  removeProduct(productId) {
+    let existingEntries = JSON.parse(sessionStorage.getItem("allEntries"));
+
+    for (let i = 0; i < existingEntries.length; i++) {
+      if (existingEntries[i].productId === productId) {
+        existingEntries.splice(i, 1);
+        break;
+      }
+    }
+
+    sessionStorage.setItem("allEntries", JSON.stringify(existingEntries));
+    this.setState({products: JSON.parse(sessionStorage.getItem("allEntries"))});
+  }
+
+
   // ***************************  RENDER  ********************************
   render() {
     return (
@@ -79,8 +97,17 @@ export default class Cart extends React.Component {
                 <th>Product</th>
                 <th>Name</th>
                 <th>Price</th>
+                <th>Action</th>
               </tr>
             </thead>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Total:</td>
+                <td></td>
+              </tr>
+            </tfoot>
             <tbody>
               {this.state.products.map((p) => {
                 return <tr key={p.productId}>
@@ -89,9 +116,18 @@ export default class Cart extends React.Component {
                   </td>
                   <td>{p.name}</td>
                   <td>{p.price}</td>
+                  <td>
+                    <Button
+                      bsStyle="danger"
+                      onClick={() => this.removeProduct(p.productId)}
+                    >
+                      <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </Button>
+                  </td>
                 </tr>
               })}
             </tbody>
+
           </Table>
         </div>
 

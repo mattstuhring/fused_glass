@@ -33,7 +33,7 @@ exports.seed = function(knex) {
       },
       {
         id: 5,
-        image_name: 'tes_salmon_2.jpg',
+        image_name: 'test_salmon_2.jpg',
         product_id: 4,
         created_at: new Date('2017-09-18 12:26:50 UTC'),
         updated_at: new Date('2017-09-18 12:26:50 UTC')
