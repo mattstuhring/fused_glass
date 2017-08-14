@@ -1,18 +1,20 @@
-var React = require('react');
-var Navigation = require('Navigation');
+import React from 'react';
+import Navigation from 'Navigation';
 import SideNav from 'SideNav';
 import Header from 'Header';
+
 
 export default class Main extends React.Component {
   constructor(props) {
     super(props);
   }
 
+
   render() {
     return (
       <div className="main">
         {/* TOP NAVBAR */}
-        <Navigation/>
+        <Navigation lock={this.lock}/>
 
         <div className="container">
           <div className="panel panel-default main-overlay">

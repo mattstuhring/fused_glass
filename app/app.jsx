@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 var { Route, Router, IndexRoute, hashHistory } = require('react-router');
 import About from 'About';
 import Cart from 'Cart';
+import Categories from 'Categories';
 import Collections from 'Collections';
 import Contact from 'Contact';
 import Gallery from 'Gallery';
@@ -10,8 +11,8 @@ import Home from 'Home';
 import Main from 'Main';
 import ProductDetails from 'ProductDetails';
 import ProductForm from 'ProductForm';
-import Categories from 'Categories';
 import Playground from 'Playground';
+
 
 // Be sure to include styles at some point, probably during your bootstrapping
 require('style!css!react-select/dist/react-select.css');

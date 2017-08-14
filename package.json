@@ -11,6 +11,7 @@
   "author": "Matt Stuhring <whereyouatmatt@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "auth0-lock": "^10.19.0",
     "axios": "^0.16.1",
     "bcrypt-as-promised": "^1.1.0",
     "body-parser": "^1.15.2",
