@@ -19,6 +19,7 @@ const categories = require('./routes/categories');
 const collections = require('./routes/collections');
 const products = require('./routes/products');
 const images = require('./routes/images');
+const cloudinary = require('./routes/cloudinary');
 
 const app = express();
 
@@ -49,6 +50,8 @@ app.use('/api', categories);
 app.use('/api', collections);
 app.use('/api', products);
 app.use('/api', images);
+app.use('/api', cloudinary);
+
 
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -78,7 +81,7 @@ app.use((err, _req, res, _next) => {
 
 app.listen(PORT, () => {
   if (process.env.NODE_ENV !== 'test') {
-    console.log('Listening on PORT', PORT);
+    console.log('Served fresh daily on PORT', PORT);
   }
 });
 
