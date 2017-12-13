@@ -98,15 +98,13 @@ export default class Categories extends React.Component {
     );
 
     const availableProducts = () => {
-      console.log(this.state.products, '********** prods');
-
       if (this.state.products.length === 0) {
         return (<div>
           <h4 className="text-center"><em>No products to display!</em></h4>
         </div>);
       } else {
         return this.state.products.map((p) => {
-          return <div className="col-sm-4" key={p.id}>
+          return <div className="col-sm-4" key={p.product_id}>
             <div>
 
               {/* DELETE PRODUCT MODAL */}

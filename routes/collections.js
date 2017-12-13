@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/collections/:id', (req, res, next) => {
   knex('products')
     .select()
-    .innerJoin('products_collections', 'products.id', 'products_collections.product_id')
+    .innerJoin('products_collections', 'products.product_id', 'products_collections.product_id')
     .where('products_collections.collection_id', req.params.id)
     .then((product) => {
       res.send(product);

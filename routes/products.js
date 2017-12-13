@@ -17,10 +17,10 @@ router.get('/products/:id', (req, res, next) => {
 
   knex('products')
     .select('*')
-    .innerJoin('products_collections', 'products.id', 'products_collections.product_id')
-    .innerJoin('collections', 'products_collections.collection_id', 'collections.id')
-    .innerJoin('categories', 'products.category_id', 'categories.id')
-    .where('products.id', productId)
+    .innerJoin('products_collections', 'products.product_id', 'products_collections.product_id')
+    .innerJoin('collections', 'products_collections.collection_id', 'collections.collection_id')
+    .innerJoin('categories', 'products.category_id', 'categories.category_id')
+    .where('products.product_id', productId)
     .then((product) => {
       res.send(product);
     })
@@ -121,7 +121,7 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
   // // INSERT FORM DATA INTO DB
   // knex('collections')
-  //   .select('id')
+  //   .select('collection_id')
   //   .whereIn('collection_name', collections)
   //   .then((collectionId) => {
   //     return knex('products')

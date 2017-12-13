@@ -103,7 +103,7 @@ export default class Collections extends React.Component {
         <Header category={this.props.params.category} collection={this.props.params.collection}/>
 
         {this.state.products.map((p) => {
-          return <div className="col-sm-4" key={p.id}>
+          return <div className="col-sm-4" key={p.product_id}>
             <div>
 
               {/* DELETE PRODUCT MODAL */}
@@ -148,7 +148,7 @@ export default class Collections extends React.Component {
                 </div>
 
                 {/* <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}}/> */}
-                
+
                 <div className="caption">
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>

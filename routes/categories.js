@@ -10,8 +10,8 @@ const router = express.Router();
 router.get('/categories/:id', (req, res, next) => {
   knex('categories')
     .select()
-    .join('products', 'products.category_id', 'categories.id')
-    .where('category_id', req.params.id)
+    .join('products', 'products.category_id', 'categories.category_id')
+    .where('products.category_id', req.params.id)
     .then((product) => {
       res.send(product);
     })
@@ -25,7 +25,7 @@ router.get('/categories/:id', (req, res, next) => {
 router.get('/categories/:id/collections', (req, res, next) => {
   knex('categories')
     .select()
-    .innerJoin('collections', 'collections.category_id', 'categories.id')
+    .innerJoin('collections', 'collections.category_id', 'categories.category_id')
     .where('collections.category_id', req.params.id)
     .then((product) => {
       res.send(product);
@@ -69,7 +69,7 @@ router.delete('/categories/:categoryId/collection/:collectionId', (req, res, nex
 
   knex('collections')
     .where('category_id', categoryId)
-    .where('collections.id', collectionId)
+    .where('collections.collection_id', collectionId)
     .del()
     .then(() => {
       return knex('collections')

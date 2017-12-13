@@ -203,18 +203,18 @@ export default class SideNav extends React.Component {
                   </ListGroupItem>
 
                   {/* DISPLAY ALL DECORATIVE PRODUCTS */}
-                  {this.state.decoratives.map(function(e) {
-                    return <ListGroupItem key={e.id}>
+                  {this.state.decoratives.map(function(c) {
+                    return <ListGroupItem key={c.collection_id}>
                         <div className="row">
                           <div className="col-sm-8">
-                            <Link to={`/collections/Decorative/${e.id}/${e.collection_name}`}>
-                              {e.collection_name}
+                            <Link to={`/collections/Decorative/${c.collection_id}/${c.collection_name}`}>
+                              {c.collection_name}
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
                             <Link
                               to={`/products/${1}/Decorative`}
-                              onClick={() => this.open(e.category_id, e.id)}
+                              onClick={() => this.open(c.category_id, c.collection_id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Link>
@@ -254,18 +254,18 @@ export default class SideNav extends React.Component {
                       </FormGroup>
                     </form>
                   </ListGroupItem>
-                  {this.state.housewares.map(function(e) {
-                    return <ListGroupItem key={e.id}>
+                  {this.state.housewares.map(function(c) {
+                    return <ListGroupItem key={c.collection_id}>
                         <div className="row">
                           <div className="col-sm-8">
-                            <Link to={`/collections/Houseware/${e.id}/${e.collection_name}`}>
-                              {e.collection_name}
+                            <Link to={`/collections/Houseware/${c.collection_id}/${c.collection_name}`}>
+                              {c.collection_name}
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
                             <Link
                               to={`/products/${2}/Houseware`}
-                              onClick={() => this.open(e.category_id, e.id)}
+                              onClick={() => this.open(c.category_id, c.collection_id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Link>
@@ -305,18 +305,18 @@ export default class SideNav extends React.Component {
                       </FormGroup>
                     </form>
                   </ListGroupItem>
-                  {this.state.jewelrys.map(function(e) {
-                    return <ListGroupItem key={e.id}>
+                  {this.state.jewelrys.map(function(c) {
+                    return <ListGroupItem key={c.collection_id}>
                         <div className="row">
                           <div className="col-sm-8">
-                            <Link to={`/collections/Jewelry/${e.id}/${e.collection_name}`}>
-                              {e.collection_name}
+                            <Link to={`/collections/Jewelry/${c.collection_id}/${c.collection_name}`}>
+                              {c.collection_name}
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
                             <Link
                               to={`/products/${3}/Jewelry`}
-                              onClick={() => this.open(e.category_id, e.id)}
+                              onClick={() => this.open(c.category_id, c.collection_id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Link>
@@ -356,18 +356,18 @@ export default class SideNav extends React.Component {
                       </FormGroup>
                     </form>
                   </ListGroupItem>
-                  {this.state.gardens.map(function(e) {
-                    return <ListGroupItem key={e.id}>
+                  {this.state.gardens.map(function(c) {
+                    return <ListGroupItem key={c.collection_id}>
                         <div className="row">
                           <div className="col-sm-8">
-                            <Link to={`/collections/Garden/${e.id}/${e.collection_name}`}>
-                              {e.collection_name}
+                            <Link to={`/collections/Garden/${c.collection_id}/${c.collection_name}`}>
+                              {c.collection_name}
                             </Link>
                           </div>
                           <div className="col-sm-4 text-right">
                             <Link
                               to={`/products/${4}/Garden`}
-                              onClick={() => this.open(e.category_id, e.id)}
+                              onClick={() => this.open(c.category_id, c.collection_id)}
                             >
                               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </Link>
