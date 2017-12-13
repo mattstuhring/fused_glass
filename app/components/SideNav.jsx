@@ -18,7 +18,7 @@ export default class SideNav extends React.Component {
       open2: false,
       open3: false,
       open4: false,
-      showModal: false,
+      deleteModal: false,
       delete: {
         categoryId: null,
         collectionId: null
@@ -34,12 +34,12 @@ export default class SideNav extends React.Component {
   }
 
   close() {
-    this.setState({ showModal: false });
+    this.setState({ deleteModal: false });
   }
 
   open(categoryId, collectionId) {
     this.setState({
-      showModal: true,
+      deleteModal: true,
       delete: { categoryId, collectionId }
     });
   }
@@ -93,7 +93,7 @@ export default class SideNav extends React.Component {
       });
 
     this.setState({
-      showModal: false,
+      deleteModal: false,
       delete: { categoryId: null, collectionId: null }
     });
   }
@@ -147,7 +147,7 @@ export default class SideNav extends React.Component {
       <div className="panel panel-primary side-nav">
 
         {/* DELETE COLLECTION MODAL */}
-        <Modal show={this.state.showModal} onHide={this.close}>
+        <Modal show={this.state.deleteModal} onHide={this.close}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Product</Modal.Title>
           </Modal.Header>
@@ -182,6 +182,7 @@ export default class SideNav extends React.Component {
               <Panel collapsible expanded={this.state.open1}>
                 <ListGroup fill>
 
+                  {/* CREATE NEW COLLECTION FORM */}
                   <ListGroupItem>
                     <form onSubmit={this.handleSubmit}>
                       <FormGroup controlId="formControlsText">
@@ -201,6 +202,7 @@ export default class SideNav extends React.Component {
                     </form>
                   </ListGroupItem>
 
+                  {/* DISPLAY ALL DECORATIVE PRODUCTS */}
                   {this.state.decoratives.map(function(e) {
                     return <ListGroupItem key={e.id}>
                         <div className="row">

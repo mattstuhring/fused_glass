@@ -245,61 +245,118 @@ export default class ProductForm extends React.Component {
   }
 
 
+  // // FORM SUBMIT NEW PRODUCT TO DATABASE
+  // handleSubmit(event) {
+  //   event.preventDefault();
+  //
+  //   const primary = this.state.primaryImage;
+  //   const secondary = this.state.secondaryImages;
+  //   let request;
+  //
+  //   if (this.props.params.id) {
+  //     request = superagent.put('/api/products')
+  //       .field('productId', this.props.params.id);
+  //   } else {
+  //     request = superagent.post('/api/products');
+  //   }
+  //
+  //   request
+  //     .field('category', this.state.category)
+  //     .field('categoryId', this.state.categoryId)
+  //     .field('collections', this.state.collections)
+  //     .field('name', this.state.name)
+  //     .field('description', this.state.description)
+  //     .field('price', this.state.price)
+  //     .field('size', this.state.size)
+  //     .attach('primary', primary)
+  //     .set('Accept', 'application/json')
+  //     .end((err, res) => {
+  //       if (err) {
+  //         console.log(err);
+  //         return;
+  //       }
+  //
+  //       let productId;
+  //       let reqImg;
+  //
+  //       if (this.props.params.id) {
+  //         productId = this.props.params.id;
+  //         reqImg = superagent.post('/api/images');
+  //       } else {
+  //         productId = res.body[0];
+  //         reqImg = superagent.post('/api/images');
+  //       }
+  //
+  //       // POST OR UPDATE SECONDARY IMAGES
+  //       secondary.forEach((img)=> {
+  //         reqImg.attach('images', img).field('id', productId)
+  //       });
+  //
+  //       reqImg.end((err, res) => {
+  //         if (err) {
+  //           console.log(err);
+  //           return;
+  //         }
+  //
+  //         console.log(res.text);
+  //       });
+  //     });
+  //
+  //   this.removeAllFiles(this.state.primaryDropzone);
+  //   this.removeAllFiles(this.state.secondaryDropzone);
+  //
+  //   this.setState({
+  //     category: '',
+  //     categoryId: null,
+  //     collections: [],
+  //     name: '',
+  //     description: '',
+  //     price: '',
+  //     size: '',
+  //     primaryDropzone: null,
+  //     secondaryDropzone: null
+  //   });
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // FORM SUBMIT NEW PRODUCT TO DATABASE
   handleSubmit(event) {
     event.preventDefault();
 
     const primary = this.state.primaryImage;
-    const secondary = this.state.secondaryImages;
-    let request;
 
-    if (this.props.params.id) {
-      request = superagent.put('/api/products')
-        .field('productId', this.props.params.id);
-    } else {
-      request = superagent.post('/api/products');
-    }
-
-    request
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', this.state.collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
+    superagent.post('/api/products')
+      // .field('category', this.state.category)
+      // .field('categoryId', this.state.categoryId)
+      // .field('collections', this.state.collections)
+      // .field('name', this.state.name)
+      // .field('description', this.state.description)
+      // .field('price', this.state.price)
+      // .field('size', this.state.size)
       .attach('primary', primary)
-      .set('Accept', 'application/json')
-      .end((err, res) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
+      .then((res) => {
+        console.log(res, '******* res');
 
-        let productId;
-        let reqImg;
 
-        if (this.props.params.id) {
-          productId = this.props.params.id;
-          reqImg = superagent.post('/api/images');
-        } else {
-          productId = res.body[0];
-          reqImg = superagent.post('/api/images');
-        }
 
-        // POST OR UPDATE SECONDARY IMAGES
-        secondary.forEach((img)=> {
-          reqImg.attach('images', img).field('id', productId)
-        });
-
-        reqImg.end((err, res) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-
-          console.log(res.text);
-        });
+      })
+      .catch((err) => {
+        console.log(err);
       });
 
     this.removeAllFiles(this.state.primaryDropzone);
@@ -317,6 +374,19 @@ export default class ProductForm extends React.Component {
       secondaryDropzone: null
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // CATEGORY FORM VALIDATION

@@ -2,12 +2,13 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('images', (table) => {
-    table.increments('id').primary();
-    table.string('image_name').defaultTo('');
+    table.increments('image_id').primary();
+    table.string('image_url').defaultTo('');
+    table.boolean('image_main').defaultTo(false);
     table.integer('product_id')
       .unsigned()
       .notNullable()
-      .references('id')
+      .references('product_id')
       .inTable('products')
       .onDelete('CASCADE')
       .index();

@@ -2,18 +2,18 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('products_collections', (table) => {
-    table.increments('id').primary();
+    table.increments('product_collection_id').primary();
     table.integer('product_id')
       .unsigned()
       .notNullable()
-      .references('id')
+      .references('product_id')
       .inTable('products')
       .onDelete('CASCADE')
       .index();
     table.integer('collection_id')
       .unsigned()
       .notNullable()
-      .references('id')
+      .references('collection_id')
       .inTable('collections')
       .onDelete('CASCADE')
       .index();

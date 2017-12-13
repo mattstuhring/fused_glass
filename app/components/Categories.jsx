@@ -97,11 +97,15 @@ export default class Categories extends React.Component {
       <Tooltip id="tooltip"><strong>Delete</strong></Tooltip>
     );
 
-    return (
-      <div>
-        <Header category={this.props.params.category}/>
+    const availableProducts = () => {
+      console.log(this.state.products, '********** prods');
 
-        {this.state.products.map((p) => {
+      if (this.state.products.length === 0) {
+        return (<div>
+          <h4 className="text-center"><em>No products to display!</em></h4>
+        </div>);
+      } else {
+        return this.state.products.map((p) => {
           return <div className="col-sm-4" key={p.id}>
             <div>
 
@@ -149,7 +153,8 @@ export default class Categories extends React.Component {
                   </div>
                 </div>
 
-                <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}} />
+                {/* <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}} /> */}
+
                 <div className="caption">
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>
@@ -161,7 +166,20 @@ export default class Categories extends React.Component {
               </div>
             </div>
           </div>
-        })}
+        })
+      }
+    }
+
+
+
+
+
+    return (
+      <div>
+        <Header category={this.props.params.category}/>
+
+        {availableProducts()}
+
       </div>
     );
   }

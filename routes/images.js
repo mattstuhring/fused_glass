@@ -23,23 +23,10 @@ router.get('/images/:id', (req, res, next) => {
 });
 
 
-// ***********  MULTER -> STORAGE LOCATION OF SECONDARY IMAGE FILES *******
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/images/uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.jpg');
-  }
-});
-
-const upload = multer({ storage: storage });
-const cpUpload = upload.fields([{ name: 'images', maxCount: 4 }]);
-// ************************  MULTER END  ********************************
 
 
 // ADD PRODUCT SECONDARY IMAGES
-router.post('/images', cpUpload, (req, res, next) => {
+router.post('/images', (req, res, next) => {
   const id = parseInt(req.body.id);
   const secondaryImages = req.files['images'];
 
@@ -52,33 +39,30 @@ router.post('/images', cpUpload, (req, res, next) => {
       productId = id;
     }
 
-    // MULTER UPLOAD
-    cpUpload(req, res, function (err) {
-      if (err) {
-        console.log(err);
-        return;
-      }
 
-      let db = knex.table('images')
-      let imgArr = [];
+    if (err) {
+      console.log(err);
+      return;
+    }
 
-      secondaryImages.forEach((img) => {
-        imgArr.push({
-          image_name: img.filename,
-          product_id: productId
-        })
-      });
+    let db = knex.table('images')
+    let imgArr = [];
 
-      db.insert(imgArr)
-        .then((r) => {
-          console.log(r, '************* r');
-        })
-        .catch((err) => {
-          next(err);
-        });
+    secondaryImages.forEach((img) => {
+      imgArr.push({
+        image_name: img.filename,
+        product_id: productId
+      })
     });
 
-    res.send('SUCCESS')
+    db.insert(imgArr)
+      .then((r) => {
+        console.log(r, '************* r');
+        res.send('SUCCESS')
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
   else {
     res.send('SUCCESS');

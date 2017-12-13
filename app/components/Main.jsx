@@ -14,7 +14,7 @@ export default class Main extends React.Component {
     return (
       <div className="main">
         {/* TOP NAVBAR */}
-        <Navigation lock={this.lock}/>
+        <Navigation/>
 
         <div className="container">
           <div className="panel panel-default main-overlay">

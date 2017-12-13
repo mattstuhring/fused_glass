@@ -147,7 +147,8 @@ export default class Collections extends React.Component {
                   </div>
                 </div>
 
-                <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}}/>
+                {/* <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}}/> */}
+                
                 <div className="caption">
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>

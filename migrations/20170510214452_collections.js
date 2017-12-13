@@ -2,12 +2,12 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('collections', (table) => {
-    table.increments('id').primary();
+    table.increments('collection_id').primary();
     table.string('collection_name').defaultTo('');
     table.integer('category_id')
       .unsigned()
       .notNullable()
-      .references('id')
+      .references('category_id')
       .inTable('categories');
     table.timestamps(true, true);
   })

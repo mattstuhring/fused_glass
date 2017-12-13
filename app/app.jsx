@@ -38,8 +38,11 @@ ReactDOM.render(
       <Route path="contact" component={Contact}/>
       <Route path="productform/:action(/:id)" component={ProductForm}/>
       <Route path="cart(/:id)" component={Cart}/>
+
       <Route path="products/:id/:category" component={Categories}/>
+
       <Route path="collections/:category/:id/:collection" component={Collections}/>
+
       <Route path="productdetails/:id" component={ProductDetails} />
 
       <Route path="playground/:action(/:id)" component={Playground} />

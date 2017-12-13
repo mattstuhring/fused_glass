@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 
+
 // GET ALL PRODUCTS IN CATEGORY
 router.get('/categories/:id', (req, res, next) => {
   knex('categories')
@@ -65,8 +66,6 @@ router.post('/categories/collection', (req, res, next) => {
 // DELETE COLLECTION FROM SIDE NAV CATEGORY & PRODUCTS_COLLECTIONS RELATIONSHIP
 router.delete('/categories/:categoryId/collection/:collectionId', (req, res, next) => {
   const { categoryId, collectionId } = req.params;
-  console.log(categoryId, '*********** catID');
-  console.log(collectionId, '********** colID');
 
   knex('collections')
     .where('category_id', categoryId)

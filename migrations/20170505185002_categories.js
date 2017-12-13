@@ -2,7 +2,7 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('categories', (table) => {
-    table.increments('id').primary();
+    table.increments('category_id').primary();
     table.string('category_name').defaultTo('');
     table.timestamps(true, true);
   })
