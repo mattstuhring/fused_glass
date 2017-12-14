@@ -84,12 +84,18 @@ router.get('/products/:id', (req, res, next) => {
 
 
 
+
+
+
+
+
 // ADD NEW PRODUCT
 router.post('/products', upload.single('primary'), (req, res, next) => {
-  // const { category, categoryId, name, description, price, size } = req.body;
-  //
-  // let { collections } = req.body;
-  // collections = collections.split(',');
+  const { name, description, price, size } = req.body;
+
+  let { collections, category, categoryId } = req.body;
+  collections = collections.split(',');
+  category = category.toLowerCase();
 
   console.log(req.file, '*************** FILE');
   console.log(req.body, '*********** BODY');
@@ -97,69 +103,82 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
   const datauri = new Datauri();
   datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
-
   cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
     api_secret: process.env.API_SECRET
   });
 
-  cloudinary.v2.uploader.upload(datauri.content,
-    {
-      folder: 'decorative/',
-      public_id: '10',
-      tags: ['primary', 'sea_life']
-    },
-    function(error, result) {
-      console.log(result, '************* CLOUD RESULT');
-      console.log(error, '*************** CLOUD ERROR');
 
-      res.sendStatus(200);
+  // INSERT FORM DATA INTO DB
+  knex('collections')
+    .select('collection_id')
+    .whereIn('collection_name', collections)
+    .then((collectionIdArray) => {
+      return knex('products')
+        .insert({
+          product_name: name,
+          product_price: price,
+          product_description: description,
+          product_size: size,
+          category_id: parseInt(categoryId)
+        })
+        .returning('product_id')
+        .then((productId) => {
+          productId = parseInt(productId[0]);
+          let db = knex.table('products_collections')
+          const c = [];
+
+          collectionIdArray.forEach((item) => {
+            c.push({
+              product_id: productId,
+              collection_id: parseInt(item.collection_id)
+            })
+          });
+
+          db.insert(c)
+            .then((r) => {
+
+              cloudinary.v2.uploader.upload(datauri.content,
+                {
+                  folder: `${category}/${productId}/`,
+                  public_id: `${path.basename(req.file.originalname, path.extname(req.file.originalname))}_${productId}`,
+                  tags: collections
+                },
+                function(error, result) {
+                  if (error) {
+                    console.log(error, '********** CLOUD ERROR');
+                  }
+                  console.log(result, '************* CLOUD RESULT');
+
+                  // INSERT IMAGE INTO DB
+                  knex('images')
+                    .insert({
+                      image_url: result.secure_url,
+                      image_main: true,
+                      product_id: productId
+                    })
+                    .then((data) => {
+                      console.log(data, '******** data');
+                      res.send(productId.toString());
+                    })
+                    .catch((err) => {
+                      next(err)
+                    });
+
+                });
+            })
+            .catch((err) => {
+              next(err);
+            });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
     });
-
-
-
-  // // INSERT FORM DATA INTO DB
-  // knex('collections')
-  //   .select('collection_id')
-  //   .whereIn('collection_name', collections)
-  //   .then((collectionId) => {
-  //     return knex('products')
-  //       .insert({
-  //         product_name: name,
-  //         product_price: price,
-  //         product_description: description,
-  //         product_size: size,
-  //         category_id: parseInt(categoryId)
-  //       })
-  //       .returning('id')
-  //       .then((id) => {
-  //         let db = knex.table('products_collections')
-  //
-  //         const c = [];
-  //         collectionId.forEach((item) => {
-  //           c.push({
-  //             product_id: id[0],
-  //             collection_id: parseInt(item.id)
-  //           })
-  //         });
-  //
-  //         db.insert(c)
-  //           .then((r) => {
-  //             console.log(r, '************* RESPONSE');
-  //           })
-  //           .catch((err) => {
-  //             next(err);
-  //           });
-  //
-  //         res.send(id[0]);
-  //       })
-  //   })
-  //   .catch((err) => {
-  //     next(err);
-  //   });
-
-
 
 });
 
