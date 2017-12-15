@@ -22,6 +22,7 @@ router.get('/products/:id', (req, res, next) => {
     .innerJoin('categories', 'products.category_id', 'categories.category_id')
     .where('products.product_id', productId)
     .then((product) => {
+      console.log(product, '**************** PRODUCT');
       res.send(product);
     })
     .catch((err) => {
@@ -32,70 +33,14 @@ router.get('/products/:id', (req, res, next) => {
 
 
 
-// // ADD NEW PRODUCT DETAILS
-// router.post('/products', (req, res, next) => {
-//   const { category, categoryId, name, description, price, size } = req.body;
-//   console.log(req.body, '*************** BODY');
-//
-//   let { collections } = req.body;
-//   collections = collections.split(',');
-//
-//
-//   // INSERT FORM DATA INTO DB
-//   knex('collections')
-//     .select('id')
-//     .whereIn('collection_name', collections)
-//     .then((collectionId) => {
-//       return knex('products')
-//         .insert({
-//           product_name: name,
-//           product_price: price,
-//           product_description: description,
-//           product_size: size,
-//           category_id: parseInt(categoryId)
-//         })
-//         .returning('id')
-//         .then((id) => {
-//           let db = knex.table('products_collections')
-//
-//           var foo = [];
-//           collectionId.forEach((item) => {
-//             foo.push({
-//               product_id: id[0],
-//               collection_id: parseInt(item.id)
-//             })
-//           });
-//
-//           db.insert(foo)
-//             .then((r) => {
-//               console.log(r, '************* r');
-//             })
-//             .catch((err) => {
-//               next(err);
-//             });
-//
-//           res.send(id);
-//         })
-//     })
-//     .catch((err) => {
-//       next(err);
-//     });
-// });
-
-
-
-
-
-
 
 
 // ADD NEW PRODUCT
 router.post('/products', upload.single('primary'), (req, res, next) => {
-  const { name, description, price, size } = req.body;
+  const { category, name, description, price, size } = req.body;
 
-  let { collections, category, categoryId } = req.body;
+  let { collections, categoryId } = req.body;
   collections = collections.split(',');
-  category = category.toLowerCase();
 
   console.log(req.file, '*************** FILE');
   console.log(req.body, '*********** BODY');
@@ -138,23 +83,25 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
           db.insert(c)
             .then((r) => {
+              collections.push(productId);
 
               cloudinary.v2.uploader.upload(datauri.content,
                 {
                   folder: `${category}/${productId}/`,
-                  public_id: `${path.basename(req.file.originalname, path.extname(req.file.originalname))}_${productId}`,
-                  tags: collections
+                  tags: collections,
+                  height: 400,
+                  weight: 500,
+                  crop: 'limit'
                 },
                 function(error, result) {
                   if (error) {
                     console.log(error, '********** CLOUD ERROR');
                   }
-                  console.log(result, '************* CLOUD RESULT');
 
                   // INSERT IMAGE INTO DB
                   knex('images')
                     .insert({
-                      image_url: result.secure_url,
+                      image_url: result.public_id,
                       image_main: true,
                       product_id: productId
                     })
@@ -165,7 +112,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
                     .catch((err) => {
                       next(err)
                     });
-
                 });
             })
             .catch((err) => {
@@ -181,18 +127,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
     });
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

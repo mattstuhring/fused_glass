@@ -54,7 +54,7 @@ exports.seed = function(knex) {
       },
       {
         collection_id: 8,
-        collection_name: 'Lotion Bottle',
+        collection_name: 'Lotion Bottles',
         category_id: 2,
         created_at: new Date('2017-09-23 11:16:16 UTC'),
         updated_at: new Date('2017-09-23 11:16:16 UTC')

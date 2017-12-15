@@ -3,7 +3,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('images', (table) => {
     table.increments('image_id').primary();
-    table.string('image_url').defaultTo('');
+    table.string('image_product_id').defaultTo('');
     table.boolean('image_main').defaultTo(false);
     table.integer('product_id')
       .unsigned()

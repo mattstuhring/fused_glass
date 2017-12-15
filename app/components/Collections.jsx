@@ -1,8 +1,12 @@
-var React = require('react');
-var axios = require('axios');
-var {Button, Modal, Tooltip, OverlayTrigger, Image} = require('react-bootstrap');
-var {Link} = require('react-router');
+import React from 'react';
+import axios from 'axios';
+import { Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Link } from 'react-router';
 import Header from 'Header';
+import { Image } from 'cloudinary-react';
+
+const cloudName = 'fusedglassbyceleste';
+
 
 export default class Collections extends React.Component {
   constructor(props) {
@@ -147,7 +151,7 @@ export default class Collections extends React.Component {
                   </div>
                 </div>
 
-                {/* <Image src={`images/uploads/${p.product_image}`} responsive alt="..." style={{height: "200px"}}/> */}
+                <Image cloudName={cloudName} publicId={p.image_product_id} width="300" height="200" crop="pad" />
 
                 <div className="caption">
                   <h4>{p.product_name}</h4>

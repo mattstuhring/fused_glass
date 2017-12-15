@@ -3,26 +3,26 @@
 exports.seed = function(knex) {
   return knex('products').del()
     .then(() => knex('products').insert([
-      // {
-      //   id: 1,
-      //   product_name: 'Tropical Fish',
-      //   product_price: '$48.50',
-      //   product_description: 'Fish night light',
-      //   product_size: '8x4',
-      //   category_id: 1,
-      //   created_at: new Date('2017-09-15 11:16:16 UTC'),
-      //   updated_at: new Date('2017-09-15 11:16:16 UTC')
-      // },
-      // {
-      //   id: 2,
-      //   product_name: 'Space Needle',
-      //   product_price: '$28.50',
-      //   product_description: 'Seattle skyline night light',
-      //   product_size: '5x3',
-      //   category_id: 1,
-      //   created_at: new Date('2017-09-16 12:46:16 UTC'),
-      //   updated_at: new Date('2017-09-16 12:46:16 UTC')
-      // },
+      {
+        product_id: 1,
+        product_name: 'Tropical Fish',
+        product_price: '$48.50',
+        product_description: 'Fish night light',
+        product_size: '8x4',
+        category_id: 1,
+        created_at: new Date('2017-09-15 11:16:16 UTC'),
+        updated_at: new Date('2017-09-15 11:16:16 UTC')
+      },
+      {
+        product_id: 2,
+        product_name: 'Space Needle',
+        product_price: '$28.50',
+        product_description: 'Seattle skyline night light',
+        product_size: '5x3',
+        category_id: 1,
+        created_at: new Date('2017-09-16 12:46:16 UTC'),
+        updated_at: new Date('2017-09-16 12:46:16 UTC')
+      },
       {
         product_id: 3,
         product_name: 'Dichro Earrings',

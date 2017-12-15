@@ -381,20 +381,17 @@ export default class ProductForm extends React.Component {
         console.log(err);
       });
 
-    this.removeAllFiles(this.state.primaryDropzone);
-    this.removeAllFiles(this.state.secondaryDropzone);
-
-    this.setState({
-      category: '',
-      categoryId: null,
-      collections: [],
-      name: '',
-      description: '',
-      price: '',
-      size: '',
-      primaryDropzone: null,
-      secondaryDropzone: null
-    });
+      this.setState({
+        category: '',
+        categoryId: null,
+        collections: [],
+        name: '',
+        description: '',
+        price: '',
+        size: '',
+        primaryDropzone: null,
+        secondaryDropzone: null
+      });
   }
 
 
@@ -588,7 +585,7 @@ export default class ProductForm extends React.Component {
               {/* PRIMARY & SECONDARY IMAGE DROPZONES */}
               <div className="col-sm-6 text-center">
                 <div className="page-header">
-                  <h4>Primary Image <small>(Max: 1)</small></h4>
+                  <h4>Main Image <small>(Max: 1)</small></h4>
                 </div>
                 <DropzoneComponent
                   config={{
@@ -606,7 +603,7 @@ export default class ProductForm extends React.Component {
                 />
 
                 <div className="page-header">
-                  <h4>Secondary Images <small>(Max: 4)</small></h4>
+                  <h4>More Images <small>(Max: 4)</small></h4>
                 </div>
                 <DropzoneComponent
                   config={{

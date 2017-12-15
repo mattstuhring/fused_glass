@@ -9,10 +9,12 @@ const router = express.Router();
 // GET ALL PRODUCTS IN CATEGORY
 router.get('/categories/:id', (req, res, next) => {
   knex('categories')
-    .select()
-    .join('products', 'products.category_id', 'categories.category_id')
+    .select('*')
+    .innerJoin('products', 'products.category_id', 'categories.category_id')
+    .innerJoin('images', 'products.product_id', 'images.product_id')
     .where('products.category_id', req.params.id)
     .then((product) => {
+      console.log(product, '********** PRODUCT');
       res.send(product);
     })
     .catch((err) => {
