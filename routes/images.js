@@ -44,8 +44,6 @@ router.post('/images', upload.array('images'), (req, res, next) => {
   let productId;
   let categoryName;
 
-  // res.sendStatus(200);
-
   if (req.files !== {}) {
     let db = knex.table('images')
     let imgArr = [];
