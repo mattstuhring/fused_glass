@@ -3,7 +3,10 @@
 const knex = require('../knex');
 const express = require('express');
 const multer  = require('multer');
-const fs = require('fs');
+const upload = multer()
+const cloudinary = require('cloudinary');
+const Datauri = require('datauri');
+const path = require('path');
 const router = express.Router();
 
 
@@ -26,48 +29,93 @@ router.get('/images/:id', (req, res, next) => {
 
 
 // ADD PRODUCT SECONDARY IMAGES
-router.post('/images', (req, res, next) => {
-  const id = parseInt(req.body.id);
-  const secondaryImages = req.files['images'];
+router.post('/images', upload.array('images'), (req, res, next) => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+  });
+
+  console.log(req.files, '************** FILES');
+  console.log(req.body, '***************** BODY');
+
+  const { category } = req.body;
+  let { collections, id } = req.body;
+  let productId;
+  let categoryName;
+
+  // res.sendStatus(200);
 
   if (req.files !== {}) {
+    let db = knex.table('images')
+    let imgArr = [];
     let productId;
 
     if (Array.isArray(id) === true) {
-      productId = id[0];
+      productId = parseInt(req.body.id[0]);
     } else {
-      productId = id;
+      productId = parseInt(req.body.id);
     }
 
-
-    if (err) {
-      console.log(err);
-      return;
+    if (Array.isArray(category) === true) {
+      categoryName = req.body.category[0];
+    } else {
+      categoryName = req.body.category;
     }
 
-    let db = knex.table('images')
-    let imgArr = [];
+    if (Array.isArray(collections) === true) {
+      collections = collections[0].split(',');
+      collections.push(productId);
+    } else {
+      collections = collections.split(',');
+      collections.push(productId);
+    }
 
-    secondaryImages.forEach((img) => {
-      imgArr.push({
-        image_name: img.filename,
-        product_id: productId
-      })
+    req.files.forEach((img) => {
+      console.log(img, '********** IMG forEach');
+      const datauri = new Datauri();
+      datauri.format(path.extname(img.originalname).toString(), img.buffer);
+
+      cloudinary.v2.uploader.upload(datauri.content,
+        {
+          folder: `${categoryName}/${productId}/`,
+          tags: collections,
+          height: 400,
+          weight: 500,
+          crop: 'limit'
+        },
+        function(error, result) {
+          if (error) {
+            console.log(error, '********** CLOUD ERROR');
+          }
+
+          imgArr.push({
+            image_public_id: result.public_id,
+            image_main: false,
+            product_id: productId
+          });
+        });
     });
 
     db.insert(imgArr)
       .then((r) => {
         console.log(r, '************* r');
-        res.send('SUCCESS')
+        res.sendStatus(200);
       })
       .catch((err) => {
         next(err);
       });
   }
   else {
-    res.send('SUCCESS');
+    res.sendStatus(200);
   }
 });
+
+
+
+
+
+
 
 
 // UPDATE PRIMARY & SECONDARY DROPZONE IMAGE TO AN EMPTY STRING

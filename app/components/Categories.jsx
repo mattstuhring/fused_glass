@@ -157,7 +157,7 @@ export default class Categories extends React.Component {
                   </div>
                 </div>
 
-                <Image cloudName={cloudName} publicId={p.image_product_id} width="300" height="200" crop="pad" />
+                <Image cloudName={cloudName} publicId={p.image_public_id} width="300" height="200" crop="pad" />
 
                 <div className="caption">
                   <h4>{p.product_name}</h4>

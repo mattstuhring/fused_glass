@@ -42,8 +42,10 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
   let { collections, categoryId } = req.body;
   collections = collections.split(',');
 
-  console.log(req.file, '*************** FILE');
-  console.log(req.body, '*********** BODY');
+  // console.log(req.file, '*************** FILE');
+  // console.log(req.body, '*********** BODY');
+
+  // res.sendStatus(200);
 
   const datauri = new Datauri();
   datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
@@ -101,12 +103,11 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
                   // INSERT IMAGE INTO DB
                   knex('images')
                     .insert({
-                      image_url: result.public_id,
+                      image_public_id: result.public_id,
                       image_main: true,
                       product_id: productId
                     })
                     .then((data) => {
-                      console.log(data, '******** data');
                       res.send(productId.toString());
                     })
                     .catch((err) => {
