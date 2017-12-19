@@ -42,8 +42,8 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
   let { collections, categoryId } = req.body;
   collections = collections.split(',');
 
-  // console.log(req.file, '*************** FILE');
-  // console.log(req.body, '*********** BODY');
+  console.log(req.file, '*************** FILE');
+  console.log(req.body, '*********** BODY');
 
   // res.sendStatus(200);
 
@@ -85,12 +85,10 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
           db.insert(c)
             .then((r) => {
-              collections.push(productId);
-
               cloudinary.v2.uploader.upload(datauri.content,
                 {
                   folder: `${category}/${productId}/`,
-                  tags: collections,
+                  tags: productId,
                   height: 400,
                   weight: 500,
                   crop: 'limit'

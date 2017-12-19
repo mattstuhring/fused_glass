@@ -28,7 +28,7 @@ router.get('/images/:id', (req, res, next) => {
 
 
 
-// ADD PRODUCT SECONDARY IMAGES
+// POST PRODUCT SECONDARY IMAGES
 router.post('/images', upload.array('images'), (req, res, next) => {
   cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -36,11 +36,8 @@ router.post('/images', upload.array('images'), (req, res, next) => {
     api_secret: process.env.API_SECRET
   });
 
-  console.log(req.files, '************** FILES');
-  console.log(req.body, '***************** BODY');
-
   const { category } = req.body;
-  let { collections, id } = req.body;
+  let { id } = req.body;
   let productId;
   let categoryName;
 
@@ -61,23 +58,15 @@ router.post('/images', upload.array('images'), (req, res, next) => {
       categoryName = req.body.category;
     }
 
-    if (Array.isArray(collections) === true) {
-      collections = collections[0].split(',');
-      collections.push(productId);
-    } else {
-      collections = collections.split(',');
-      collections.push(productId);
-    }
 
     req.files.forEach((img) => {
-      console.log(img, '********** IMG forEach');
       const datauri = new Datauri();
       datauri.format(path.extname(img.originalname).toString(), img.buffer);
 
       cloudinary.v2.uploader.upload(datauri.content,
         {
           folder: `${categoryName}/${productId}/`,
-          tags: collections,
+          tags: productId,
           height: 400,
           weight: 500,
           crop: 'limit'
