@@ -11,7 +11,6 @@ router.get('/categories/:id', (req, res, next) => {
   knex('categories')
     .select('*')
     .innerJoin('products', 'products.category_id', 'categories.category_id')
-    .innerJoin('images', 'products.product_id', 'images.product_id')
     .where('products.category_id', req.params.id)
     .then((product) => {
       console.log(product, '********** PRODUCT');

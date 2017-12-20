@@ -41,7 +41,8 @@ router.post('/images', upload.array('images'), (req, res, next) => {
   let productId;
   let categoryName;
 
-  if (req.files !== {}) {
+  if (req.files !== {} || req.files !== undefined) {
+    console.log(req.files, '************ req files');
     let db = knex.table('images')
     let imgArr = [];
     let productId;
@@ -78,7 +79,6 @@ router.post('/images', upload.array('images'), (req, res, next) => {
 
           imgArr.push({
             image_public_id: result.public_id,
-            image_main: false,
             product_id: productId
           });
         });

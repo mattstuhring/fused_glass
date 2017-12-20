@@ -110,6 +110,7 @@ export default class Categories extends React.Component {
         </div>);
       } else {
         return this.state.products.map((p) => {
+          console.log(p, '********** products');
           return <div className="col-sm-4" key={p.product_id}>
             <div>
 
@@ -123,10 +124,10 @@ export default class Categories extends React.Component {
                   <h4>{this.state.name}</h4>
                   <p>{this.state.description}</p>
                   <p>{this.state.price}</p>
-                  <p>Product ID: {this.state.id}</p>
+                  <p>Product ID: {this.state.product_id}</p>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button onClick={() => this.handleProductDelete(this.state.id)}>
+                  <Button onClick={() => this.handleProductDelete(this.state.product_id)}>
                     Yes
                   </Button>
                   <Button onClick={this.close}>No</Button>
@@ -139,7 +140,7 @@ export default class Categories extends React.Component {
                     <OverlayTrigger placement="top" overlay={edit}>
 
                       {/* LINK TO UPDATE PRODUCT FORM */}
-                      <Link to={`/productform/Update%20product/${p.id}`}>
+                      <Link to={`/productform/Update%20product/${p.product_id}`}>
 
                         <Button bsStyle="success">
                           <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -149,7 +150,7 @@ export default class Categories extends React.Component {
                     <OverlayTrigger placement="top" overlay={remove}>
                       <Button
                         bsStyle="danger"
-                        onClick={() => this.open(p.product_name, p.product_description, p.product_price, p.id)}
+                        onClick={() => this.open(p.product_name, p.product_description, p.product_price, product_id)}
                       >
                         <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                       </Button>
@@ -157,13 +158,13 @@ export default class Categories extends React.Component {
                   </div>
                 </div>
 
-                <Image cloudName={cloudName} publicId={p.image_public_id} width="300" height="200" crop="pad" />
+                <Image cloudName={cloudName} publicId={p.product_image_public_id} width="300" height="200" crop="pad" />
 
                 <div className="caption">
                   <h4>{p.product_name}</h4>
                   <p>{p.product_description}</p>
                   <p>{p.product_price}</p>
-                  <Link to={`/productdetails/${p.id}`}>
+                  <Link to={`/productdetails/${p.product_id}`}>
                     <Button bsStyle="primary">Buy</Button>
                   </Link>
                 </div>

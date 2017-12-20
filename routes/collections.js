@@ -9,7 +9,6 @@ router.get('/collections/:id', (req, res, next) => {
   knex('products')
     .select()
     .innerJoin('products_collections', 'products.product_id', 'products_collections.product_id')
-    .innerJoin('images', 'products.product_id', 'images.product_id')
     .where('products_collections.collection_id', req.params.id)
     .then((product) => {
       res.send(product);

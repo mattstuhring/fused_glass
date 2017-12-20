@@ -46,12 +46,13 @@ app.use(bodyParser.json());
 //   secret: process.env.SESSION_SECRET
 // }));
 
+
+
 app.use('/api', categories);
 app.use('/api', collections);
 app.use('/api', products);
 app.use('/api', images);
 app.use('/api', cloudinary);
-
 
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

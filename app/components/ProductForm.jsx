@@ -40,7 +40,7 @@ export default class ProductForm extends React.Component {
     this.categoryValidation = this.categoryValidation.bind(this);
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
-    this.getCategory = this.getCategory.bind(this);
+    this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
     this.handleRemoveImage = this.handleRemoveImage.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
   }
@@ -48,12 +48,81 @@ export default class ProductForm extends React.Component {
 
   componentDidMount() {
     if (this.props.params.id) {
+      // axios.get(`api/products/${this.props.params.id}`)
+      //   .then((res) => {
+      //     const data = res.data[0];
+      //     const categoryName = data.category_name.toLowerCase();
+      //
+      //     this.handleCategoryCollections(categoryName, data.category_id);
+      //
+      //     let collectionNames = [];
+      //     let collectionIds = [];
+      //     res.data.forEach((p) => {
+      //       collectionNames.push(p.collection_name);
+      //       collectionIds.push(p.collection_id);
+      //       return;
+      //     });
+      //
+      //     if (data.product_image !== '') {
+      //       const img = data.product_image;
+      //       const file = {name: img}
+      //
+      //       this.state.primaryDropzone.emit("addedfile", file);
+      //       this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
+      //       this.state.primaryDropzone.emit("complete", file);
+      //       const existingFileCount = 1;
+      //       this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
+      //
+      //       this.setState({primaryImage: file})
+      //     }
+      //
+      //     this.setState({
+      //       collections: collectionNames,
+      //       collectionIds: collectionIds,
+      //       description: data.product_description,
+      //       name: data.product_name,
+      //       price: data.product_price,
+      //       size: data.product_size
+      //     });
+      //   })
+      //   .then(() => {
+      //     axios.get(`api/images/${this.props.params.id}`)
+      //       .then((r) => {
+      //         let images = Object.assign([], this.state.secondaryImages);
+      //
+      //         r.data.forEach((img) => {
+      //           if (img.image_name !== '') {
+      //             const secondFile = {name: img.image_name};
+      //             images.push(secondFile);
+      //
+      //             this.state.secondaryDropzone.emit("addedfile", secondFile);
+      //             this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+      //             this.state.secondaryDropzone.emit("complete", secondFile);
+      //           }
+      //         });
+      //
+      //         this.setState({ secondaryImages: images });
+      //       })
+      //       .catch((err) => {
+      //         console.log(err);
+      //       });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+
+
+
+
+
       axios.get(`api/products/${this.props.params.id}`)
         .then((res) => {
+          console.log(res.data, '************ RES');
+
           const data = res.data[0];
           const categoryName = data.category_name.toLowerCase();
 
-          this.getCategory(categoryName, data.category_id);
+          this.handleCategoryCollections(categoryName, data.category_id);
 
           let collectionNames = [];
           let collectionIds = [];
@@ -63,17 +132,27 @@ export default class ProductForm extends React.Component {
             return;
           });
 
-          if (data.product_image !== '') {
-            const img = data.product_image;
-            const file = {name: img}
+          if (data.product_image_public_id !== '') {
+            const dz = this.state.primaryDropzone;
+            const imgName = data.product_image_public_id;
+            const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
 
-            this.state.primaryDropzone.emit("addedfile", file);
-            this.state.primaryDropzone.createThumbnailFromUrl(file, `images/uploads/${img}`);
-            this.state.primaryDropzone.emit("complete", file);
-            const existingFileCount = 1;
-            this.state.primaryDropzone.options.maxFiles = this.state.primaryDropzone.options.maxFiles - existingFileCount;
+            dz.files.push(thumb);
 
-            this.setState({primaryImage: file})
+            // Call the default addedfile event handler
+            dz.emit('addedfile', thumb);
+
+            dz.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
+              console.log('We made it!');
+            }, 'anonymous');
+
+            // Make sure that there is no progress bar, etc...
+            dz.emit('complete', thumb);
+
+            // If you use the maxFiles option, make sure you adjust it to the
+            // correct amount:
+            var existingFileCount = 1; // The number of files already uploaded
+            dz.options.maxFiles = dz.options.maxFiles - existingFileCount;
           }
 
           this.setState({
@@ -85,28 +164,28 @@ export default class ProductForm extends React.Component {
             size: data.product_size
           });
         })
-        .then(() => {
-          axios.get(`api/images/${this.props.params.id}`)
-            .then((r) => {
-              let images = Object.assign([], this.state.secondaryImages);
-
-              r.data.forEach((img) => {
-                if (img.image_name !== '') {
-                  const secondFile = {name: img.image_name};
-                  images.push(secondFile);
-
-                  this.state.secondaryDropzone.emit("addedfile", secondFile);
-                  this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
-                  this.state.secondaryDropzone.emit("complete", secondFile);
-                }
-              });
-
-              this.setState({ secondaryImages: images });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
+        // .then(() => {
+        //   axios.get(`api/images/${this.props.params.id}`)
+        //     .then((r) => {
+        //       let images = Object.assign([], this.state.secondaryImages);
+        //
+        //       r.data.forEach((img) => {
+        //         if (img.image_name !== '') {
+        //           const secondFile = {name: img.image_name};
+        //           images.push(secondFile);
+        //
+        //           this.state.secondaryDropzone.emit("addedfile", secondFile);
+        //           this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+        //           this.state.secondaryDropzone.emit("complete", secondFile);
+        //         }
+        //       });
+        //
+        //       this.setState({ secondaryImages: images });
+        //     })
+        //     .catch((err) => {
+        //       console.log(err);
+        //     });
+        // })
         .catch((err) => {
           console.log(err);
         });
@@ -183,13 +262,11 @@ export default class ProductForm extends React.Component {
 
   // ASSIGN PRIMARY DROPZONE OBJECT TO STATE
   handlePrimaryDropzone(obj) {
-    // console.log(obj, '********** PRIMARY DROPZONE');
     this.setState({ primaryDropzone: obj });
   }
 
   // UPDATE PRIMARY IMAGE STATE
   handlePrimaryImage(file) {
-    // console.log(file, '********* PRIMARY IMAGE FILE');
     this.setState({ primaryImage: file })
   }
 
@@ -225,7 +302,7 @@ export default class ProductForm extends React.Component {
 
 
   // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
-  getCategory(categoryName, categoryId) {
+  handleCategoryCollections(categoryName, categoryId) {
     axios.get(`/api/categories/${categoryId}/collections`)
       .then((res) => {
         var options = res.data.map((e) => {

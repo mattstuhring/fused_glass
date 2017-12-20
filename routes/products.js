@@ -10,7 +10,6 @@ const path = require('path');
 const router = express.Router();
 
 
-
 // GET PRODUCT DETAILS BY ID
 router.get('/products/:id', (req, res, next) => {
   const productId = req.params.id;
@@ -99,11 +98,9 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
                   }
 
                   // INSERT IMAGE INTO DB
-                  knex('images')
-                    .insert({
-                      image_public_id: result.public_id,
-                      image_main: true,
-                      product_id: productId
+                  knex('products')
+                    .update({
+                      product_image_public_id: result.public_id
                     })
                     .then((data) => {
                       res.send(productId.toString());
