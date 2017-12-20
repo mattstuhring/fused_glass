@@ -12,8 +12,6 @@ const router = express.Router();
 
 // GET ALL SECONDARY PRODUCT IMAGES BY ID
 router.get('/images/:id', (req, res, next) => {
-  console.log(req.params.id, '********* ID');
-
   knex('images')
     .select('*')
     .where('product_id', req.params.id)
@@ -74,7 +72,7 @@ router.post('/images', upload.array('images'), (req, res, next) => {
         },
         function(error, result) {
           if (error) {
-            console.log(error, '********** CLOUD ERROR');
+            next(error);
           }
 
           imgArr.push({
@@ -86,7 +84,72 @@ router.post('/images', upload.array('images'), (req, res, next) => {
 
     db.insert(imgArr)
       .then((r) => {
-        console.log(r, '************* r');
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+  else {
+    res.sendStatus(200);
+  }
+});
+
+
+
+
+// UPDATE PRODUCT SECONDARY IMAGES
+router.put('/images', upload.array('images'), (req, res, next) => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+  });
+
+  const { category } = req.body;
+  let { id } = req.body;
+  let productId;
+  let categoryName;
+
+  if (req.files !== {} || req.files !== undefined) {
+    console.log(req.files, '************ req files');
+    let db = knex.table('images')
+    let imgArr = [];
+    let productId;
+
+    if (Array.isArray(id) === true) {
+      productId = parseInt(req.body.id[0]);
+    } else {
+      productId = parseInt(req.body.id);
+    }
+
+
+    req.files.forEach((img) => {
+      const datauri = new Datauri();
+      datauri.format(path.extname(img.originalname).toString(), img.buffer);
+
+      cloudinary.v2.uploader.upload(datauri.content,
+        {
+          folder: `${categoryName}/${productId}/`,
+          tags: productId,
+          height: 400,
+          weight: 500,
+          crop: 'limit'
+        },
+        function(error, result) {
+          if (error) {
+            next(error);
+          }
+
+          imgArr.push({
+            image_public_id: result.public_id,
+            product_id: productId
+          });
+        });
+    });
+
+    db.insert(imgArr)
+      .then((r) => {
         res.sendStatus(200);
       })
       .catch((err) => {
