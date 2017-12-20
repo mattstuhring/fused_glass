@@ -132,12 +132,15 @@ export default class ProductForm extends React.Component {
             return;
           });
 
+          let primeDrop;
+
           if (data.product_image_public_id !== '') {
             const dz = this.state.primaryDropzone;
             const imgName = data.product_image_public_id;
             const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
 
-            dz.files.push(thumb);
+            primeDrop = Object.assign({}, this.state.primaryDropzone);
+            primeDrop.files.push(thumb);
 
             // Call the default addedfile event handler
             dz.emit('addedfile', thumb);
@@ -161,31 +164,70 @@ export default class ProductForm extends React.Component {
             description: data.product_description,
             name: data.product_name,
             price: data.product_price,
-            size: data.product_size
+            size: data.product_size,
+            primaryDropzone: primeDrop
           });
         })
-        // .then(() => {
-        //   axios.get(`api/images/${this.props.params.id}`)
-        //     .then((r) => {
-        //       let images = Object.assign([], this.state.secondaryImages);
-        //
-        //       r.data.forEach((img) => {
-        //         if (img.image_name !== '') {
-        //           const secondFile = {name: img.image_name};
-        //           images.push(secondFile);
-        //
-        //           this.state.secondaryDropzone.emit("addedfile", secondFile);
-        //           this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
-        //           this.state.secondaryDropzone.emit("complete", secondFile);
-        //         }
-        //       });
-        //
-        //       this.setState({ secondaryImages: images });
-        //     })
-        //     .catch((err) => {
-        //       console.log(err);
-        //     });
-        // })
+        .then(() => {
+          return axios.get(`api/images/${this.props.params.id}`)
+            .then((r) => {
+              console.log(r, '*********** RES');
+              let secondDrop;
+
+
+              if (r.data.length > 0) {
+                r.data.forEach((item) => {
+                  const dz2 = this.state.secondaryDropzone;
+                  const imgName = item.image_public_id;
+                  const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
+
+                  // let dz2 = Object.assign([], this.state.secondaryImages);
+                  secondDrop = Object.assign({}, this.state.secondaryDropzone);
+                  secondDrop.files.push(thumb);
+
+                  // Call the default addedfile event handler
+                  dz2.emit('addedfile', thumb);
+
+                  dz2.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
+                    console.log('We made it!');
+                  }, 'anonymous');
+
+                  // Make sure that there is no progress bar, etc...
+                  dz2.emit('complete', thumb);
+
+                  // If you use the maxFiles option, make sure you adjust it to the
+                  // correct amount:
+                  var existingFileCount = 1; // The number of files already uploaded
+                  dz2.options.maxFiles = dz2.options.maxFiles - existingFileCount;
+                });
+              }
+
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+
+          // axios.get(`api/images/${this.props.params.id}`)
+          //   .then((r) => {
+          //     let images = Object.assign([], this.state.secondaryImages);
+          //
+          //     r.data.forEach((img) => {
+          //       if (img.image_name !== '') {
+          //         const secondFile = {name: img.image_name};
+          //         images.push(secondFile);
+          //
+          //         this.state.secondaryDropzone.emit("addedfile", secondFile);
+          //         this.state.secondaryDropzone.createThumbnailFromUrl(secondFile, `images/uploads/${img.image_name}`);
+          //         this.state.secondaryDropzone.emit("complete", secondFile);
+          //       }
+          //     });
+          //
+          //     this.setState({ secondaryImages: images });
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
+        })
         .catch((err) => {
           console.log(err);
         });
