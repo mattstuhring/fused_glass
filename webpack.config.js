@@ -33,8 +33,8 @@ module.exports = {
       Home: 'app/components/Home.jsx',
       Main: 'app/components/Main.jsx',
       Navigation: 'app/components/Navigation.jsx',
+      ProductAdd: 'app/components/ProductAdd.jsx',
       ProductDetails: 'app/components/ProductDetails.jsx',
-      ProductForm: 'app/components/ProductForm.jsx',
       ProductUpdate: 'app/components/ProductUpdate.jsx',
       Playground: 'app/components/playground.jsx',
       SideNav: 'app/components/SideNav.jsx'

@@ -10,7 +10,7 @@ import Gallery from 'Gallery';
 import Home from 'Home';
 import Main from 'Main';
 import ProductDetails from 'ProductDetails';
-import ProductForm from 'ProductForm';
+import ProductAdd from 'ProductAdd';
 import ProductUpdate from 'ProductUpdate';
 import Playground from 'Playground';
 
@@ -37,7 +37,7 @@ ReactDOM.render(
       <Route path="about" component={About}/>
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
-      <Route path="productform" component={ProductForm}/>
+      <Route path="productadd" component={ProductAdd}/>
       <Route path="productupdate/:id" component={ProductUpdate}/>
       <Route path="cart(/:id)" component={Cart}/>
 

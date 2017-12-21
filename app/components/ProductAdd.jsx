@@ -9,7 +9,7 @@ import superagent from 'superagent';
 
 
 
-export default class ProductForm extends React.Component {
+export default class ProductAdd extends React.Component {
   constructor(props) {
     super(props);
 
@@ -38,7 +38,7 @@ export default class ProductForm extends React.Component {
     this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
     this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
     this.categoryValidation = this.categoryValidation.bind(this);
-    this.collectionValidation = this.collectionValidation.bind(this);
+    // this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
     this.handleRemoveImage = this.handleRemoveImage.bind(this);
@@ -198,57 +198,57 @@ export default class ProductForm extends React.Component {
     console.log(primary, '*********** PRIMARY');
     console.log(secondary, '*********** SECONDARY');
 
-    superagent.post('/api/products')
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', this.state.collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
-      .attach('primary', primary[0])
-      .then((res) => {
-        let productId;
-        productId = res.text;
-        productId = parseInt(productId);
-
-        let reqImg = superagent.post('/api/images');
-
-        // POST SECONDARY IMAGES
-        secondary.forEach((img) => {
-          reqImg
-            .field('id', productId)
-            .field('category', this.state.category)
-            .attach('images', img)
-        });
-
-        reqImg.end((err, res) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-
-          console.log('NEW PRODUCT SUCCESS');
-
-          this.state.primaryDropzone.removeAllFiles();
-          this.state.secondaryDropzone.removeAllFiles();
-
-          this.setState({
-            category: '',
-            categoryId: null,
-            collections: [],
-            name: '',
-            description: '',
-            price: '',
-            size: '',
-            primaryImage: [],
-            secondaryImages: []
-          });
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // superagent.post('/api/products')
+    //   .field('category', this.state.category)
+    //   .field('categoryId', this.state.categoryId)
+    //   .field('collections', this.state.collections)
+    //   .field('name', this.state.name)
+    //   .field('description', this.state.description)
+    //   .field('price', this.state.price)
+    //   .field('size', this.state.size)
+    //   .attach('primary', primary[0])
+    //   .then((res) => {
+    //     let productId;
+    //     productId = res.text;
+    //     productId = parseInt(productId);
+    //
+    //     let reqImg = superagent.post('/api/images');
+    //
+    //     // POST SECONDARY IMAGES
+    //     secondary.forEach((img) => {
+    //       reqImg
+    //         .field('id', productId)
+    //         .field('category', this.state.category)
+    //         .attach('images', img)
+    //     });
+    //
+    //     reqImg.end((err, res) => {
+    //       if (err) {
+    //         console.log(err);
+    //         return;
+    //       }
+    //
+    //       console.log('NEW PRODUCT SUCCESS');
+    //
+    //       this.state.primaryDropzone.removeAllFiles();
+    //       this.state.secondaryDropzone.removeAllFiles();
+    //
+    //       this.setState({
+    //         category: '',
+    //         categoryId: null,
+    //         collections: [],
+    //         name: '',
+    //         description: '',
+    //         price: '',
+    //         size: '',
+    //         primaryImage: [],
+    //         secondaryImages: []
+    //       });
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 
 
@@ -275,6 +275,7 @@ export default class ProductForm extends React.Component {
     if (this.state.collections === []) return null;
     else if (this.state.collections.length > 0) return 'success';
   }
+
   // TEXT FORM VALIDATION
   textValidation(field) {
     if (field === '') return null;
@@ -298,10 +299,10 @@ export default class ProductForm extends React.Component {
               <div className="col-sm-6">
 
                 <div className="page-header text-center">
-                  <h4>Product Details</h4>
+                  <h4>PRODUCT DETAILS</h4>
                 </div>
 
-                {/* CATEGORY & COLLECTION */}
+                {/* CATEGORY */}
                 <FormGroup
                   controlId="formControlsSelect"
                   validationState={this.categoryValidation()}
@@ -309,25 +310,28 @@ export default class ProductForm extends React.Component {
                   <ControlLabel>Category</ControlLabel>
                   <FormControl
                     componentClass="select"
-                    placeholder="select"
+                    // placeholder="Select a product category"
                     onChange={this.handleCategory}
                     value={this.state.category}
                   >
-                    <option>select...</option>
+                    <option></option>
                     <option value="decorative">Decorative</option>
                     <option value="houseware">Houseware</option>
                     <option value="jewelry">Jewelry</option>
                     <option value="garden">Garden</option>
                   </FormControl>
                 </FormGroup>
+
+                {/* COLLECTIONS */}
                 <FormGroup
                   controlId="formControlsSelect"
                   validationState={this.collectionValidation()}
                 >
-                  <ControlLabel>Collection</ControlLabel>
+                  <ControlLabel>Collections</ControlLabel>
                   <Select
                     multi={true}
                     simpleValue={true}
+                    placeholder="Optional..."
                     value={this.state.collections}
                     options={this.state.options}
                     onChange={this.handleCollections}
@@ -343,7 +347,6 @@ export default class ProductForm extends React.Component {
                   <ControlLabel>Name</ControlLabel>
                   <FormControl
                     type="text"
-                    placeholder="Enter name"
                     name="name"
                     value={this.state.name}
                     onChange={this.handleChange}
@@ -359,7 +362,6 @@ export default class ProductForm extends React.Component {
                   <ControlLabel>Description</ControlLabel>
                   <FormControl
                     componentClass="textarea"
-                    placeholder="textarea"
                     name="description"
                     value={this.state.description}
                     onChange={this.handleChange}
@@ -379,7 +381,6 @@ export default class ProductForm extends React.Component {
                         <InputGroup.Addon>$</InputGroup.Addon>
                         <FormControl
                           type="text"
-                          placeholder="Enter price"
                           name="price"
                           value={this.state.price}
                           onChange={this.handleChange}
@@ -395,7 +396,6 @@ export default class ProductForm extends React.Component {
                       <ControlLabel>Size</ControlLabel>
                       <FormControl
                         type="text"
-                        placeholder="Enter size"
                         name="size"
                         value={this.state.size}
                         onChange={this.handleChange}
@@ -412,7 +412,7 @@ export default class ProductForm extends React.Component {
               {/* REACT DROPZONE COMONENTS */}
               <div className="col-sm-6 text-center">
                 <div className="page-header">
-                  <h4>Display Image <small>(Choose: 1)</small></h4>
+                  <h4>DISPLAY IMAGE <small><em>(Choose: 1)</em></small></h4>
                 </div>
 
 
@@ -432,7 +432,7 @@ export default class ProductForm extends React.Component {
                 />
 
                 <div className="page-header">
-                  <h4>More Images <small>(Max: 4)</small></h4>
+                  <h4>MORE IMAGES <small><em>(Max: 4)</em></small></h4>
                 </div>
 
 
@@ -455,11 +455,8 @@ export default class ProductForm extends React.Component {
 
 
             <div className="row">
-              <div className="col-sm-3 col-sm-offset-3">
-                <Button bsStyle="primary" type="submit">Add</Button>
-              </div>
-              <div className="col-sm-3">
-                <Button bsStyle="danger" type="button">Clear</Button>
+              <div className="col-sm-4 col-sm-offset-4">
+                <Button bsStyle="primary" type="submit">ADD NEW PRODUCT</Button>
               </div>
             </div>
           </form>
