@@ -30,8 +30,6 @@ export default class Categories extends React.Component {
   componentDidMount() {
     axios.get(`/api/categories/${this.props.params.id}`)
       .then((res) => {
-        console.log(res.data, '********* RES');
-
         this.setState({
           products: res.data,
           categoryId: this.props.params.id
@@ -110,7 +108,6 @@ export default class Categories extends React.Component {
         </div>);
       } else {
         return this.state.products.map((p) => {
-          console.log(p, '********** products');
           return <div className="col-sm-4" key={p.product_id}>
             <div>
 

@@ -27,7 +27,6 @@ router.get('/products/:id', (req, res, next) => {
     .innerJoin('categories', 'products.category_id', 'categories.category_id')
     .where('products.product_id', productId)
     .then((product) => {
-      console.log(product, '**************** PRODUCT');
       res.send(product);
     })
     .catch((err) => {
@@ -46,9 +45,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
   let { collections, categoryId } = req.body;
   collections = collections.split(',');
-
-  console.log(req.file, '*************** FILE');
-  console.log(req.body, '*********** BODY');
 
   // res.sendStatus(200);
 
@@ -84,7 +80,7 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
           });
 
           db.insert(c)
-            .then((r) => {
+            .then(() => {
               cloudinary.v2.uploader.upload(datauri.content,
                 {
                   folder: `${category}/${productId}/`,
@@ -98,8 +94,9 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
                     console.log(error, '********** CLOUD ERROR');
                   }
 
-                  // INSERT IMAGE INTO DB
+                  // INSERT IMAGE INTO PRODUCT IMAGE DB COLUMN
                   knex('products')
+                    .where('products.product_id', productId)
                     .update({
                       product_image_public_id: result.public_id
                     })
@@ -122,7 +119,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-
 });
 
 
@@ -159,6 +155,7 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
       return knex('products')
         .select('*')
         .where('products.product_id', productId)
+        .returning('product_image_public_id')
         .update({
           product_name: name,
           product_price: price,
@@ -166,7 +163,9 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
           product_size: size,
           category_id: categoryId
         })
-        .then(() => {
+        .then((imgPublicId) => {
+          // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+          // INSERT NEW COLLECTIONS
           return knex('products_collections')
             .where('products_collections.product_id', productId)
             .del()
@@ -182,8 +181,16 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
               });
 
               db.insert(coll)
-                .then((r) => {
-                  if (req.file !== undefined) {
+                .then(() => {
+                  console.log(req.file, '********** req.file');
+
+                  // IF THERE IS A PRIMARY IMAGE FILE THEN
+                  // DELETE THE OLD IMAGE FROM CLOUDINARY
+                  // UPLOAD NEW IMAGE TO CLOUDINARY
+                  // UPDATE DB WITH NEW PUBLIC_ID
+                  if (req.file) {
+                    cloudinary.v2.api.delete_resources(imgPublicId, function(error, result){console.log(result, '*********  CLOUD DELETE SUCCESS');});
+
                     const datauri = new Datauri();
                     datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
@@ -214,6 +221,8 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
                       });
                   }
                   else {
+                    // IF THERE IS NO IMAGE FILE:
+                    // SEND BACK PRODUCT ID WHICH UNFORTUNATELY HAS TO BE SENT AS A STRING.
                     res.send(productId.toString());
                   }
 

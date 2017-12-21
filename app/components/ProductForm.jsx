@@ -104,6 +104,8 @@ export default class ProductForm extends React.Component {
             .then((r) => {
               let secondDrop;
 
+              console.log(r, '************ r');
+
               if (r.data.length > 0) {
                 r.data.forEach((item) => {
                   const dz2 = this.state.secondaryDropzone;
@@ -126,7 +128,7 @@ export default class ProductForm extends React.Component {
 
                   // If you use the maxFiles option, make sure you adjust it to the
                   // correct amount:
-                  var existingFileCount = 1; // The number of files already uploaded
+                  var existingFileCount = secondDrop.files.length; // The number of files already uploaded
                   dz2.options.maxFiles = dz2.options.maxFiles - existingFileCount;
                 });
               }
@@ -248,8 +250,18 @@ export default class ProductForm extends React.Component {
     if (this.props.params.id) {
       if (component === 'primary') {
         console.log(file, '******* pdz file remove');
+
       } else if (component === 'secondary') {
         console.log(file, '********** sdz file remove');
+
+        // let imgPublicId = file.name;
+        // axios.delete(`/api/images/${imgPublicId}/${this.prop.params.id}`)
+        //   .then((res) => {
+        //     console.log(res, '*********** RES');
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
       }
     }
   }
@@ -288,8 +300,8 @@ export default class ProductForm extends React.Component {
     const primary = this.state.primaryDropzone.files;
     const secondary = this.state.secondaryDropzone.files;
 
-    // console.log(primary, '*********** PRIMARY');
-    // console.log(secondary, '*********** SECONDARY');
+    console.log(primary, '*********** PRIMARY');
+    console.log(secondary, '*********** SECONDARY');
 
     let request;
 
@@ -320,7 +332,6 @@ export default class ProductForm extends React.Component {
           productId = this.props.params.id;
           reqImg = superagent.put('/api/images');
         } else {
-          productId = res.body[0];
           reqImg = superagent.post('/api/images');
         }
 

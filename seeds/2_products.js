@@ -9,7 +9,7 @@ exports.seed = function(knex) {
         product_price: '$48.50',
         product_description: 'Fish night light',
         product_size: '8x4',
-        product_image_public_id: 'decorative/1/inqblewellycdalixs6g',
+        product_image_public_id: 'decorative/1/kbjza6ky6ilyy6k6nriz',
         category_id: 1,
         created_at: new Date('2017-09-15 11:16:16 UTC'),
         updated_at: new Date('2017-09-15 11:16:16 UTC')

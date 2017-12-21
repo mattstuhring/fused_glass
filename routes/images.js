@@ -14,8 +14,9 @@ const router = express.Router();
 router.get('/images/:id', (req, res, next) => {
   knex('images')
     .select('*')
-    .where('product_id', req.params.id)
+    .where('images.product_id', req.params.id)
     .then((images) => {
+      console.log(images, '************* GET SECONDARY IMAGES');
       res.send(images);
     })
     .catch((err) => {
@@ -36,28 +37,24 @@ router.post('/images', upload.array('images'), (req, res, next) => {
 
   const { category } = req.body;
   let { id } = req.body;
-  let productId;
   let categoryName;
+  let productId;
 
-  if (req.files !== {} || req.files !== undefined) {
-    console.log(req.files, '************ req files');
-    let db = knex.table('images')
-    let imgArr = [];
-    let productId;
+  if (Array.isArray(id) === true) {
+    productId = parseInt(req.body.id[0]);
+  } else {
+    productId = parseInt(req.body.id);
+  }
 
-    if (Array.isArray(id) === true) {
-      productId = parseInt(req.body.id[0]);
-    } else {
-      productId = parseInt(req.body.id);
-    }
-
-    if (Array.isArray(category) === true) {
-      categoryName = req.body.category[0];
-    } else {
-      categoryName = req.body.category;
-    }
+  if (Array.isArray(category) === true) {
+    categoryName = req.body.category[0];
+  } else {
+    categoryName = req.body.category;
+  }
 
 
+  // CHECK IF THERE ARE ANY SECONARY IMAGES
+  if (req.files) {
     req.files.forEach((img) => {
       const datauri = new Datauri();
       datauri.format(path.extname(img.originalname).toString(), img.buffer);
@@ -75,23 +72,23 @@ router.post('/images', upload.array('images'), (req, res, next) => {
             next(error);
           }
 
-          imgArr.push({
-            image_public_id: result.public_id,
-            product_id: productId
-          });
+          knex('images')
+            .insert({
+              image_public_id: result.public_id,
+              product_id: productId
+            })
+            .then((r) => {
+              console.log(r, '********* r');
+            })
+            .catch((err) => {
+              next(err);
+            });
         });
     });
-
-    db.insert(imgArr)
-      .then((r) => {
-        res.sendStatus(200);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
-  else {
     res.sendStatus(200);
+
+  } else {
+    res.sendStatus(300);
   }
 });
 
@@ -100,6 +97,11 @@ router.post('/images', upload.array('images'), (req, res, next) => {
 
 // UPDATE PRODUCT SECONDARY IMAGES
 router.put('/images', upload.array('images'), (req, res, next) => {
+
+  // console.log(req.files, '************* FILES');
+  // console.log(req.body, '************* BODY');
+  // res.sendStatus(200)
+
   cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
@@ -108,22 +110,18 @@ router.put('/images', upload.array('images'), (req, res, next) => {
 
   const { category } = req.body;
   let { id } = req.body;
-  let productId;
   let categoryName;
+  let productId;
+  let db = knex.table('images')
+  let imgArr = [];
 
-  if (req.files !== {} || req.files !== undefined) {
-    console.log(req.files, '************ req files');
-    let db = knex.table('images')
-    let imgArr = [];
-    let productId;
+  if (Array.isArray(id) === true) {
+    productId = parseInt(req.body.id[0]);
+  } else {
+    productId = parseInt(req.body.id);
+  }
 
-    if (Array.isArray(id) === true) {
-      productId = parseInt(req.body.id[0]);
-    } else {
-      productId = parseInt(req.body.id);
-    }
-
-
+  if (req.files) {
     req.files.forEach((img) => {
       const datauri = new Datauri();
       datauri.format(path.extname(img.originalname).toString(), img.buffer);
@@ -142,7 +140,7 @@ router.put('/images', upload.array('images'), (req, res, next) => {
           }
 
           imgArr.push({
-            image_public_id: result.public_id,
+            product_image_public_id: result.public_id,
             product_id: productId
           });
         });
@@ -155,9 +153,8 @@ router.put('/images', upload.array('images'), (req, res, next) => {
       .catch((err) => {
         next(err);
       });
-  }
-  else {
-    res.sendStatus(200);
+  } else {
+    res.sendStatus(300);
   }
 });
 
@@ -169,10 +166,12 @@ router.put('/images', upload.array('images'), (req, res, next) => {
 
 
 // UPDATE PRIMARY & SECONDARY DROPZONE IMAGE TO AN EMPTY STRING
-router.delete('/images/:name/:component/:id', (req, res, next) => {
+router.delete('/images/:name/:id', (req, res, next) => {
   const name = req.params.name;
-  const component = req.params.component;
   const productId = req.params.id;
+
+  console.log(name, '************* name');
+  console.log(productId, '********* productId');
 
   // if (component === 'primary') {
   //   fs.unlink(`public/images/uploads/${name}`, (err) => {
