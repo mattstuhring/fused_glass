@@ -184,7 +184,7 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
                 .then(() => {
                   console.log(req.file, '********** req.file');
 
-                  // IF THERE IS A PRIMARY IMAGE FILE THEN
+                  // IF THERE IS A PRIMARY IMAGE FILE THEN:
                   // DELETE THE OLD IMAGE FROM CLOUDINARY
                   // UPLOAD NEW IMAGE TO CLOUDINARY
                   // UPDATE DB WITH NEW PUBLIC_ID
@@ -209,6 +209,7 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
 
                         // UPDATE PRODUCT WITH CLOUDINARY PUBLIC_ID
                         knex('products')
+                          .where('products.product_id', productId)
                           .update({
                             product_image_public_id: result.public_id
                           })
@@ -225,7 +226,6 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
                     // SEND BACK PRODUCT ID WHICH UNFORTUNATELY HAS TO BE SENT AS A STRING.
                     res.send(productId.toString());
                   }
-
                 })
                 .catch((err) => {
                   next(err);

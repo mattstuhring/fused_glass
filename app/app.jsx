@@ -11,6 +11,7 @@ import Home from 'Home';
 import Main from 'Main';
 import ProductDetails from 'ProductDetails';
 import ProductForm from 'ProductForm';
+import ProductUpdate from 'ProductUpdate';
 import Playground from 'Playground';
 
 
@@ -36,7 +37,8 @@ ReactDOM.render(
       <Route path="about" component={About}/>
       <Route path="gallery" component={Gallery}/>
       <Route path="contact" component={Contact}/>
-      <Route path="productform/:action(/:id)" component={ProductForm}/>
+      <Route path="productform" component={ProductForm}/>
+      <Route path="productupdate/:id" component={ProductUpdate}/>
       <Route path="cart(/:id)" component={Cart}/>
 
       <Route path="products/:id/:category" component={Categories}/>

@@ -35,6 +35,7 @@ module.exports = {
       Navigation: 'app/components/Navigation.jsx',
       ProductDetails: 'app/components/ProductDetails.jsx',
       ProductForm: 'app/components/ProductForm.jsx',
+      ProductUpdate: 'app/components/ProductUpdate.jsx',
       Playground: 'app/components/playground.jsx',
       SideNav: 'app/components/SideNav.jsx'
     },

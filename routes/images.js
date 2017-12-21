@@ -126,6 +126,11 @@ router.put('/images', upload.array('images'), (req, res, next) => {
       const datauri = new Datauri();
       datauri.format(path.extname(img.originalname).toString(), img.buffer);
 
+      // DELETE PRODUCT IMAGE ROWS FROM DB
+      // DELETE CLOUDINARY IMAGES ASSOCIATED TO PRODUCT ID
+      // UPLOAD NEW IMAGES TO CLOUDINARY
+      // INSERT RESULTS INTO IMAGES ROWS
+
       cloudinary.v2.uploader.upload(datauri.content,
         {
           folder: `${categoryName}/${productId}/`,
@@ -139,20 +144,21 @@ router.put('/images', upload.array('images'), (req, res, next) => {
             next(error);
           }
 
-          imgArr.push({
-            product_image_public_id: result.public_id,
-            product_id: productId
-          });
+          knex('images')
+            .insert({
+              image_public_id: result.public_id,
+              product_id: productId
+            })
+            .then((r) => {
+              console.log(r, '********* r');
+            })
+            .catch((err) => {
+              next(err);
+            });
         });
     });
 
-    db.insert(imgArr)
-      .then((r) => {
-        res.sendStatus(200);
-      })
-      .catch((err) => {
-        next(err);
-      });
+    res.sendStatus(200);
   } else {
     res.sendStatus(300);
   }

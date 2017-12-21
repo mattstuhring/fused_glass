@@ -46,104 +46,9 @@ export default class ProductForm extends React.Component {
   }
 
 
-  componentDidMount() {
-    if (this.props.params.id) {
-      axios.get(`api/products/${this.props.params.id}`)
-        .then((res) => {
-          const data = res.data[0];
-          const categoryName = data.category_name.toLowerCase();
-
-          this.handleCategoryCollections(categoryName, data.category_id);
-
-          let collectionNames = [];
-          let collectionIds = [];
-          res.data.forEach((p) => {
-            collectionNames.push(p.collection_name);
-            collectionIds.push(p.collection_id);
-            return;
-          });
-
-          let primeDrop;
-
-          if (data.product_image_public_id !== '') {
-            const dz = this.state.primaryDropzone;
-            const imgName = data.product_image_public_id;
-            const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
-
-            primeDrop = Object.assign({}, this.state.primaryDropzone);
-            primeDrop.files.push(thumb);
-
-            // Call the default addedfile event handler
-            dz.emit('addedfile', thumb);
-
-            dz.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-              console.log('We made it!');
-            }, 'anonymous');
-
-            // Make sure that there is no progress bar, etc...
-            dz.emit('complete', thumb);
-
-            // If you use the maxFiles option, make sure you adjust it to the
-            // correct amount:
-            var existingFileCount = 1; // The number of files already uploaded
-            dz.options.maxFiles = dz.options.maxFiles - existingFileCount;
-          }
-
-          this.setState({
-            collections: collectionNames,
-            collectionIds: collectionIds,
-            description: data.product_description,
-            name: data.product_name,
-            price: data.product_price,
-            size: data.product_size,
-            primaryDropzone: primeDrop
-          });
-        })
-        .then(() => {
-          return axios.get(`api/images/${this.props.params.id}`)
-            .then((r) => {
-              let secondDrop;
-
-              console.log(r, '************ r');
-
-              if (r.data.length > 0) {
-                r.data.forEach((item) => {
-                  const dz2 = this.state.secondaryDropzone;
-                  const imgName = item.image_public_id;
-                  const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
-
-                  // let dz2 = Object.assign([], this.state.secondaryImages);
-                  secondDrop = Object.assign({}, this.state.secondaryDropzone);
-                  secondDrop.files.push(thumb);
-
-                  // Call the default addedfile event handler
-                  dz2.emit('addedfile', thumb);
-
-                  dz2.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-                    console.log('We made it!');
-                  }, 'anonymous');
-
-                  // Make sure that there is no progress bar, etc...
-                  dz2.emit('complete', thumb);
-
-                  // If you use the maxFiles option, make sure you adjust it to the
-                  // correct amount:
-                  var existingFileCount = secondDrop.files.length; // The number of files already uploaded
-                  dz2.options.maxFiles = dz2.options.maxFiles - existingFileCount;
-                });
-              }
-
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-
+  // componentDidMount() {
+  //
+  // }
 
 
   // HANDLE ALL FORM INPUT CHANGE EVENTS
@@ -219,15 +124,7 @@ export default class ProductForm extends React.Component {
 
   // UPDATE PRIMARY IMAGE CHANGE
   handlePrimaryImage(file) {
-    if (this.props.params.id) {
-      let pdz = Object.assign({}, this.state.primaryDropzone);
-      pdz.files = [];
-      pdz.files.push(file);
-
-      this.setState({ primaryDropzone: pdz});
-    } else {
-      this.setState({ primaryImage: file})
-    }
+    this.setState({ primaryImage: file});
   }
 
   // ASSIGN SECONDARY DROPZONE OBJECT TO STATE
@@ -247,22 +144,20 @@ export default class ProductForm extends React.Component {
 
   // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
   handleRemoveImage(file, component) {
-    if (this.props.params.id) {
-      if (component === 'primary') {
-        console.log(file, '******* pdz file remove');
+    if (component === 'primary') {
+      console.log(file, '******* pdz file remove');
 
-      } else if (component === 'secondary') {
-        console.log(file, '********** sdz file remove');
+    } else if (component === 'secondary') {
+      console.log(file, '********** sdz file remove');
 
-        // let imgPublicId = file.name;
-        // axios.delete(`/api/images/${imgPublicId}/${this.prop.params.id}`)
-        //   .then((res) => {
-        //     console.log(res, '*********** RES');
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
-      }
+      // let imgPublicId = file.name;
+      // axios.delete(`/api/images/${imgPublicId}/${this.prop.params.id}`)
+      //   .then((res) => {
+      //     console.log(res, '*********** RES');
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
   }
 
@@ -303,16 +198,7 @@ export default class ProductForm extends React.Component {
     console.log(primary, '*********** PRIMARY');
     console.log(secondary, '*********** SECONDARY');
 
-    let request;
-
-    if (this.props.params.id) {
-      request = superagent.put('/api/products')
-        .field('productId', this.props.params.id);
-    } else {
-      request = superagent.post('/api/products');
-    }
-
-    request
+    superagent.post('/api/products')
       .field('category', this.state.category)
       .field('categoryId', this.state.categoryId)
       .field('collections', this.state.collections)
@@ -326,14 +212,7 @@ export default class ProductForm extends React.Component {
         productId = res.text;
         productId = parseInt(productId);
 
-        let reqImg;
-
-        if (this.props.params.id) {
-          productId = this.props.params.id;
-          reqImg = superagent.put('/api/images');
-        } else {
-          reqImg = superagent.post('/api/images');
-        }
+        let reqImg = superagent.post('/api/images');
 
         // POST SECONDARY IMAGES
         secondary.forEach((img) => {
@@ -349,25 +228,22 @@ export default class ProductForm extends React.Component {
             return;
           }
 
-          if (this.props.params.id) {
-            console.log('SUCCESS');
-            return;
-          } else {
-            this.state.primaryDropzone.removeAllFiles();
-            this.state.secondaryDropzone.removeAllFiles();
+          console.log('NEW PRODUCT SUCCESS');
 
-            this.setState({
-              category: '',
-              categoryId: null,
-              collections: [],
-              name: '',
-              description: '',
-              price: '',
-              size: '',
-              primaryImage: [],
-              secondaryImages: []
-            });
-          }
+          this.state.primaryDropzone.removeAllFiles();
+          this.state.secondaryDropzone.removeAllFiles();
+
+          this.setState({
+            category: '',
+            categoryId: null,
+            collections: [],
+            name: '',
+            description: '',
+            price: '',
+            size: '',
+            primaryImage: [],
+            secondaryImages: []
+          });
         });
       })
       .catch((err) => {
@@ -409,39 +285,6 @@ export default class ProductForm extends React.Component {
 
   // **************************   RENDER   ***********************************
   render() {
-    const title = (
-      <h3>{this.props.params.action}</h3>
-    );
-
-    // CONDITIONAL TO DISPLAY THE ADD OR UPDATE PRODUCT BUTTON CONFIG
-    const buttonAction = () => {
-      if (this.props.params.id) {
-        return <div className="row">
-          <div className="col-sm-3 col-sm-offset-3">
-            <Button bsStyle="primary" type="submit">Save</Button>
-          </div>
-          <div className="col-sm-3">
-            <Button
-              bsStyle="danger"
-              type="button"
-              onClick={() => window.history.back()}
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>;
-      } else {
-        return <div className="row">
-          <div className="col-sm-3 col-sm-offset-3">
-            <Button bsStyle="primary" type="submit">Add</Button>
-          </div>
-          <div className="col-sm-3">
-            <Button bsStyle="danger" type="button">Clear</Button>
-          </div>
-        </div>;
-      }
-    };
-
 
     return (
       <div className="admin">
@@ -449,7 +292,7 @@ export default class ProductForm extends React.Component {
         {/* HEADER */}
         <Header category="Admin"/>
 
-        <Panel header={title} bsStyle="primary">
+        <Panel header="ADD NEW PRODUCT" bsStyle="success">
           <form onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-sm-6">
@@ -611,8 +454,14 @@ export default class ProductForm extends React.Component {
             </div>
 
 
-            {/* SUBMIT & CANCEL BTN */}
-            {buttonAction()}
+            <div className="row">
+              <div className="col-sm-3 col-sm-offset-3">
+                <Button bsStyle="primary" type="submit">Add</Button>
+              </div>
+              <div className="col-sm-3">
+                <Button bsStyle="danger" type="button">Clear</Button>
+              </div>
+            </div>
           </form>
         </Panel>
       </div>
