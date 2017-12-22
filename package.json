@@ -17,6 +17,7 @@
     "body-parser": "^1.15.2",
     "boom": "^3.2.2",
     "bootstrap": "^3.3.7",
+    "classnames": "^2.2.5",
     "cloudinary": "^1.9.1",
     "cloudinary-react": "^1.0.4",
     "cookie-parser": "^1.4.3",

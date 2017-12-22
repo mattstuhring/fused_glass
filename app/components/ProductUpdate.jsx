@@ -47,7 +47,6 @@ export default class ProductUpdate extends React.Component {
 
 
   componentDidMount() {
-    console.log(this.props.params.id, '*********** HEY');
     axios.get(`api/products/${this.props.params.id}`)
       .then((res) => {
         const data = res.data[0];
@@ -357,7 +356,7 @@ export default class ProductUpdate extends React.Component {
   render() {
 
     return (
-      <div className="admin">
+      <div className="product-update">
 
         {/* HEADER */}
         <Header category="Admin"/>

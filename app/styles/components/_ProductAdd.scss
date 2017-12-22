@@ -1,0 +1,31 @@
+.product-add {
+
+
+  .pdz-valid {
+    div.filepicker {
+      border-color: green;
+    }
+  }
+
+  .pdz-invalid {
+    div.filepicker {
+      border-color: red;
+    }
+
+    span.pdz-error {
+      position: relative;
+      top: 7px;
+      color: red;
+    }
+  }
+
+  button.btn.btn-primary, button.btn.btn-danger {
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  div.panel-body {
+    padding: 0px 30px 30px 30px;
+  }
+
+}

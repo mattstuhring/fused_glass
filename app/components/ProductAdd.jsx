@@ -6,7 +6,7 @@ import Header from 'Header';
 import Select from 'react-select';
 import DropzoneComponent from 'react-dropzone-component';
 import superagent from 'superagent';
-
+import classNames from 'classnames';
 
 
 export default class ProductAdd extends React.Component {
@@ -26,6 +26,9 @@ export default class ProductAdd extends React.Component {
       size: '',
       options: null,
       primaryDropzone: {},
+      pdzValid: null,
+      pdz: true,
+      pdzError: false,
       secondaryDropzone: {}
     };
 
@@ -124,7 +127,20 @@ export default class ProductAdd extends React.Component {
 
   // UPDATE PRIMARY IMAGE CHANGE
   handlePrimaryImage(file) {
-    this.setState({ primaryImage: file});
+    let pdz = Object.assign({}, this.state.primaryDropzone);
+    pdz.files = [];
+    pdz.files.push(file);
+
+    this.setState({ primaryDropzone: pdz});
+
+    const primary = this.state.primaryDropzone.files;
+    console.log(primary.length, '************* PDZ');
+
+    if (primary.length > 0) {
+      this.setState({ pdzValid: true, pdz: false, pdzError: false});
+    } else {
+      this.setState({ pdzValid: false, pdzError: true});
+    }
   }
 
   // ASSIGN SECONDARY DROPZONE OBJECT TO STATE
@@ -146,6 +162,7 @@ export default class ProductAdd extends React.Component {
   handleRemoveImage(file, component) {
     if (component === 'primary') {
       console.log(file, '******* pdz file remove');
+      this.setState({pdzValid: false, pdzError: true})
 
     } else if (component === 'secondary') {
       console.log(file, '********** sdz file remove');
@@ -194,14 +211,24 @@ export default class ProductAdd extends React.Component {
 
     const primary = this.state.primaryDropzone.files;
     const secondary = this.state.secondaryDropzone.files;
+    let collections = this.state.collections;
 
     console.log(primary, '*********** PRIMARY');
     console.log(secondary, '*********** SECONDARY');
 
+    console.log(collections, '******** collections');
+    if (primay === []) {
+      // THROW ERROR MESSAGE
+    }
+
+    if (!collections) {
+      let collections = [];
+    }
+
     // superagent.post('/api/products')
     //   .field('category', this.state.category)
     //   .field('categoryId', this.state.categoryId)
-    //   .field('collections', this.state.collections)
+    //   .field('collections', collections)
     //   .field('name', this.state.name)
     //   .field('description', this.state.description)
     //   .field('price', this.state.price)
@@ -286,9 +313,22 @@ export default class ProductAdd extends React.Component {
 
   // **************************   RENDER   ***********************************
   render() {
+    let pdzValidation = classNames({
+      'pdz': this.state.pdz,
+      'pdz-valid': this.state.pdzValid && !this.state.pdz,
+      'pdz-invalid': !this.state.pdzValid && !this.state.pdz
+    });
+
+    const pdzError = () => {
+      if (this.state.pdzError) {
+        return <span className="pdz-error">* Display image is required!</span>;
+      } else {
+        return <span></span>;
+      }
+    }
 
     return (
-      <div className="admin">
+      <div className="product-add">
 
         {/* HEADER */}
         <Header category="Admin"/>
@@ -310,7 +350,6 @@ export default class ProductAdd extends React.Component {
                   <ControlLabel>Category</ControlLabel>
                   <FormControl
                     componentClass="select"
-                    // placeholder="Select a product category"
                     onChange={this.handleCategory}
                     value={this.state.category}
                   >
@@ -417,19 +456,26 @@ export default class ProductAdd extends React.Component {
 
 
                 {/* PRIMARY DROPZONE */}
-                <DropzoneComponent
-                  config={{
-                    iconFiletypes: ['.jpg', '.png'],
-                    showFiletypeIcon: true,
-                    postUrl: 'no-url'
-                  }}
-                  eventHandlers={{
-                    addedfile: (file) => this.handlePrimaryImage(file),
-                    removedfile: (file) => this.handleRemoveImage(file, 'primary'),
-                    init: (obj) => this.handlePrimaryDropzone(obj)
-                  }}
-                  djsConfig={{addRemoveLinks: true, maxFiles: 1}}
-                />
+                <div className={pdzValidation}>
+                  <DropzoneComponent
+                    config={{
+                      iconFiletypes: ['.jpg', '.png'],
+                      showFiletypeIcon: true,
+                      postUrl: 'no-url'
+                    }}
+                    eventHandlers={{
+                      addedfile: (file) => this.handlePrimaryImage(file),
+                      removedfile: (file) => this.handleRemoveImage(file, 'primary'),
+                      init: (obj) => this.handlePrimaryDropzone(obj)
+                    }}
+                    djsConfig={{
+                      addRemoveLinks: true,
+                      maxFiles: 1
+                    }}
+                  />
+
+                  {pdzError()}
+                </div>
 
                 <div className="page-header">
                   <h4>MORE IMAGES <small><em>(Max: 4)</em></small></h4>
