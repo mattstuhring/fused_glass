@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup}
+import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup, Alert}
   from 'react-bootstrap';
 import Header from 'Header';
 import Select from 'react-select';
@@ -25,6 +25,8 @@ export default class ProductAdd extends React.Component {
       price: '',
       size: '',
       options: null,
+      alertVisible: false,
+      requireError: false,
       primaryDropzone: {},
       pdzValid: null,
       pdz: true,
@@ -46,6 +48,8 @@ export default class ProductAdd extends React.Component {
     this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
     this.handleRemoveImage = this.handleRemoveImage.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
+    this.handleAlertShow = this.handleAlertShow.bind(this);
+    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
   }
 
 
@@ -209,20 +213,29 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
+
+    const category = this.state.category;
+    const name = this.state.name;
+    const description = this.state.description;
+    const price = this.state.price;
+    const size = this.state.size;
     const primary = this.state.primaryDropzone.files;
     const secondary = this.state.secondaryDropzone.files;
     let collections = this.state.collections;
 
+
     console.log(primary, '*********** PRIMARY');
     console.log(secondary, '*********** SECONDARY');
 
-    console.log(collections, '******** collections');
-    if (primay === []) {
-      // THROW ERROR MESSAGE
-    }
+
+    // if (name === '' || description === '' || price === '' || primary === []) {
+    //   // THROW ERROR MESSAGE
+    //   this.setState({ alertVisible: true, requireError: true})
+    // }
 
     if (!collections) {
       let collections = [];
+      console.log(collections, '*********** ');
     }
 
     // superagent.post('/api/products')
@@ -283,8 +296,14 @@ export default class ProductAdd extends React.Component {
 
 
 
+  // BOOTSTRAP ALERT TOGGLES
+  handleAlertDismiss() {
+    this.setState({ alertVisible: false });
+  }
 
-
+  handleAlertShow() {
+    this.setState({ alertVisible: true });
+  }
 
 
 
@@ -294,19 +313,17 @@ export default class ProductAdd extends React.Component {
 
   // CATEGORY FORM VALIDATION
   categoryValidation() {
-    if (this.state.category === '') return null;
-    else if (this.state.category.length > 0) return 'success';
+    if (this.state.collections.length > 0) return 'success';
   }
+
   // COLLECTIONS FORM VALIDATION
   collectionValidation() {
-    if (this.state.collections === []) return null;
-    else if (this.state.collections.length > 0) return 'success';
+    if (this.state.collections.length > 0) return 'success';
   }
 
   // TEXT FORM VALIDATION
   textValidation(field) {
-    if (field === '') return null;
-    else if (field.length > 0) return 'success';
+    if (field.length > 0) return 'success';
   }
 
 
@@ -321,9 +338,24 @@ export default class ProductAdd extends React.Component {
 
     const pdzError = () => {
       if (this.state.pdzError) {
-        return <span className="pdz-error">* Display image is required!</span>;
-      } else {
-        return <span></span>;
+        return <span className="pdz-error"><small><em>* Display image is required!</em></small></span>;
+      }
+    };
+
+    const alertVisible = () => {
+      if (this.state.alertVisible) {
+        return (
+          <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
+            <h4>Oops! You got an error!</h4>
+            <p>Please fill in all required form fields.</p>
+          </Alert>
+        );
+      }
+    };
+
+    const requireError = () => {
+      if (this.state.requireError) {
+        return <span><small><em>* Required</em></small></span>
       }
     }
 
@@ -334,6 +366,9 @@ export default class ProductAdd extends React.Component {
         <Header category="Admin"/>
 
         <Panel header="ADD NEW PRODUCT" bsStyle="success">
+
+          {alertVisible()}
+
           <form onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-sm-6">
@@ -408,8 +443,9 @@ export default class ProductAdd extends React.Component {
                 </FormGroup>
 
 
-                {/* PRICE & SIZE */}
                 <div className="row">
+
+                  {/* PRICE */}
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
@@ -427,6 +463,8 @@ export default class ProductAdd extends React.Component {
                       </InputGroup>
                     </FormGroup>
                   </div>
+
+                  {/* SIZE */}
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"

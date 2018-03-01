@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'jQuery';
+// import $ from 'jQuery';
 import { Link, IndexLink } from 'react-router';
 import { Button } from 'react-bootstrap';
 

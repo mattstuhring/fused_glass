@@ -7,3 +7,6 @@
   - Webpack v1
   - Bootstrap
   - Font Awesome
+
+### Server: npm start
+### Webpack: webpack -w
