@@ -39,18 +39,19 @@ export default class ProductAdd extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
-    this.handlePrimaryImage = this.handlePrimaryImage.bind(this);
+    this.handleAddImgPDZ = this.handleAddImgPDZ.bind(this);
     this.handleSecondaryImages = this.handleSecondaryImages.bind(this);
-    this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
+    this.handleInitPDZ = this.handleInitPDZ.bind(this);
     this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
     this.categoryValidation = this.categoryValidation.bind(this);
     // this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
-    this.handleRemoveImage = this.handleRemoveImage.bind(this);
+    this.handleRemoveImgPDZ = this.handleRemoveImgPDZ.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
     this.handleAlertShow = this.handleAlertShow.bind(this);
     this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
+    this.handleSuccessPDZ = this.handleSuccessPDZ.bind(this);
   }
 
 
@@ -112,7 +113,7 @@ export default class ProductAdd extends React.Component {
 
 
 
-  // HANDLE NEW COLLECTION INPUT CHANGE EVENTS
+  // HANDLE NEW COLLECTION CHANGE
   handleCollections(val) {
     this.setState({collections: val})
   }
@@ -126,47 +127,30 @@ export default class ProductAdd extends React.Component {
 
 
   // INIT PRIMARY DROPZONE
-  handlePrimaryDropzone(dropzone) {
+  handleInitPDZ(dropzone) {
     console.log(dropzone, '****** init');
     this.setState({ primaryDropzone: dropzone });
   }
 
-  handlePrimaryImage(file) {
+  handleAddImgPDZ(file) {
     console.log(file, '******* added');
     if (file) {
-      this.setState({ pdzValid: true, pdz: false, pdzError: false});
+      this.setState({ primaryImage: file, pdzValid: true, pdz: false, pdzError: false});
     } else {
       this.setState({ pdzValid: false, pdzError: true});
     }
   }
 
-  handleRemoveImage(str, file) {
-    console.log(str, '********* name');
+  handleRemoveImgPDZ(str, file) {
     console.log(file, '******** removed');
     this.setState({pdzValid: false, pdzError: true})
   }
 
+  handleSuccessPDZ(file) {
+    console.log(file, '********* success');
+  }
 
 
-
-
-
-  // // UPDATE PRIMARY IMAGE CHANGE
-  // handlePrimaryImage(file) {
-  //   let pdz = Object.assign({}, this.state.primaryDropzone);
-  //   pdz.files = [];
-  //   pdz.files.push(file);
-  //
-  //   this.setState({ primaryDropzone: pdz});
-  //
-  //   const primary = this.state.primaryDropzone.files;
-  //
-  //   if (primary.length > 0) {
-  //     this.setState({ pdzValid: true, pdz: false, pdzError: false});
-  //   } else {
-  //     this.setState({ pdzValid: false, pdzError: true});
-  //   }
-  // }
 
 
 
@@ -188,7 +172,7 @@ export default class ProductAdd extends React.Component {
 
 
   // // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
-  // handleRemoveImage(file, component) {
+  // handleRemoveImgPDZ(file, component) {
   //   if (component === 'primary') {
   //     console.log(file, '******* pdz file remove');
   //     this.setState({pdzValid: false, pdzError: true})
@@ -231,19 +215,15 @@ export default class ProductAdd extends React.Component {
   }
 
 
-  // REMOVE ALL FILES FROM DROPZONE COMPONENT ON FORM SUBMIT
-  removeFile(dropzone) {
-    if (dropzone) {
-      dropzone.removeFile();
-    }
-  }
 
 
 
 
-  // FORM SUBMIT NEW PRODUCT
+  // -------------  FORM SUBMIT NEW PRODUCT -------------
   handleSubmit(event) {
     event.preventDefault();
+
+    console.log(this.state.primaryImage, '*********** PDZ submit');
 
     this.state.primaryDropzone.removeAllFiles();
 
@@ -334,7 +314,7 @@ export default class ProductAdd extends React.Component {
 
 
 
-  // BOOTSTRAP ALERT TOGGLES
+  // -----------  BOOTSTRAP ALERT TOGGLES ------------
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
   }
@@ -343,18 +323,16 @@ export default class ProductAdd extends React.Component {
     this.setState({ alertVisible: true });
   }
 
-
-  // CATEGORY FORM VALIDATION
+  // ----------  FORM VALIDATIONS -------------
+  // CATEGORY
   categoryValidation() {
     if (this.state.collections.length > 0) return 'success';
   }
-
-  // COLLECTIONS FORM VALIDATION
+  // COLLECTIONS
   collectionValidation() {
     if (this.state.collections.length > 0) return 'success';
   }
-
-  // TEXT FORM VALIDATION
+  // TEXT
   textValidation(field) {
     if (field.length > 0) return 'success';
   }
@@ -559,9 +537,10 @@ export default class ProductAdd extends React.Component {
                       postUrl: 'no-url'
                     }}
                     eventHandlers={{
-                      addedfile: (file) => this.handlePrimaryImage(file),
-                      removedfile: (file) => this.handleRemoveImage(file, 'primary'),
-                      init: (obj) => this.handlePrimaryDropzone(obj)
+                      addedfile: (file) => this.handleAddImgPDZ(file),
+                      removedfile: (file) => this.handleRemoveImgPDZ(file, 'primary'),
+                      init: (obj) => this.handleInitPDZ(obj),
+                      success: (file) => this.handleSuccessPDZ(file)
                     }}
                     djsConfig={{
                       addRemoveLinks: true,
@@ -587,7 +566,7 @@ export default class ProductAdd extends React.Component {
                   }}
                   eventHandlers={{
                     addedfile: (file) => this.handleSecondaryImages(file),
-                    removedfile: (file) => this.handleRemoveImage(file, 'secondary'),
+                    removedfile: (file) => this.handleRemoveImgPDZ(file, 'secondary'),
                     init: (obj) => this.handleSecondaryDropzone(obj)
                   }}
                   djsConfig={{addRemoveLinks: true, maxFiles: 4}}
