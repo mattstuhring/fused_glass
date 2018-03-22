@@ -8,6 +8,7 @@ import DropzoneComponent from 'react-dropzone-component';
 import superagent from 'superagent';
 import classNames from 'classnames';
 
+import { browserHistory } from 'react-router'
 
 export default class ProductAdd extends React.Component {
   constructor(props) {
@@ -27,11 +28,11 @@ export default class ProductAdd extends React.Component {
       options: null,
       alertVisible: false,
       requireError: false,
-      primaryDropzone: {},
+      primaryDropzone: null,
       pdzValid: null,
       pdz: true,
       pdzError: false,
-      secondaryDropzone: {}
+      secondaryDropzone: null
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -125,27 +126,51 @@ export default class ProductAdd extends React.Component {
 
 
   // INIT PRIMARY DROPZONE
-  handlePrimaryDropzone(obj) {
-    this.setState({ primaryDropzone: obj });
+  handlePrimaryDropzone(dropzone) {
+    console.log(dropzone, '****** init');
+    this.setState({ primaryDropzone: dropzone });
   }
 
-  // UPDATE PRIMARY IMAGE CHANGE
   handlePrimaryImage(file) {
-    let pdz = Object.assign({}, this.state.primaryDropzone);
-    pdz.files = [];
-    pdz.files.push(file);
-
-    this.setState({ primaryDropzone: pdz});
-
-    const primary = this.state.primaryDropzone.files;
-    console.log(primary.length, '************* PDZ');
-
-    if (primary.length > 0) {
+    console.log(file, '******* added');
+    if (file) {
       this.setState({ pdzValid: true, pdz: false, pdzError: false});
     } else {
       this.setState({ pdzValid: false, pdzError: true});
     }
   }
+
+  handleRemoveImage(str, file) {
+    console.log(str, '********* name');
+    console.log(file, '******** removed');
+    this.setState({pdzValid: false, pdzError: true})
+  }
+
+
+
+
+
+
+  // // UPDATE PRIMARY IMAGE CHANGE
+  // handlePrimaryImage(file) {
+  //   let pdz = Object.assign({}, this.state.primaryDropzone);
+  //   pdz.files = [];
+  //   pdz.files.push(file);
+  //
+  //   this.setState({ primaryDropzone: pdz});
+  //
+  //   const primary = this.state.primaryDropzone.files;
+  //
+  //   if (primary.length > 0) {
+  //     this.setState({ pdzValid: true, pdz: false, pdzError: false});
+  //   } else {
+  //     this.setState({ pdzValid: false, pdzError: true});
+  //   }
+  // }
+
+
+
+
 
   // ASSIGN SECONDARY DROPZONE OBJECT TO STATE
   handleSecondaryDropzone(obj) {
@@ -162,25 +187,25 @@ export default class ProductAdd extends React.Component {
   }
 
 
-  // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
-  handleRemoveImage(file, component) {
-    if (component === 'primary') {
-      console.log(file, '******* pdz file remove');
-      this.setState({pdzValid: false, pdzError: true})
-
-    } else if (component === 'secondary') {
-      console.log(file, '********** sdz file remove');
-
-      // let imgPublicId = file.name;
-      // axios.delete(`/api/images/${imgPublicId}/${this.prop.params.id}`)
-      //   .then((res) => {
-      //     console.log(res, '*********** RES');
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-    }
-  }
+  // // REMOVE IMAGES FROM PRIMARY & SECONDARY DROPZONE COMPONENTS
+  // handleRemoveImage(file, component) {
+  //   if (component === 'primary') {
+  //     console.log(file, '******* pdz file remove');
+  //     this.setState({pdzValid: false, pdzError: true})
+  //
+  //   } else if (component === 'secondary') {
+  //     console.log(file, '********** sdz file remove');
+  //
+  //     // let imgPublicId = file.name;
+  //     // axios.delete(`/api/images/${imgPublicId}/${this.prop.params.id}`)
+  //     //   .then((res) => {
+  //     //     console.log(res, '*********** RES');
+  //     //   })
+  //     //   .catch((err) => {
+  //     //     console.log(err);
+  //     //   });
+  //   }
+  // }
 
 
   // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
@@ -206,6 +231,13 @@ export default class ProductAdd extends React.Component {
   }
 
 
+  // REMOVE ALL FILES FROM DROPZONE COMPONENT ON FORM SUBMIT
+  removeFile(dropzone) {
+    if (dropzone) {
+      dropzone.removeFile();
+    }
+  }
+
 
 
 
@@ -213,30 +245,35 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
+    this.state.primaryDropzone.removeAllFiles();
 
-    const category = this.state.category;
-    const name = this.state.name;
-    const description = this.state.description;
-    const price = this.state.price;
-    const size = this.state.size;
-    const primary = this.state.primaryDropzone.files;
-    const secondary = this.state.secondaryDropzone.files;
-    let collections = this.state.collections;
+    this.setState({pdzValid: null, pdzError: false, pdz: true});
 
 
-    console.log(primary, '*********** PRIMARY');
-    console.log(secondary, '*********** SECONDARY');
+    // const category = this.state.category;
+    // const name = this.state.name;
+    // const description = this.state.description;
+    // const price = this.state.price;
+    // const size = this.state.size;
+    // let primary = this.state.primaryDropzone.files;
+    // let secondary = this.state.secondaryDropzone.files;
+    // let collections = this.state.collections;
+
+
+    // console.log(category, '******** category');
+    // console.log(collections, '******* collections');
+    // console.log(name, '********* name');
+    // console.log(description, '*********** description');
+    // console.log(price, '****** price');
+    // console.log(size, '******* size');
+    // console.log(primary, '*********** PRIMARY');
+    // console.log(secondary, '*********** SECONDARY');
 
 
     // if (name === '' || description === '' || price === '' || primary === []) {
     //   // THROW ERROR MESSAGE
     //   this.setState({ alertVisible: true, requireError: true})
     // }
-
-    if (!collections) {
-      let collections = [];
-      console.log(collections, '*********** ');
-    }
 
     // superagent.post('/api/products')
     //   .field('category', this.state.category)
@@ -268,27 +305,28 @@ export default class ProductAdd extends React.Component {
     //         return;
     //       }
     //
-    //       console.log('NEW PRODUCT SUCCESS');
-    //
-    //       this.state.primaryDropzone.removeAllFiles();
-    //       this.state.secondaryDropzone.removeAllFiles();
-    //
-    //       this.setState({
-    //         category: '',
-    //         categoryId: null,
-    //         collections: [],
-    //         name: '',
-    //         description: '',
-    //         price: '',
-    //         size: '',
-    //         primaryImage: [],
-    //         secondaryImages: []
-    //       });
+
+          // console.log(this.state.primaryDropzone.removeAllFiles(), '********* primary dropzone');
+
+
+          // this.setState({
+          //   category: '',
+          //   categoryId: null,
+          //   collections: [],
+          //   name: '',
+          //   description: '',
+          //   price: '',
+          //   size: '',
+          //   primaryImage: [],
+          //   secondaryImages: []
+          // });
     //     });
     //   })
     //   .catch((err) => {
     //     console.log(err);
     //   });
+
+    // window.location.reload()
   }
 
 
@@ -304,11 +342,6 @@ export default class ProductAdd extends React.Component {
   handleAlertShow() {
     this.setState({ alertVisible: true });
   }
-
-
-
-
-
 
 
   // CATEGORY FORM VALIDATION
@@ -493,6 +526,30 @@ export default class ProductAdd extends React.Component {
                 </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 {/* PRIMARY DROPZONE */}
                 <div className={pdzValidation}>
                   <DropzoneComponent
@@ -508,7 +565,8 @@ export default class ProductAdd extends React.Component {
                     }}
                     djsConfig={{
                       addRemoveLinks: true,
-                      maxFiles: 1
+                      maxFiles: 1,
+                      acceptedFiles: "image/jpeg,image/png"
                     }}
                   />
 

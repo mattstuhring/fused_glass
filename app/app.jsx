@@ -47,7 +47,7 @@ ReactDOM.render(
 
       <Route path="productdetails/:id" component={ProductDetails} />
 
-      <Route path="playground/:action(/:id)" component={Playground} />
+      <Route path="playground" component={Playground} />
     </Route>
   </Router>,
   document.getElementById('app')
