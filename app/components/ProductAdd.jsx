@@ -128,22 +128,25 @@ export default class ProductAdd extends React.Component {
 
   // INIT PRIMARY DROPZONE
   handleInitPDZ(dropzone) {
-    console.log(dropzone, '****** init');
     this.setState({ primaryDropzone: dropzone });
   }
 
   handleAddImgPDZ(file) {
-    console.log(file, '******* added');
-    if (file) {
-      this.setState({ primaryImage: file, pdzValid: true, pdz: false, pdzError: false});
+    if (this.state.primaryDropzone.files.length >= 2) {
+      this.state.primaryDropzone.removeFile(file);
     } else {
-      this.setState({ pdzValid: false, pdzError: true});
+      this.setState({
+        primaryImage: file, pdzValid: true, pdz: false, pdzError: false
+      });
     }
   }
 
   handleRemoveImgPDZ(str, file) {
-    console.log(file, '******** removed');
-    this.setState({pdzValid: false, pdzError: true})
+    if (this.state.primaryDropzone.files.length === 1) {
+      this.setState({ pdzValid: true, pdz: false, pdzError: false });
+    } else if (file) {
+      this.setState({ pdzValid: false, pdz: false, pdzError: true } );
+    }
   }
 
   handleSuccessPDZ(file) {
@@ -227,7 +230,7 @@ export default class ProductAdd extends React.Component {
 
     this.state.primaryDropzone.removeAllFiles();
 
-    this.setState({pdzValid: null, pdzError: false, pdz: true});
+    this.setState({ pdzValid: null, pdz: true, pdzError: false });
 
 
     // const category = this.state.category;
@@ -349,7 +352,7 @@ export default class ProductAdd extends React.Component {
 
     const pdzError = () => {
       if (this.state.pdzError) {
-        return <span className="pdz-error"><small><em>* Display image is required!</em></small></span>;
+        return <span className="pdz-error"><small><em>* Single display image is required!</em></small></span>;
       }
     };
 
