@@ -32,6 +32,9 @@ export default class ProductAdd extends React.Component {
       pdzValid: null,
       pdz: true,
       pdzError: false,
+      sdzValid: null,
+      sdz: true,
+      sdzError: false,
       secondaryDropzone: null
     };
 
@@ -39,19 +42,20 @@ export default class ProductAdd extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
-    this.handleAddImgPDZ = this.handleAddImgPDZ.bind(this);
-    this.handleSecondaryImages = this.handleSecondaryImages.bind(this);
-    this.handleInitPDZ = this.handleInitPDZ.bind(this);
-    this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
-    this.categoryValidation = this.categoryValidation.bind(this);
-    // this.collectionValidation = this.collectionValidation.bind(this);
-    this.textValidation = this.textValidation.bind(this);
-    this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
-    this.handleRemoveImgPDZ = this.handleRemoveImgPDZ.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
+    this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
+    this.handleInitPDZ = this.handleInitPDZ.bind(this);
+    this.handleAddImgPDZ = this.handleAddImgPDZ.bind(this);
+    this.handleRemoveImgPDZ = this.handleRemoveImgPDZ.bind(this);
+    this.handleSuccessPDZ = this.handleSuccessPDZ.bind(this);
+    this.handleInitSDZ = this.handleInitSDZ.bind(this);
+    this.handleAddImgSDZ = this.handleAddImgSDZ.bind(this);
+    this.handleRemoveImgSDZ = this.handleRemoveImgSDZ.bind(this);
+    // this.collectionValidation = this.collectionValidation.bind(this);
+    this.categoryValidation = this.categoryValidation.bind(this);
+    this.textValidation = this.textValidation.bind(this);
     this.handleAlertShow = this.handleAlertShow.bind(this);
     this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
-    this.handleSuccessPDZ = this.handleSuccessPDZ.bind(this);
   }
 
 
@@ -135,17 +139,15 @@ export default class ProductAdd extends React.Component {
     if (this.state.primaryDropzone.files.length >= 2) {
       this.state.primaryDropzone.removeFile(file);
     } else {
-      this.setState({
-        primaryImage: file, pdzValid: true, pdz: false, pdzError: false
-      });
+      this.setState({ pdzValid: true, pdz: false, pdzError: false });
     }
   }
 
-  handleRemoveImgPDZ(str, file) {
+  handleRemoveImgPDZ(file) {
     if (this.state.primaryDropzone.files.length === 1) {
       this.setState({ pdzValid: true, pdz: false, pdzError: false });
     } else if (file) {
-      this.setState({ pdzValid: false, pdz: false, pdzError: true } );
+      this.setState({ pdzValid: false, pdz: false, pdzError: true });
     }
   }
 
@@ -160,17 +162,25 @@ export default class ProductAdd extends React.Component {
 
 
   // ASSIGN SECONDARY DROPZONE OBJECT TO STATE
-  handleSecondaryDropzone(obj) {
-    this.setState({ secondaryDropzone: obj });
+  handleInitSDZ(dropzone) {
+    this.setState({ secondaryDropzone: dropzone });
   }
 
-
   // UPDATE SECONDARY IMAGES STATE
-  handleSecondaryImages(files) {
-    let images = Object.assign([], this.state.secondaryImages);
-    images.push(files);
+  handleAddImgSDZ(file) {
+    if (this.state.secondaryDropzone.files.length > 4) {
+      this.state.secondaryDropzone.removeFile(file);
+    } else {
+      this.setState({ sdzValid: true, sdz: false, sdzError: false });
+    }
+  }
 
-    this.setState({ secondaryImages: images });
+  handleRemoveImgSDZ(file) {
+    if (this.state.secondaryDropzone.files.length === 0) {
+      this.setState({ sdzValid: false, sdz: false, sdzError: false });
+    } else {
+      this.setState({ sdzValid: true, sdz: false, sdzError: false });
+    }
   }
 
 
@@ -226,11 +236,19 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    console.log(this.state.primaryImage, '*********** PDZ submit');
-
     this.state.primaryDropzone.removeAllFiles();
+    this.state.secondaryDropzone.removeAllFiles();
 
-    this.setState({ pdzValid: null, pdz: true, pdzError: false });
+    this.setState({
+      primaryDropzone: null,
+      pdzValid: null,
+      pdz: true,
+      pdzError: false,
+      secondaryDropzone: null,
+      sdzValid: null,
+      sdz: true,
+      sdzError: false
+    });
 
 
     // const category = this.state.category;
@@ -308,8 +326,6 @@ export default class ProductAdd extends React.Component {
     //   .catch((err) => {
     //     console.log(err);
     //   });
-
-    // window.location.reload()
   }
 
 
@@ -348,11 +364,24 @@ export default class ProductAdd extends React.Component {
       'pdz': this.state.pdz,
       'pdz-valid': this.state.pdzValid && !this.state.pdz,
       'pdz-invalid': !this.state.pdzValid && !this.state.pdz
+
+    });
+
+    let sdzValidation = classNames({
+      'sdz': this.state.sdz,
+      'sdz-valid': this.state.sdzValid && !this.state.sdz,
+      'sdz-invalid': !this.state.sdzValid && !this.state.sdz
     });
 
     const pdzError = () => {
       if (this.state.pdzError) {
         return <span className="pdz-error"><small><em>* Single display image is required!</em></small></span>;
+      }
+    };
+
+    const sdzError = () => {
+      if (this.state.sdzError) {
+        return <span className="sdz-error"><small><em>* Only 4 images allowed! required!</em></small></span>;
       }
     };
 
@@ -506,31 +535,6 @@ export default class ProductAdd extends React.Component {
                   <h4>DISPLAY IMAGE <small><em>(Choose: 1)</em></small></h4>
                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 {/* PRIMARY DROPZONE */}
                 <div className={pdzValidation}>
                   <DropzoneComponent
@@ -541,7 +545,7 @@ export default class ProductAdd extends React.Component {
                     }}
                     eventHandlers={{
                       addedfile: (file) => this.handleAddImgPDZ(file),
-                      removedfile: (file) => this.handleRemoveImgPDZ(file, 'primary'),
+                      removedfile: (file) => this.handleRemoveImgPDZ(file),
                       init: (obj) => this.handleInitPDZ(obj),
                       success: (file) => this.handleSuccessPDZ(file)
                     }}
@@ -561,19 +565,27 @@ export default class ProductAdd extends React.Component {
 
 
                 {/* SECONDARY DROPZONE */}
-                <DropzoneComponent
-                  config={{
-                    iconFiletypes: ['.jpg', '.png'],
-                    showFiletypeIcon: true,
-                    postUrl: 'no-url'
-                  }}
-                  eventHandlers={{
-                    addedfile: (file) => this.handleSecondaryImages(file),
-                    removedfile: (file) => this.handleRemoveImgPDZ(file, 'secondary'),
-                    init: (obj) => this.handleSecondaryDropzone(obj)
-                  }}
-                  djsConfig={{addRemoveLinks: true, maxFiles: 4}}
-                />
+                <div className={sdzValidation}>
+                  <DropzoneComponent
+                    config={{
+                      iconFiletypes: ['.jpg', '.png'],
+                      showFiletypeIcon: true,
+                      postUrl: 'no-url'
+                    }}
+                    eventHandlers={{
+                      addedfile: (file) => this.handleAddImgSDZ(file),
+                      removedfile: (file) => this.handleRemoveImgSDZ(file),
+                      init: (obj) => this.handleInitSDZ(obj)
+                    }}
+                    djsConfig={{
+                      addRemoveLinks: true,
+                      maxFiles: 4,
+                      acceptedFiles: "image/jpeg,image/png"
+                    }}
+                  />
+
+                  {sdzError()}
+                </div>
               </div>
             </div>
 
