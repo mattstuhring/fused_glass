@@ -241,37 +241,28 @@ export default class ProductAdd extends React.Component {
     console.log(this.state.primaryDropzone.files, '******* pdz');
     console.log(this.state.secondaryDropzone.files, '******* sdz');
 
-    this.state.primaryDropzone.removeAllFiles();
-    this.state.secondaryDropzone.removeAllFiles();
-
-    this.setState({
-      pdzValid: null,
-      pdz: true,
-      pdzError: false,
-      sdzValid: null,
-      sdz: true,
-      sdzError: false
-    });
 
 
-    // const category = this.state.category;
-    // const name = this.state.name;
-    // const description = this.state.description;
-    // const price = this.state.price;
-    // const size = this.state.size;
-    // let primary = this.state.primaryDropzone.files;
-    // let secondary = this.state.secondaryDropzone.files;
-    // let collections = this.state.collections;
+
+    const category = this.state.category;
+    let collections = this.state.collections;
+    const name = this.state.name;
+    const description = this.state.description;
+    const price = this.state.price;
+    const size = this.state.size;
+    let primary = this.state.primaryDropzone.files;
+    let secondary = this.state.secondaryDropzone.files;
 
 
-    // console.log(category, '******** category');
-    // console.log(collections, '******* collections');
-    // console.log(name, '********* name');
-    // console.log(description, '*********** description');
-    // console.log(price, '****** price');
-    // console.log(size, '******* size');
-    // console.log(primary, '*********** PRIMARY');
-    // console.log(secondary, '*********** SECONDARY');
+    console.log(category, '******** category');
+    console.log(this.state.categoryId, '******* cat ID');
+    console.log(collections, '******* collections');
+    console.log(name, '********* name');
+    console.log(description, '*********** description');
+    console.log(price, '****** price');
+    console.log(size, '******* size');
+    console.log(primary, '*********** PRIMARY');
+    console.log(secondary, '*********** SECONDARY');
 
 
     // if (name === '' || description === '' || price === '' || primary === []) {
@@ -308,27 +299,33 @@ export default class ProductAdd extends React.Component {
     //         console.log(err);
     //         return;
     //       }
-    //
 
-          // console.log(this.state.primaryDropzone.removeAllFiles(), '********* primary dropzone');
+          this.state.primaryDropzone.removeAllFiles();
+          this.state.secondaryDropzone.removeAllFiles();
 
 
-          // this.setState({
-          //   category: '',
-          //   categoryId: null,
-          //   collections: [],
-          //   name: '',
-          //   description: '',
-          //   price: '',
-          //   size: '',
-          //   primaryImage: [],
-          //   secondaryImages: []
-          // });
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+          this.setState({
+            category: '',
+            categoryId: null,
+            collections: [],
+            name: '',
+            description: '',
+            price: '',
+            size: '',
+            pdzValid: null,
+            pdz: true,
+            pdzError: false,
+            sdzValid: null,
+            sdz: true,
+            sdzError: false
+          });
+
+
+      //   });
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // });
   }
 
 
