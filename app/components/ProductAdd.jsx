@@ -178,10 +178,10 @@ export default class ProductAdd extends React.Component {
 
   // SDZ -> REMOVE IMAGE
   handleRemoveImgSDZ(file) {
-    if (this.state.secondaryDropzone.files.length === 0) {
-      this.setState({ sdzValid: false, sdz: false, sdzError: false });
-    } else {
+    if (this.state.secondaryDropzone.files.length > 0) {
       this.setState({ sdzValid: true, sdz: false, sdzError: false });
+    } else {
+      this.setState({ sdzValid: null, sdz: true, sdzError: false });
     }
   }
 
@@ -238,10 +238,8 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    console.log(this.state.primaryDropzone.files, '******* pdz');
-    console.log(this.state.secondaryDropzone.files, '******* sdz');
-
-
+    // console.log(this.state.primaryDropzone.files, '******* pdz');
+    // console.log(this.state.secondaryDropzone.files, '******* sdz');
 
 
     const category = this.state.category;
@@ -254,78 +252,79 @@ export default class ProductAdd extends React.Component {
     let secondary = this.state.secondaryDropzone.files;
 
 
-    console.log(category, '******** category');
-    console.log(this.state.categoryId, '******* cat ID');
-    console.log(collections, '******* collections');
-    console.log(name, '********* name');
-    console.log(description, '*********** description');
-    console.log(price, '****** price');
-    console.log(size, '******* size');
-    console.log(primary, '*********** PRIMARY');
-    console.log(secondary, '*********** SECONDARY');
+    // console.log(category, '******** category');
+    // console.log(this.state.categoryId, '******* cat ID');
+    // console.log(collections, '******* collections');
+    // console.log(name, '********* name');
+    // console.log(description, '*********** description');
+    // console.log(price, '****** price');
+    // console.log(size, '******* size');
+    // console.log(primary, '*********** PRIMARY');
+    // console.log(secondary, '*********** SECONDARY');
 
 
-    // if (name === '' || description === '' || price === '' || primary === []) {
-    //   // THROW ERROR MESSAGE
-    //   this.setState({ alertVisible: true, requireError: true})
-    // }
+    if (category === '' || name === '' || description === '' || price === '' || primary === []) {
+      // THROW ERROR MESSAGE
+      this.setState({ alertVisible: true, requireError: true})
+    }
 
-    // superagent.post('/api/products')
-    //   .field('category', this.state.category)
-    //   .field('categoryId', this.state.categoryId)
-    //   .field('collections', collections)
-    //   .field('name', this.state.name)
-    //   .field('description', this.state.description)
-    //   .field('price', this.state.price)
-    //   .field('size', this.state.size)
-    //   .attach('primary', primary[0])
-    //   .then((res) => {
-    //     let productId;
-    //     productId = res.text;
-    //     productId = parseInt(productId);
-    //
-    //     let reqImg = superagent.post('/api/images');
-    //
-    //     // POST SECONDARY IMAGES
-    //     secondary.forEach((img) => {
-    //       reqImg
-    //         .field('id', productId)
-    //         .field('category', this.state.category)
-    //         .attach('images', img)
-    //     });
-    //
-    //     reqImg.end((err, res) => {
-    //       if (err) {
-    //         console.log(err);
-    //         return;
-    //       }
+    superagent.post('/api/products')
+      .field('category', this.state.category)
+      .field('categoryId', this.state.categoryId)
+      .field('collections', collections)
+      .field('name', this.state.name)
+      .field('description', this.state.description)
+      .field('price', this.state.price)
+      .field('size', this.state.size)
+      .attach('primary', primary[0])
+      .then((res) => {
+        let productId = res.text;
+        productId = parseInt(productId);
 
-          this.state.primaryDropzone.removeAllFiles();
-          this.state.secondaryDropzone.removeAllFiles();
+        console.log(secondary.length, '******** sec length');
 
-
-          this.setState({
-            category: '',
-            categoryId: null,
-            collections: [],
-            name: '',
-            description: '',
-            price: '',
-            size: '',
-            pdzValid: null,
-            pdz: true,
-            pdzError: false,
-            sdzValid: null,
-            sdz: true,
-            sdzError: false
-          });
+        // if (secondary.length !== 0) {
+        //   let reqImg = superagent.post('/api/images');
+        //
+        //   // POST SECONDARY IMAGES
+        //   secondary.forEach((img) => {
+        //     reqImg
+        //       .field('id', productId)
+        //       .field('category', this.state.category)
+        //       .attach('images', img)
+        //   });
+        //
+        //   reqImg.end((err, res) => {
+        //     if (err) {
+        //       console.log(err);
+        //       return;
+        //     }
+        //   });
+        // }
 
 
-      //   });
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
+        this.state.primaryDropzone.removeAllFiles();
+        this.state.secondaryDropzone.removeAllFiles();
+
+        this.setState({
+          category: '',
+          categoryId: null,
+          collections: [],
+          name: '',
+          description: '',
+          price: '',
+          size: '',
+          pdzValid: null,
+          pdz: true,
+          pdzError: false,
+          sdzValid: null,
+          sdz: true,
+          sdzError: false
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
 

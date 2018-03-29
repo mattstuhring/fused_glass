@@ -46,79 +46,87 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
   let { collections, categoryId } = req.body;
   collections = collections.split(',');
 
-  // res.sendStatus(200);
-
   const datauri = new Datauri();
   datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
+  console.log(category, '********* cat');
+  console.log(name, '********* name');
+  console.log(description, '******** des');
+  console.log(price, '******** price');
+  console.log(size, '********* size');
+  console.log(collections, '******** coll');
+  console.log(categoryId, '*********** catID');
+  console.log(datauri, '************* datauri');
 
-  // INSERT FORM DATA INTO DB
-  knex('collections')
-    .select('collection_id')
-    .whereIn('collection_name', collections)
-    .then((collectionIdArray) => {
-      return knex('products')
-        .insert({
-          product_name: name,
-          product_price: price,
-          product_description: description,
-          product_size: size,
-          product_image_public_id: '',
-          category_id: parseInt(categoryId)
-        })
-        .returning('product_id')
-        .then((productId) => {
-          productId = parseInt(productId[0]);
-          let db = knex.table('products_collections')
-          const c = [];
+  res.sendStatus(200);
 
-          collectionIdArray.forEach((item) => {
-            c.push({
-              product_id: productId,
-              collection_id: parseInt(item.collection_id)
-            })
-          });
-
-          db.insert(c)
-            .then(() => {
-              cloudinary.v2.uploader.upload(datauri.content,
-                {
-                  folder: `${category}/${productId}/`,
-                  tags: productId,
-                  height: 400,
-                  weight: 500,
-                  crop: 'limit'
-                },
-                function(error, result) {
-                  if (error) {
-                    console.log(error, '********** CLOUD ERROR');
-                  }
-
-                  // INSERT IMAGE INTO PRODUCT IMAGE DB COLUMN
-                  knex('products')
-                    .where('products.product_id', productId)
-                    .update({
-                      product_image_public_id: result.public_id
-                    })
-                    .then((data) => {
-                      res.send(productId.toString());
-                    })
-                    .catch((err) => {
-                      next(err)
-                    });
-                });
-            })
-            .catch((err) => {
-              next(err);
-            });
-        })
-        .catch((err) => {
-          next(err);
-        });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  // // INSERT FORM DATA INTO DB
+  // knex('collections')
+  //   .select('collection_id')
+  //   .whereIn('collection_name', collections)
+  //   .then((collectionIdArray) => {
+  //     return knex('products')
+  //       .insert({
+  //         product_name: name,
+  //         product_price: price,
+  //         product_description: description,
+  //         product_size: size,
+  //         product_image_public_id: '',
+  //         category_id: parseInt(categoryId)
+  //       })
+  //       .returning('product_id')
+  //       .then((productId) => {
+  //         productId = parseInt(productId[0]);
+  //         let db = knex.table('products_collections')
+  //         const c = [];
+  //
+  //         collectionIdArray.forEach((item) => {
+  //           c.push({
+  //             product_id: productId,
+  //             collection_id: parseInt(item.collection_id)
+  //           })
+  //         });
+  //
+  //         db.insert(c)
+  //           .then(() => {
+  //             cloudinary.v2.uploader.upload(datauri.content,
+  //               {
+  //                 folder: `${category}/${productId}/`,
+  //                 tags: productId,
+  //                 height: 400,
+  //                 weight: 500,
+  //                 crop: 'limit'
+  //               },
+  //               function(error, result) {
+  //                 if (error) {
+  //                   console.log(error, '********** CLOUD ERROR');
+  //                 }
+  //
+  //                 // INSERT IMAGE INTO PRODUCT IMAGE DB COLUMN
+  //                 knex('products')
+  //                   .where('products.product_id', productId)
+  //                   .update({
+  //                     product_image_public_id: result.public_id
+  //                   })
+  //                   .then((data) => {
+  //                     res.send(productId.toString());
+  //                   })
+  //                   .catch((err) => {
+  //                     next(err)
+  //                   });
+  //               });
+  //           })
+  //           .catch((err) => {
+  //             next(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
 });
 
 
