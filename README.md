@@ -4,6 +4,7 @@
 
 ### Tools:
   - React
+  - Cloudinary
   - Webpack v1
   - Bootstrap
   - Font Awesome
