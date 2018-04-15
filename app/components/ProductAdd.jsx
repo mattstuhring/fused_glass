@@ -275,29 +275,28 @@ export default class ProductAdd extends React.Component {
       .field('size', this.state.size)
       .attach('primary', primary[0])
       .then((res) => {
-        // let productId = res.text;
-        // productId = parseInt(productId);
-        console.log(res, '******* res');
+        let productId = parseInt(res.text);
+        console.log(productId, '********* productId');
         console.log(secondary.length, '******** sec length');
 
-        // if (secondary.length !== 0) {
-        //   let reqImg = superagent.post('/api/images');
-        //
-        //   // POST SECONDARY IMAGES
-        //   secondary.forEach((img) => {
-        //     reqImg
-        //       .field('id', productId)
-        //       .field('category', this.state.category)
-        //       .attach('images', img)
-        //   });
-        //
-        //   reqImg.end((err, res) => {
-        //     if (err) {
-        //       console.log(err);
-        //       return;
-        //     }
-        //   });
-        // }
+        if (secondary.length !== 0) {
+          let reqImg = superagent.post('/api/images');
+
+          // POST SECONDARY IMAGES
+          secondary.forEach((img) => {
+            reqImg
+              .field('id', productId)
+              .field('category', this.state.category)
+              .attach('images', img)
+          });
+
+          reqImg.end((err, res) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+          });
+        }
 
         this.state.primaryDropzone.removeAllFiles();
         this.state.secondaryDropzone.removeAllFiles();

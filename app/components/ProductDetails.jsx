@@ -2,7 +2,11 @@ import React from 'react';
 import axios from 'axios';
 import Header from 'Header';
 import { Link } from 'react-router';
-import { Image, Thumbnail, Panel, Button } from 'react-bootstrap';
+import { Thumbnail, Panel, Button } from 'react-bootstrap';
+
+import { Image } from 'cloudinary-react';
+
+const cloudName = 'fusedglassbyceleste';
 
 export default class ProductDetails extends React.Component {
   constructor(props) {
@@ -29,11 +33,13 @@ export default class ProductDetails extends React.Component {
       .then((res) => {
         const data = res.data[0];
 
+        console.log(data, '************* data');
+
         this.setState({
           productId: this.props.params.id,
           description: data.product_description,
-          primaryImage: data.product_image,
-          image: data.product_image,
+          primaryImage: data.product_image_public_id,
+          image: data.product_image_public_id,
           name: data.product_name,
           price: data.product_price,
           size: data.product_size
@@ -42,10 +48,11 @@ export default class ProductDetails extends React.Component {
       .then(() => {
         axios.get(`api/images/${this.props.params.id}`)
           .then((r) => {
+            console.log(r, '********* response');
             let images = Object.assign([], this.state.secondaryImages);
 
             r.data.forEach((img) => {
-              return images.push(img.image_name);
+              return images.push(img.image_public_id);
             });
 
             this.setState({ secondaryImages: images });
@@ -72,7 +79,7 @@ export default class ProductDetails extends React.Component {
 
   // *************************  RENDER  *************************
   render() {
-    const {productId, description, primaryImage, name, price, size} = this.state;
+    const {productId, description, primaryImage, name, price, size, image} = this.state;
 
     return <div className="row details">
       {/* HEADER */}
@@ -83,21 +90,26 @@ export default class ProductDetails extends React.Component {
       <div className="row">
         <div className="col-sm-6">
           <div className="row">
-            <div className="col-sm-12">
+            <div className="col-sm-12 text-center">
               <Panel>
-                <Image className="primary-image" src={`images/uploads/${this.state.image}`} rounded responsive/>
+                <Image cloudName={cloudName} publicId={image} width="300" height="200" crop="pad" />
               </Panel>
             </div>
           </div>
 
           <div className="row">
             <div className="col-sm-3">
-              <Thumbnail href="#" src={`images/uploads/${primaryImage}`} onClick={() => this.handleImage(primaryImage)}/>
+              <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${primaryImage}`} onClick={() => this.handleImage(primaryImage)}/>
+
+                {/* <Image cloudName={cloudName} publicId={primaryImage} width="100" height="50" crop="pad" /> */}
             </div>
 
             {this.state.secondaryImages.map((img, i) => {
+              console.log(img, '******** img');
               return <div className="col-sm-3" key={i}>
-                <Thumbnail href="#" src={`images/uploads/${img}`} onClick={() => this.handleImage(img)}/>
+                <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${img}`} onClick={() => this.handleImage(img)}/>
+
+                {/* <Image cloudName={cloudName} publicId={img} width="100" height="50" crop="pad" /> */}
               </div>
             })}
           </div>

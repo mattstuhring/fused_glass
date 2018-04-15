@@ -162,7 +162,7 @@ export default class Categories extends React.Component {
                   <p>{p.product_description}</p>
                   <p>{p.product_price}</p>
                   <Link to={`/productdetails/${p.product_id}`}>
-                    <Button bsStyle="primary">Buy</Button>
+                    <Button bsStyle="primary">Buy Now</Button>
                   </Link>
                 </div>
               </div>
