@@ -241,7 +241,6 @@ export default class ProductAdd extends React.Component {
     // console.log(this.state.primaryDropzone.files, '******* pdz');
     // console.log(this.state.secondaryDropzone.files, '******* sdz');
 
-
     const category = this.state.category;
     let collections = this.state.collections;
     const name = this.state.name;
@@ -250,7 +249,6 @@ export default class ProductAdd extends React.Component {
     const size = this.state.size;
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
-
 
     // console.log(category, '******** category');
     // console.log(this.state.categoryId, '******* cat ID');
@@ -262,11 +260,10 @@ export default class ProductAdd extends React.Component {
     // console.log(primary, '*********** PRIMARY');
     // console.log(secondary, '*********** SECONDARY');
 
-
-    if (category === '' || name === '' || description === '' || price === '' || primary === []) {
-      // THROW ERROR MESSAGE
-      this.setState({ alertVisible: true, requireError: true})
-    }
+    // if (category === '' || name === '' || description === '' || price === '' || primary === []) {
+    //   // THROW ERROR MESSAGE
+    //   this.setState({ alertVisible: true, requireError: true})
+    // }
 
     superagent.post('/api/products')
       .field('category', this.state.category)
@@ -278,9 +275,9 @@ export default class ProductAdd extends React.Component {
       .field('size', this.state.size)
       .attach('primary', primary[0])
       .then((res) => {
-        let productId = res.text;
-        productId = parseInt(productId);
-
+        // let productId = res.text;
+        // productId = parseInt(productId);
+        console.log(res, '******* res');
         console.log(secondary.length, '******** sec length');
 
         // if (secondary.length !== 0) {
@@ -301,7 +298,6 @@ export default class ProductAdd extends React.Component {
         //     }
         //   });
         // }
-
 
         this.state.primaryDropzone.removeAllFiles();
         this.state.secondaryDropzone.removeAllFiles();
