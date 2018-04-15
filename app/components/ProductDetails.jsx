@@ -68,7 +68,7 @@ export default class ProductDetails extends React.Component {
 
 
   componentWillUnmount() {
-    this.setState({ productId: null, description: '', primaryImage: '', name: '', price: '', size: '' });
+    this.setState({ productId: null, description: '', primaryImage: '', name: '', price: '', size: '', image: '' });
   }
 
 
@@ -80,6 +80,19 @@ export default class ProductDetails extends React.Component {
   // *************************  RENDER  *************************
   render() {
     const {productId, description, primaryImage, name, price, size, image} = this.state;
+
+    const secondaryImgs = () => {
+      if (this.state.secondaryImages > 0) {
+        this.state.secondaryImages.map((img, i) => {
+          console.log(img, '******** img');
+          return <div className="col-sm-3" key={i}>
+            <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${img}`} onClick={() => this.handleImage(img)}/>
+
+            {/* <Image cloudName={cloudName} publicId={img} width="100" height="50" crop="pad" /> */}
+          </div>;
+        })
+      }
+     }
 
     return <div className="row details">
       {/* HEADER */}
@@ -104,14 +117,7 @@ export default class ProductDetails extends React.Component {
                 {/* <Image cloudName={cloudName} publicId={primaryImage} width="100" height="50" crop="pad" /> */}
             </div>
 
-            {this.state.secondaryImages.map((img, i) => {
-              console.log(img, '******** img');
-              return <div className="col-sm-3" key={i}>
-                <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${img}`} onClick={() => this.handleImage(img)}/>
-
-                {/* <Image cloudName={cloudName} publicId={img} width="100" height="50" crop="pad" /> */}
-              </div>
-            })}
+            {secondaryImgs()}
           </div>
         </div>
 
