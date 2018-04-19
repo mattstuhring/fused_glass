@@ -28,8 +28,12 @@ export default class ProductDetails extends React.Component {
 
   // GET PRODUCT DETAILS BY ID
   componentDidMount() {
+    console.log(this.props.params.id, '********** params id');
+
+
     axios.get(`api/products/${this.props.params.id}`)
       .then((res) => {
+        console.log(res, '******** res');
         const data = res.data[0];
 
         console.log(data, '************* data');
