@@ -3,7 +3,6 @@ import axios from 'axios';
 import Header from 'Header';
 import { Link } from 'react-router';
 import { Thumbnail, Panel, Button } from 'react-bootstrap';
-
 import { Image } from 'cloudinary-react';
 
 const cloudName = 'fusedglassbyceleste';
@@ -81,19 +80,6 @@ export default class ProductDetails extends React.Component {
   render() {
     const {productId, description, primaryImage, name, price, size, image} = this.state;
 
-    const secondaryImgs = () => {
-      if (this.state.secondaryImages > 0) {
-        this.state.secondaryImages.map((img, i) => {
-          console.log(img, '******** img');
-          return <div className="col-sm-3" key={i}>
-            <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${img}`} onClick={() => this.handleImage(img)}/>
-
-            {/* <Image cloudName={cloudName} publicId={img} width="100" height="50" crop="pad" /> */}
-          </div>;
-        })
-      }
-     }
-
     return <div className="row details">
       {/* HEADER */}
       <div className="col-sm-12">
@@ -117,7 +103,15 @@ export default class ProductDetails extends React.Component {
                 {/* <Image cloudName={cloudName} publicId={primaryImage} width="100" height="50" crop="pad" /> */}
             </div>
 
-            {secondaryImgs()}
+            {/* {secondaryImgs()} */}
+            {this.state.secondaryImages.map((img, i) => {
+              return <div className="col-sm-3" key={i}>
+                  <Thumbnail href="#" src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${img}`} onClick={() => this.handleImage(img)}/>
+
+                  {/* <Image cloudName={cloudName} publicId={img} width="100" height="50" crop="pad" /> */}
+                </div>;
+              })
+            }
           </div>
         </div>
 
