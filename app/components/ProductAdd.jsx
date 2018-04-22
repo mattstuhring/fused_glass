@@ -238,8 +238,7 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    // console.log(this.state.primaryDropzone.files, '******* pdz');
-    // console.log(this.state.secondaryDropzone.files, '******* sdz');
+
 
     const category = this.state.category;
     let collections = this.state.collections;
@@ -249,6 +248,9 @@ export default class ProductAdd extends React.Component {
     const size = this.state.size;
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
+
+    // console.log(this.state.primaryDropzone.files, '******* pdz');
+    // console.log(this.state.secondaryDropzone.files, '******* sdz');
 
     // console.log(category, '******** category');
     // console.log(this.state.categoryId, '******* cat ID');
@@ -276,8 +278,6 @@ export default class ProductAdd extends React.Component {
       .attach('primary', primary[0])
       .then((res) => {
         let productId = parseInt(res.text);
-        console.log(productId, '********* productId');
-        console.log(secondary.length, '******** sec length');
 
         if (secondary.length !== 0) {
           let reqImg = superagent.post('/api/images');
