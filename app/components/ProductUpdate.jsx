@@ -40,7 +40,7 @@ export default class ProductUpdate extends React.Component {
     this.categoryValidation = this.categoryValidation.bind(this);
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
-    this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
+    // this.handleCategoryCollections = this.handleCategoryCollections.bind(this);
     this.handleRemoveImage = this.handleRemoveImage.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
   }
@@ -49,10 +49,12 @@ export default class ProductUpdate extends React.Component {
   componentDidMount() {
     axios.get(`api/products/${this.props.params.id}`)
       .then((res) => {
+        console.log(res, '********** res');
         const data = res.data[0];
         const categoryName = data.category_name.toLowerCase();
+        const categoryId = parseInt(data.category_id);
 
-        this.handleCategoryCollections(categoryName, data.category_id);
+        // this.handleCategoryCollections(categoryName, data.category_id);
 
         let collectionNames = [];
         let collectionIds = [];
@@ -60,6 +62,13 @@ export default class ProductUpdate extends React.Component {
           collectionNames.push(p.collection_name);
           collectionIds.push(p.collection_id);
           return;
+        });
+
+        let options = res.data.map((e) => {
+          return {
+            value: e.collection_name,
+            label: e.collection_name
+          }
         });
 
         let primeDrop;
@@ -76,7 +85,7 @@ export default class ProductUpdate extends React.Component {
           dz.emit('addedfile', thumb);
 
           dz.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-            console.log('We made it!');
+            console.log('Primary made it!');
           }, 'anonymous');
 
           // Make sure that there is no progress bar, etc...
@@ -95,7 +104,10 @@ export default class ProductUpdate extends React.Component {
           name: data.product_name,
           price: data.product_price,
           size: data.product_size,
-          primaryDropzone: primeDrop
+          primaryDropzone: primeDrop,
+          category: categoryName,
+          categoryId: categoryId,
+          options: options
         });
       })
       .then(() => {
@@ -116,7 +128,7 @@ export default class ProductUpdate extends React.Component {
                 dz2.emit('addedfile', thumb);
 
                 dz2.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-                  console.log('We made it!');
+                  console.log('Secondary made it!');
                 }, 'anonymous');
 
                 // Make sure that there is no progress bar, etc...
@@ -257,27 +269,28 @@ export default class ProductUpdate extends React.Component {
   }
 
 
-  // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
-  handleCategoryCollections(categoryName, categoryId) {
-    axios.get(`/api/categories/${categoryId}/collections`)
-      .then((res) => {
-        var options = res.data.map((e) => {
-          return {
-            value: e.collection_name,
-            label: e.collection_name
-          }
-        });
-
-        this.setState({
-          category: categoryName,
-          categoryId: categoryId,
-          options: options
-        });
-      })
-      .catch((err) => {
-        console.log(err, 'error');
-      });
-  }
+  // // SHOW SELECTED CATEGORY WHEN COMPONENT MOUNTS FOR UPDATING A PRODUCT
+  // handleCategoryCollections(categoryName, categoryId) {
+  //   axios.get(`/api/categories/${categoryId}/collections`)
+  //     .then((res) => {
+  //       console.log(res, '*********** handleCategoryCollections');
+  //       var options = res.data.map((e) => {
+  //         return {
+  //           value: e.collection_name,
+  //           label: e.collection_name
+  //         }
+  //       });
+  //
+  //       this.setState({
+  //         category: categoryName,
+  //         categoryId: categoryId,
+  //         options: options
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err, 'error');
+  //     });
+  // }
 
 
 

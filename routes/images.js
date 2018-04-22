@@ -16,7 +16,6 @@ router.get('/images/:id', (req, res, next) => {
     .select('*')
     .where('images.product_id', req.params.id)
     .then((images) => {
-      console.log(images, '************* GET SECONDARY IMAGES');
       res.send(images);
     })
     .catch((err) => {

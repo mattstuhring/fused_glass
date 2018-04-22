@@ -23,7 +23,12 @@ router.get('/products/:id', (req, res, next) => {
   knex('products')
     .select('*')
     .where('products.product_id', productId)
+    .innerJoin('categories', 'categories.category_id', 'products.category_id')
+    .innerJoin('products_collections', 'products_collections.product_id', 'products.product_id')
+    .innerJoin('collections', 'products_collections.collection_id', 'collections.collection_id')
     .then((product) => {
+      console.log(product, '******** product');
+
       res.send(product);
     })
     .catch((err) => {
