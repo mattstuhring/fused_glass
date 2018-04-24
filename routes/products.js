@@ -194,12 +194,14 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   productId = parseInt(productId);
   categoryId = parseInt(categoryId);
 
-
   if (Array.isArray(collections) === true) {
     collections = req.body.collections;
   } else {
     collections = req.body.collections.split(',');
   }
+
+
+  
 
   knex('collections')
     .select('collection_id')

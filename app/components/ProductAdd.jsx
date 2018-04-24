@@ -57,11 +57,6 @@ export default class ProductAdd extends React.Component {
   }
 
 
-  // componentDidMount() {
-  //
-  // }
-
-
   // HANDLE ALL FORM INPUT CHANGE EVENTS
   handleChange(event) {
     const value = event.target.value;
