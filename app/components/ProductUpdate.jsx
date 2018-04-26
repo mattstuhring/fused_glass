@@ -313,9 +313,15 @@ export default class ProductUpdate extends React.Component {
     let secondary = this.state.secondaryDropzone.files;
 
     // CHECK PRIMARY CHANGE
-
+    if (initialPrimaryDropzone.files === primary) {
+      primary = {};
+    }
 
     // CHECK SECONDARY CHANGE
+    if (initialSecondaryDropzone.files === secondary) {
+      secondary = {};
+    }
+
 
     console.log(this.state.categoryId, '******* categoryId');
     console.log(category, '******** category');
@@ -418,17 +424,18 @@ export default class ProductUpdate extends React.Component {
                   <h4>Product Details</h4>
                 </div>
 
-                {/* CATEGORY & COLLECTION */}
                 <FormGroup
                   controlId="formControlsSelect"
                   validationState={this.categoryValidation()}
                 >
+                  {/* CATEGORY */}
                   <ControlLabel>Category</ControlLabel>
                   <FormControl
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleCategory}
                     value={this.state.category}
+                    disabled="disabled"
                   >
                     <option>select...</option>
                     <option value="decorative">Decorative</option>
@@ -441,6 +448,7 @@ export default class ProductUpdate extends React.Component {
                   controlId="formControlsSelect"
                   validationState={this.collectionValidation()}
                 >
+                  {/* COLLECTION */}
                   <ControlLabel>Collection</ControlLabel>
                   <Select
                     multi={true}
@@ -484,13 +492,14 @@ export default class ProductUpdate extends React.Component {
                 </FormGroup>
 
 
-                {/* PRICE & SIZE */}
+
                 <div className="row">
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
                       validationState={this.textValidation(this.state.price)}
                     >
+                      {/* PRICE */}
                       <ControlLabel>Price</ControlLabel>
                       <InputGroup>
                         <InputGroup.Addon>$</InputGroup.Addon>
@@ -509,6 +518,7 @@ export default class ProductUpdate extends React.Component {
                       controlId="formControlsText"
                       validationState={this.textValidation(this.state.size)}
                     >
+                      {/* SIZE */}
                       <ControlLabel>Size</ControlLabel>
                       <FormControl
                         type="text"
