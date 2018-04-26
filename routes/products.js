@@ -195,6 +195,10 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   categoryId = parseInt(categoryId);
   collections = req.body.collections.split(',');
 
+  console.log(req.body, '******** body');
+  console.log(collections, '******** collections');
+
+  res.sendStatus(200);
   // knex('collections')
   //   .select('collection_id')
   //   .whereIn('collection_name', collections)

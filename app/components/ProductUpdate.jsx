@@ -333,41 +333,43 @@ export default class ProductUpdate extends React.Component {
     console.log(primary, '*********** PRIMARY');
     console.log(secondary, '*********** SECONDARY');
 
-    // superagent.put('/api/products')
-    //   .field('productId', this.props.params.id)
-    //   .field('category', this.state.category)
-    //   .field('categoryId', this.state.categoryId)
-    //   .field('collections', this.state.collections)
-    //   .field('name', this.state.name)
-    //   .field('description', this.state.description)
-    //   .field('price', this.state.price)
-    //   .field('size', this.state.size)
-    //   .attach('primary', primary[0])
-    //   .then((res) => {
-    //     let productId = this.props.params.id;
-    //     let reqImg = superagent.put('/api/images');
-    //
-    //     // POST SECONDARY IMAGES
-    //     secondary.forEach((img) => {
-    //       reqImg
-    //         .field('id', productId)
-    //         .field('category', this.state.category)
-    //         .attach('images', img)
-    //     });
-    //
-    //     reqImg.end((err, res) => {
-    //       if (err) {
-    //         console.log(err);
-    //         return;
-    //       }
-    //
-    //       console.log('UPDATE COMPLETE');
-    //       return;
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    superagent.put('/api/products')
+      .field('productId', this.props.params.id)
+      .field('category', this.state.category)
+      .field('categoryId', this.state.categoryId)
+      .field('collections', this.state.collections)
+      .field('name', this.state.name)
+      .field('description', this.state.description)
+      .field('price', this.state.price)
+      .field('size', this.state.size)
+      .attach('primary', primary[0])
+      .then((res) => {
+        console.log(res, '******* res');
+
+        // let productId = this.props.params.id;
+        // let reqImg = superagent.put('/api/images');
+        //
+        // // POST SECONDARY IMAGES
+        // secondary.forEach((img) => {
+        //   reqImg
+        //     .field('id', productId)
+        //     .field('category', this.state.category)
+        //     .attach('images', img)
+        // });
+        //
+        // reqImg.end((err, res) => {
+        //   if (err) {
+        //     console.log(err);
+        //     return;
+        //   }
+        //
+        //   console.log('UPDATE COMPLETE');
+        //   return;
+        // });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
 
