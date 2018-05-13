@@ -42,6 +42,7 @@ export default class ProductUpdate extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCategory = this.handleCategory.bind(this);
     this.handleCollections = this.handleCollections.bind(this);
+    this.handleOpenCollections = this.handleOpenCollections.bind(this);
     this.handleRemoveCollection = this.handleRemoveCollection.bind(this);
     this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
     this.handlePrimaryImage = this.handlePrimaryImage.bind(this);
@@ -227,6 +228,34 @@ export default class ProductUpdate extends React.Component {
     this.setState({collections: val})
   }
 
+  // GET ALL COLLECTIONS FOR CATEGORY -> ON CLICK OF COLLECTIONS INPUT
+  handleOpenCollections() {
+    console.log(this.state.categoryId, '********** catID');
+    const categoryId = this.state.categoryId;
+    const categoryName = this.state.category;
+
+
+    axios.get(`/api/categories/${categoryId}/collections`)
+      .then((res) => {
+        var options = res.data.map((e) => {
+          return {
+            value: e.collection_name,
+            label: e.collection_name
+          }
+        });
+
+        this.setState({
+          category: categoryName,
+          categoryId: categoryId,
+          options: options
+        });
+      })
+      .catch((err) => {
+        console.log(err, 'error');
+      });
+  }
+
+
   handleRemoveCollection(val) {
     console.log(val, '************ val');
   }
@@ -381,46 +410,6 @@ export default class ProductUpdate extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-
-
-
-    // superagent.put('/api/products')
-    //   .field('productId', this.props.params.id)
-    //   .field('category', this.state.category)
-    //   .field('categoryId', this.state.categoryId)
-    //   .field('collections', this.state.collections)
-    //   .field('name', this.state.name)
-    //   .field('description', this.state.description)
-    //   .field('price', this.state.price)
-    //   .field('size', this.state.size)
-    //   .attach('primary', primary[0])
-    //   .then((res) => {
-    //     console.log(res, '******* res');
-    //
-    //     let productId = this.props.params.id;
-    //     let reqImg = superagent.put('/api/images');
-    //
-    //     // POST SECONDARY IMAGES
-    //     secondary.forEach((img) => {
-    //       reqImg
-    //         .field('id', productId)
-    //         .field('category', this.state.category)
-    //         .attach('images', img)
-    //     });
-    //
-    //     reqImg.end((err, res) => {
-    //       if (err) {
-    //         console.log(err);
-    //         return;
-    //       }
-    //
-    //       console.log('UPDATE COMPLETE');
-    //       return;
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   }
 
 
@@ -509,6 +498,7 @@ export default class ProductUpdate extends React.Component {
                     value={this.state.collections}
                     options={this.state.options}
                     onChange={this.handleCollections}
+                    onOpen={this.handleOpenCollections}
                   />
                 </FormGroup>
 
