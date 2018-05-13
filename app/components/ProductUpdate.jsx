@@ -56,15 +56,19 @@ export default class ProductUpdate extends React.Component {
 
 
   componentDidMount() {
+    console.log(this.props.params.id, '********* props ID');
     axios.get(`api/products/${this.props.params.id}`)
       .then((res) => {
-        console.log(res, '********** res');
         const data = res.data[0];
+
+        console.log(data, '******** data');
+
         const categoryName = data.category_name.toLowerCase();
         const categoryId = parseInt(data.category_id);
 
         let collectionNames = [];
         let collectionIds = [];
+
         res.data.forEach((p) => {
           collectionNames.push(p.collection_name);
           collectionIds.push(p.collection_id);
@@ -92,7 +96,7 @@ export default class ProductUpdate extends React.Component {
           dz.emit('addedfile', thumb);
 
           dz.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-            console.log('Primary made it!');
+            // console.log('Primary made it!');
           }, 'anonymous');
 
           // Make sure that there is no progress bar, etc...
@@ -135,7 +139,7 @@ export default class ProductUpdate extends React.Component {
                 dz2.emit('addedfile', thumb);
 
                 dz2.createThumbnailFromUrl(thumb, 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName, function (thumbnail) {
-                  console.log('Secondary made it!');
+                  // console.log('Secondary made it!');
                 }, 'anonymous');
 
                 // Make sure that there is no progress bar, etc...
@@ -312,28 +316,29 @@ export default class ProductUpdate extends React.Component {
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
 
-    // CHECK PRIMARY CHANGE
-    if (initialPrimaryDropzone.files === primary) {
-      primary = {};
+
+    // console.log(this.state.categoryId, '******* categoryId');
+    // console.log(category, '******** category');
+    // console.log(collections, '******* collections');
+    // console.log(name, '********* name');
+    // console.log(description, '*********** description');
+    // console.log(price, '****** price');
+    // console.log(size, '******* size');
+    // console.log(primary, '*********** PRIMARY');
+    // console.log(secondary, '*********** SECONDARY');
+
+
+    let reqPrimaryImg;
+
+    // PRIMARY DROPZONE CHANGE
+    if (this.state.initialPrimaryDropzone.files !== primary) {
+      reqPrimaryImg = superagent.put('/api/products')
+        .attach('primary', primary[0]);
+    } else {
+      reqPrimaryImg = superagent.put('/api/products');
     }
 
-    // CHECK SECONDARY CHANGE
-    if (initialSecondaryDropzone.files === secondary) {
-      secondary = {};
-    }
-
-
-    console.log(this.state.categoryId, '******* categoryId');
-    console.log(category, '******** category');
-    console.log(collections, '******* collections');
-    console.log(name, '********* name');
-    console.log(description, '*********** description');
-    console.log(price, '****** price');
-    console.log(size, '******* size');
-    console.log(primary, '*********** PRIMARY');
-    console.log(secondary, '*********** SECONDARY');
-
-    superagent.put('/api/products')
+    reqPrimaryImg
       .field('productId', this.props.params.id)
       .field('category', this.state.category)
       .field('categoryId', this.state.categoryId)
@@ -342,34 +347,80 @@ export default class ProductUpdate extends React.Component {
       .field('description', this.state.description)
       .field('price', this.state.price)
       .field('size', this.state.size)
-      .attach('primary', primary[0])
       .then((res) => {
         console.log(res, '******* res');
 
-        // let productId = this.props.params.id;
-        // let reqImg = superagent.put('/api/images');
-        //
-        // // POST SECONDARY IMAGES
-        // secondary.forEach((img) => {
-        //   reqImg
-        //     .field('id', productId)
-        //     .field('category', this.state.category)
-        //     .attach('images', img)
-        // });
-        //
-        // reqImg.end((err, res) => {
-        //   if (err) {
-        //     console.log(err);
-        //     return;
-        //   }
-        //
-        //   console.log('UPDATE COMPLETE');
-        //   return;
-        // });
+        // CHECK SECONDARY CHANGE
+        if (this.state.initialSecondaryDropzone.files !== secondary) {
+          console.log('Started from the bottom!');
+
+          // let productId = this.props.params.id;
+          // let reqSecondaryImg = superagent.put('/api/images');
+          //
+          // // POST SECONDARY IMAGES
+          // secondary.forEach((img) => {
+          //   reqSecondaryImg
+          //     .field('id', productId)
+          //     .field('category', this.state.category)
+          //     .attach('images', img)
+          // });
+          //
+          // reqSecondaryImg.end((err, res) => {
+          //   if (err) {
+          //     console.log(err);
+          //     return;
+          //   }
+          //
+          //   console.log('UPDATE COMPLETE');
+          //   return;
+          // });
+        } else {
+          console.log('Now we here!');
+        }
       })
       .catch((err) => {
         console.log(err);
       });
+
+
+
+    // superagent.put('/api/products')
+    //   .field('productId', this.props.params.id)
+    //   .field('category', this.state.category)
+    //   .field('categoryId', this.state.categoryId)
+    //   .field('collections', this.state.collections)
+    //   .field('name', this.state.name)
+    //   .field('description', this.state.description)
+    //   .field('price', this.state.price)
+    //   .field('size', this.state.size)
+    //   .attach('primary', primary[0])
+    //   .then((res) => {
+    //     console.log(res, '******* res');
+    //
+    //     let productId = this.props.params.id;
+    //     let reqImg = superagent.put('/api/images');
+    //
+    //     // POST SECONDARY IMAGES
+    //     secondary.forEach((img) => {
+    //       reqImg
+    //         .field('id', productId)
+    //         .field('category', this.state.category)
+    //         .attach('images', img)
+    //     });
+    //
+    //     reqImg.end((err, res) => {
+    //       if (err) {
+    //         console.log(err);
+    //         return;
+    //       }
+    //
+    //       console.log('UPDATE COMPLETE');
+    //       return;
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 
 

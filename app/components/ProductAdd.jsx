@@ -17,7 +17,7 @@ export default class ProductAdd extends React.Component {
     this.state = {
       category: '',
       categoryId: null,
-      collections: [],
+      collections: '',
       collectionIds: [],
       description: '',
       name: '',
@@ -233,8 +233,6 @@ export default class ProductAdd extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-
-
     const category = this.state.category;
     let collections = this.state.collections;
     const name = this.state.name;
@@ -243,9 +241,6 @@ export default class ProductAdd extends React.Component {
     const size = this.state.size;
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
-
-    // console.log(this.state.primaryDropzone.files, '******* pdz');
-    // console.log(this.state.secondaryDropzone.files, '******* sdz');
 
     // console.log(category, '******** category');
     // console.log(this.state.categoryId, '******* cat ID');
@@ -299,7 +294,7 @@ export default class ProductAdd extends React.Component {
         this.setState({
           category: '',
           categoryId: null,
-          collections: [],
+          collections: '',
           name: '',
           description: '',
           price: '',
@@ -334,11 +329,11 @@ export default class ProductAdd extends React.Component {
   // ----------  FORM VALIDATIONS -------------
   // CATEGORY
   categoryValidation() {
-    if (this.state.collections.length > 0) return 'success';
+    if (this.state.category !== '') return 'success';
   }
   // COLLECTIONS
   collectionValidation() {
-    if (this.state.collections.length > 0) return 'success';
+    if (this.state.category !== '') return 'success';
   }
   // TEXT
   textValidation(field) {
