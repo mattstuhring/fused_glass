@@ -13,7 +13,6 @@ router.get('/categories/:id', (req, res, next) => {
     .innerJoin('products', 'products.category_id', 'categories.category_id')
     .where('products.category_id', req.params.id)
     .then((product) => {
-      console.log(product, '********** PRODUCT');
       res.send(product);
     })
     .catch((err) => {

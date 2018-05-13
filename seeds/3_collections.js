@@ -58,34 +58,6 @@ exports.seed = function(knex) {
         category_id: 2,
         created_at: new Date('2017-09-23 11:16:16 UTC'),
         updated_at: new Date('2017-09-23 11:16:16 UTC')
-      },
-      {
-        collection_id: 9,
-        collection_name: 'Decorative',
-        category_id: 1,
-        created_at: new Date('2018-05-12 03:16:16 UTC'),
-        updated_at: new Date('2018-09-12 03:16:16 UTC')
-      },
-      {
-        collection_id: 10,
-        collection_name: 'Houseware',
-        category_id: 2,
-        created_at: new Date('2018-05-12 04:16:16 UTC'),
-        updated_at: new Date('2018-05-12 04:16:16 UTC')
-      },
-      {
-        collection_id: 11,
-        collection_name: 'Jewelry',
-        category_id: 3,
-        created_at: new Date('2018-05-12 05:16:16 UTC'),
-        updated_at: new Date('2018-05-12 05:16:16 UTC')
-      },
-      {
-        collection_id: 12,
-        collection_name: 'Garden',
-        category_id: 4,
-        created_at: new Date('2018-05-12 06:16:16 UTC'),
-        updated_at: new Date('2018-05-12 06:16:16 UTC')
       }])
     )
     .then(() => knex.raw(
