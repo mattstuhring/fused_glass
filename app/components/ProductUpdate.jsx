@@ -17,7 +17,7 @@ export default class ProductUpdate extends React.Component {
     this.state = {
       category: '',
       categoryId: null,
-      collections: [],
+      collections: '',
       collectionIds: [],
       options: null,
       description: '',
@@ -57,37 +57,34 @@ export default class ProductUpdate extends React.Component {
 
 
   componentDidMount() {
-    console.log(this.props.params.id, '********* props ID');
     axios.get(`api/products/${this.props.params.id}`)
       .then((res) => {
-        const data = res.data[0];
-
-        console.log(data, '******** data');
-
-        const categoryName = data.category_name.toLowerCase();
-        const categoryId = parseInt(data.category_id);
+        const product = res.data[0];
+        const collections = res.data[1];
+        const categoryName = product.category_name.toLowerCase();
+        const categoryId = parseInt(product.category_id);
 
         let collectionNames = [];
         let collectionIds = [];
 
-        res.data.forEach((p) => {
-          collectionNames.push(p.collection_name);
-          collectionIds.push(p.collection_id);
+        collections.forEach((c) => {
+          collectionNames.push(c.collection_name);
+          collectionIds.push(c.collection_id);
           return;
         });
 
-        let options = res.data.map((e) => {
+        let options = collections.map((e) => {
           return {
             value: e.collection_name,
             label: e.collection_name
           }
         });
 
-        let primeDrop;
+        let primeDrop = {};
 
-        if (data.product_image_public_id !== '') {
+        if (product.product_image_public_id) {
           const dz = this.state.primaryDropzone;
-          const imgName = data.product_image_public_id;
+          const imgName = product.product_image_public_id;
           const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
 
           primeDrop = Object.assign({}, this.state.primaryDropzone);
@@ -112,10 +109,10 @@ export default class ProductUpdate extends React.Component {
         this.setState({
           collections: collectionNames,
           collectionIds: collectionIds,
-          description: data.product_description,
-          name: data.product_name,
-          price: data.product_price,
-          size: data.product_size,
+          description: product.product_description,
+          name: product.product_name,
+          price: product.product_price,
+          size: product.product_size,
           initialPrimaryDropzone: primeDrop,
           category: categoryName,
           categoryId: categoryId,
@@ -127,7 +124,7 @@ export default class ProductUpdate extends React.Component {
           .then((r) => {
             let secondDrop;
 
-            if (r.data.length > 0) {
+            if (r.data) {
               r.data.forEach((item) => {
                 const dz2 = this.state.secondaryDropzone;
                 const imgName = item.image_public_id;
@@ -345,21 +342,19 @@ export default class ProductUpdate extends React.Component {
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
 
-
-    // console.log(this.state.categoryId, '******* categoryId');
-    // console.log(category, '******** category');
-    // console.log(collections, '******* collections');
-    // console.log(name, '********* name');
-    // console.log(description, '*********** description');
-    // console.log(price, '****** price');
-    // console.log(size, '******* size');
-    // console.log(primary, '*********** PRIMARY');
-    // console.log(secondary, '*********** SECONDARY');
-
+    console.log(this.state.categoryId, '******* categoryId');
+    console.log(category, '******** category');
+    console.log(collections, '******* collections');
+    console.log(name, '********* name');
+    console.log(description, '*********** description');
+    console.log(price, '****** price');
+    console.log(size, '******* size');
+    console.log(primary, '*********** PRIMARY');
+    console.log(secondary, '*********** SECONDARY');
 
     let reqPrimaryImg;
 
-    // PRIMARY DROPZONE CHANGE
+    // CHECK PRIMARY DROPZONE CHANGE
     if (this.state.initialPrimaryDropzone.files !== primary) {
       reqPrimaryImg = superagent.put('/api/products')
         .attach('primary', primary[0]);
@@ -367,6 +362,7 @@ export default class ProductUpdate extends React.Component {
       reqPrimaryImg = superagent.put('/api/products');
     }
 
+    // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
     reqPrimaryImg
       .field('productId', this.props.params.id)
       .field('category', this.state.category)
@@ -378,9 +374,10 @@ export default class ProductUpdate extends React.Component {
       .field('size', this.state.size)
       .then((res) => {
         console.log(res, '******* res');
+        const initSecondDPZ = this.state.initialSecondaryDropzone;
 
-        // CHECK SECONDARY CHANGE
-        if (this.state.initialSecondaryDropzone.files !== secondary) {
+        // CHECK SECONDARY DPZ FILES
+        if (initSecondDPZ && initSecondDPZ.files !== secondary) {
           console.log('Started from the bottom!');
 
           // let productId = this.props.params.id;

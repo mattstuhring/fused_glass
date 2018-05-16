@@ -34,12 +34,16 @@ router.get('/products/:id', (req, res, next) => {
         .innerJoin('collections', 'products_collections.collection_id', 'collections.collection_id')
         .then((colls) => {
 
+          let collections = [];
+
           // IF PRODUCTS_COLLECTIONS EXISTS
           if (colls.length > 0) {
             colls.forEach((c) => {
-              product.push(c);
+              collections.push(c);
             });
           }
+
+          product.push(collections);
 
           // SEND PRODUCT DETAILS
           res.send(product);
@@ -68,7 +72,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
   // PRODUCT VARIABLES
   const { name, description, price, size } = req.body;
   let { category, collections, categoryId } = req.body;
-  console.log(collections, '********* initial collections');
 
   // INSERT NEW PRODUCT INTO DB
   knex('products')
@@ -96,8 +99,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
         if (collections.length > 1) {
           collections = collections.split(',');
         }
-
-        console.log(collections, '****** collections');
 
         // INSERT COLLECTIONS INTO DB
         knex('collections')
@@ -178,12 +179,12 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   let { productId, collections, categoryId } = req.body;
   productId = parseInt(productId);
   categoryId = parseInt(categoryId);
-
+  console.log(collections, '*************** collections');
 
   // IF COLLECTIONS EXIST, INSERT COLLECTIONS INTO DB
-  if (collections !== '' || collections.length >= 1) {
-    console.log('Made it to collections does exists');
-    
+  if (collections && collections.length >= 1) {
+    console.log('true and collections >= 1');
+
     if (collections.length === 1) {
       let collName = collections;
       collections = [];
@@ -234,8 +235,6 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
       });
   }
 
-
-
   // UPDATE PRODUCT IN DB
   knex('products')
     .select('*')
@@ -247,21 +246,23 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
       product_description: description,
       product_size: size
     })
-    .then((imgPublicId) => {
+    .then((productImagePublicId) => {
       console.log(req.file, '********** req.file');
 
       // IF THERE IS A PRIMARY IMAGE FILE:
       // DELETE THE OLD IMAGE FROM CLOUDINARY
       // UPLOAD NEW IMAGE TO CLOUDINARY
       // UPDATE DB WITH NEW PUBLIC_ID
-      if (!req.file) {
-        cloudinary.v2.api.delete_resources(imgPublicId, function(err, res) {
+      if (req.file) {
+        // DELETE PRIMARY IMAGE FROM CLOUDINARY
+        cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
           console.log(res, '*********  CLOUD DELETE SUCCESS');
         });
 
         const datauri = new Datauri();
         datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
+        // UPLOAD NEW PRIMARY IMAGE TO CLOUDINARY
         cloudinary.v2.uploader.upload(datauri.content,
           {
             folder: `${category}/${productId}/`,
