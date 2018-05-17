@@ -342,15 +342,15 @@ export default class ProductUpdate extends React.Component {
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
 
-    console.log(this.state.categoryId, '******* categoryId');
+    // console.log(this.state.categoryId, '******* categoryId');
     console.log(category, '******** category');
     console.log(collections, '******* collections');
-    console.log(name, '********* name');
-    console.log(description, '*********** description');
-    console.log(price, '****** price');
-    console.log(size, '******* size');
-    console.log(primary, '*********** PRIMARY');
-    console.log(secondary, '*********** SECONDARY');
+    // console.log(name, '********* name');
+    // console.log(description, '*********** description');
+    // console.log(price, '****** price');
+    // console.log(size, '******* size');
+    // console.log(primary, '*********** PRIMARY');
+    // console.log(secondary, '*********** SECONDARY');
 
     let reqPrimaryImg;
 
@@ -378,7 +378,7 @@ export default class ProductUpdate extends React.Component {
 
         // CHECK SECONDARY DPZ FILES
         if (initSecondDPZ && initSecondDPZ.files !== secondary) {
-          console.log('Started from the bottom!');
+          console.log('Secondary file');
 
           // let productId = this.props.params.id;
           // let reqSecondaryImg = superagent.put('/api/images');
@@ -401,7 +401,7 @@ export default class ProductUpdate extends React.Component {
           //   return;
           // });
         } else {
-          console.log('Now we here!');
+          console.log('Nada');
         }
       })
       .catch((err) => {

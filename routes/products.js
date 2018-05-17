@@ -181,59 +181,159 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   categoryId = parseInt(categoryId);
   console.log(collections, '*************** collections');
 
-  // IF COLLECTIONS EXIST, INSERT COLLECTIONS INTO DB
-  if (collections && collections.length >= 1) {
-    console.log('true and collections >= 1');
+  if (!collections) {
+    collections = [];
+  }
 
-    if (collections.length === 1) {
-      let collName = collections;
-      collections = [];
-      collections.push(collName);
-    }
+  // // IF COLLECTIONS EXIST, INSERT COLLECTIONS INTO DB
+  // if (collections && collections.length >= 1) {
+  // console.log('true and collections >= 1');
 
-    if (collections.length > 1) {
-      collections = collections.split(',');
-    }
+  if (collections.length === 1) {
+    let collName = collections;
+    collections = [];
+    collections.push(collName);
+  } else if (collections.length > 1) {
+    collections = collections.split(',');
+  } else {
+    collections = [];
+  }
+
+  // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+  knex('products_collections')
+    .where('products_collections.product_id', productId)
+    .del()
+    .then(() => {
+      // CREATE COLLE
+      return knex('collections')
+        .select('collection_id')
+        .whereIn('collection_name', collections)
+        .then((collectionIdArray) => {
+
+          console.log(collectionIdArray, '******* coll Id Arr');
+          let db = knex.table('products_collections')
+          let coll = [];
+
+          // CREATE COLLECTIONS ARRAY
+          collectionIdArray.forEach((item) => {
+            coll.push({
+              product_id: productId,
+              collection_id: parseInt(item.collection_id)
+            })
+          });
+
+          // INSERT COLLECTIONS ARRAY INTO DB
+          db.insert(coll)
+            .then(() => {
+              console.log('Insert collection sucessful!');
+            })
+            .catch((err) => {
+              next(err);
+            });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+
+
+
+    // knex('collections')
+    //   .select('collection_id')
+    //   .whereIn('collection_name', collections)
+    //   .then((collectionIdArray) => {
+    //     // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+    //     // INSERT ALL NEW COLLECTIONS
+    //     return knex('products_collections')
+    //       .where('products_collections.product_id', productId)
+    //       .del()
+    //       .then(() => {
+    //         let db = knex.table('products_collections')
+    //         const coll = [];
+    //
+    //         // CREATE COLLECTIONS ARRAY
+    //         collectionIdArray.forEach((item) => {
+    //           coll.push({
+    //             product_id: productId,
+    //             collection_id: parseInt(item.collection_id)
+    //           })
+    //         });
+    //
+    //         // INSERT COLLECTIONS ARRAY INTO DB
+    //         db.insert(coll)
+    //           .then(() => {
+    //             console.log('Insert collection sucessful!');
+    //           })
+    //           .catch((err) => {
+    //             next(err);
+    //           });
+    //       })
+    //       .catch((err) => {
+    //         next(err);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     next(err);
+    //   });
+
+
+
+
+
+
+
+    // if (collections.length === 1) {
+    //   let collName = collections;
+    //   collections = [];
+    //   collections.push(collName);
+    // }
+    //
+    // if (collections.length > 1) {
+    //   collections = collections.split(',');
+    // }
 
     // REMOVE ALL COLLECTIONS FROM DB THEN RE-INSERT ALL COLLECTIONS INTO DB
-    knex('collections')
-      .select('collection_id')
-      .whereIn('collection_name', collections)
-      .then((collectionIdArray) => {
-        // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
-        // INSERT ALL NEW COLLECTIONS
-        return knex('products_collections')
-          .where('products_collections.product_id', productId)
-          .del()
-          .then(() => {
-            let db = knex.table('products_collections')
-            const coll = [];
-
-            // CREATE COLLECTIONS ARRAY
-            collectionIdArray.forEach((item) => {
-              coll.push({
-                product_id: productId,
-                collection_id: parseInt(item.collection_id)
-              })
-            });
-
-            // INSERT COLLECTIONS ARRAY INTO DB
-            db.insert(coll)
-              .then(() => {
-                console.log('Insert collection sucessful!');
-              })
-              .catch((err) => {
-                next(err);
-              });
-          })
-          .catch((err) => {
-            next(err);
-          });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
+    // knex('collections')
+    //   .select('collection_id')
+    //   .whereIn('collection_name', collections)
+    //   .then((collectionIdArray) => {
+    //     // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+    //     // INSERT ALL NEW COLLECTIONS
+    //     return knex('products_collections')
+    //       .where('products_collections.product_id', productId)
+    //       .del()
+    //       .then(() => {
+    //         let db = knex.table('products_collections')
+    //         const coll = [];
+    //
+    //         // CREATE COLLECTIONS ARRAY
+    //         collectionIdArray.forEach((item) => {
+    //           coll.push({
+    //             product_id: productId,
+    //             collection_id: parseInt(item.collection_id)
+    //           })
+    //         });
+    //
+    //         // INSERT COLLECTIONS ARRAY INTO DB
+    //         db.insert(coll)
+    //           .then(() => {
+    //             console.log('Insert collection sucessful!');
+    //           })
+    //           .catch((err) => {
+    //             next(err);
+    //           });
+    //       })
+    //       .catch((err) => {
+    //         next(err);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     next(err);
+    //   });
+  // }
 
   // UPDATE PRODUCT IN DB
   knex('products')
