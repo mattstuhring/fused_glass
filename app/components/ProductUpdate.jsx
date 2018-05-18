@@ -377,29 +377,29 @@ export default class ProductUpdate extends React.Component {
         const initSecondDPZ = this.state.initialSecondaryDropzone;
 
         // CHECK SECONDARY DPZ FILES
-        if (initSecondDPZ && initSecondDPZ.files !== secondary) {
+        if (initSecondDPZ !== secondary) {
           console.log('Secondary file');
 
-          // let productId = this.props.params.id;
-          // let reqSecondaryImg = superagent.put('/api/images');
-          //
-          // // POST SECONDARY IMAGES
-          // secondary.forEach((img) => {
-          //   reqSecondaryImg
-          //     .field('id', productId)
-          //     .field('category', this.state.category)
-          //     .attach('images', img)
-          // });
-          //
-          // reqSecondaryImg.end((err, res) => {
-          //   if (err) {
-          //     console.log(err);
-          //     return;
-          //   }
-          //
-          //   console.log('UPDATE COMPLETE');
-          //   return;
-          // });
+          let productId = this.props.params.id;
+          let reqSecondaryImg = superagent.put('/api/images');
+
+          // POST SECONDARY IMAGES
+          secondary.forEach((img) => {
+            reqSecondaryImg
+              .field('id', productId)
+              .field('category', this.state.category)
+              .attach('images', img)
+          });
+
+          reqSecondaryImg.end((err, res) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+
+            console.log('UPDATE COMPLETE');
+            return;
+          });
         } else {
           console.log('No 2nd files');
         }

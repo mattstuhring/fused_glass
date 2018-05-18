@@ -269,7 +269,7 @@ export default class ProductAdd extends React.Component {
       .then((res) => {
         let productId = parseInt(res.text);
 
-        if (secondary.length !== 0) {
+        if (secondary.length > 0) {
           let reqImg = superagent.post('/api/images');
 
           // POST SECONDARY IMAGES
