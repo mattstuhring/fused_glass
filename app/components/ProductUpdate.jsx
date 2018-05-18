@@ -401,7 +401,7 @@ export default class ProductUpdate extends React.Component {
           //   return;
           // });
         } else {
-          console.log('Nada');
+          console.log('No 2nd files');
         }
       })
       .catch((err) => {
