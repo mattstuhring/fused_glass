@@ -102,12 +102,35 @@ router.put('/images', upload.array('images'), (req, res, next) => {
     api_secret: process.env.API_SECRET
   });
 
-  const { category } = req.body;
-  let { id } = req.body;
-  let categoryName;
+  console.log(req.body, '*********** req.body');
+  console.log(req.files, '********** req.files');
+
+  res.sendStatus(200);
+
+  // req.body = { id: '10', category: 'decorative' };
+  // req.files = [{
+  //   fieldname: 'images',
+  //   originalname: 'test_salmon_1.jpg',
+  //   encoding: '7bit',
+  //   mimetype: 'image/jpeg',
+  //   size: 346757
+  // }];
+
+
+  // req.body = { id: '10', category: 'decorative' };
+  // req.files = undefined;
+
+
+  // req.body = {
+  //   id: [ '10', '10', '10', '10' ],
+  //   category: [ 'decorative', 'decorative', 'decorative', 'decorative' ]
+  // }
+  // req.files = [{...}]
+
+  let { id, category } = req.body;
+
   let productId;
-  let db = knex.table('images')
-  let imgArr = [];
+  let categoryName;
 
   if (Array.isArray(id) === true) {
     productId = parseInt(req.body.id[0]);
@@ -115,65 +138,73 @@ router.put('/images', upload.array('images'), (req, res, next) => {
     productId = parseInt(req.body.id);
   }
 
-  console.log(req.files, '*********** req files');
-
-  if (req.files) {
-    knex('images')
-      .select('*')
-      .where('images.product_id', productId)
-      .returning('image_public_id')
-      .then((productImagePublicId) => {
-        console.log(productImagePublicId, '******* prod img pubic ID');
-
-        // DELETE ALL PRIMARY IMAGE FROM CLOUDINARY
-        productImagePublicId.forEach((img) => {
-          cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
-            console.log(res, '*********  CLOUD DELETE SUCCESS');
-          });
-        })
-
-        // UPLOAD ALL IMAGES TO CLOUDINARY AND INSERT ALL IMAGES INTO DB
-        req.files.forEach((img) => {
-          const datauri = new Datauri();
-          datauri.format(path.extname(img.originalname).toString(), img.buffer);
-
-          // UPLOAD ALL IMAGES TO CLOUDINARY
-          cloudinary.v2.uploader.upload(datauri.content,
-            {
-              folder: `${categoryName}/${productId}/`,
-              tags: productId,
-              height: 400,
-              weight: 500,
-              crop: 'limit'
-            },
-            function(error, result) {
-              if (error) {
-                next(error);
-              }
-
-              // INSERT ALL IMAGES INTO DB
-              knex('images')
-                .insert({
-                  image_public_id: result.public_id,
-                  product_id: productId
-                })
-                .then((r) => {
-                  console.log(r, '********* r');
-                })
-                .catch((err) => {
-                  next(err);
-                });
-            });
-        });
-      })
-      .catch((err) => {
-        next(err);
-      });
-
-    res.sendStatus(200);
+  if (Array.isArray(category) === true) {
+    categoryName = req.body.category[0];
   } else {
-    res.sendStatus(300);
+    categoryName = req.body.category;
   }
+
+
+  // if (req.files) {
+  //   knex('images')
+  //     .select('*')
+  //     .where('images.product_id', productId)
+  //     .returning('image_public_id')
+  //     .then((productImagePublicId) => {
+  //       console.log(productImagePublicId, '******* productImagePublicId');
+  //
+  //       // DELETE ALL PRIMARY IMAGE FROM CLOUDINARY
+  //       productImagePublicId.forEach((img) => {
+  //         cloudinary.v2.api.delete_resources(img, function(err, res) {
+  //           console.log(res, '*********  CLOUD DELETE SUCCESS');
+  //         });
+  //       })
+  //
+  //       // UPLOAD ALL IMAGES TO CLOUDINARY AND INSERT ALL IMAGES INTO DB
+  //       req.files.forEach((img) => {
+  //         const datauri = new Datauri();
+  //         datauri.format(path.extname(img.originalname).toString(), img.buffer);
+  //
+  //         // UPLOAD ALL IMAGES TO CLOUDINARY
+  //         cloudinary.v2.uploader.upload(datauri.content,
+  //           {
+  //             folder: `${categoryName}/${productId}/`,
+  //             tags: productId,
+  //             height: 400,
+  //             weight: 500,
+  //             crop: 'limit'
+  //           },
+  //           function(error, result) {
+  //             if (error) {
+  //               next(error);
+  //             }
+  //
+  //             console.log(result, '******** cloundinary result');
+  //             console.log(error, '********** cloundinary error');
+  //
+  //             // INSERT ALL IMAGES INTO DB
+  //             knex('images')
+  //               .insert({
+  //                 image_public_id: result.public_id,
+  //                 product_id: productId
+  //               })
+  //               .then((r) => {
+  //                 console.log(r, '********* r');
+  //               })
+  //               .catch((err) => {
+  //                 next(err);
+  //               });
+  //           });
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       next(err);
+  //     });
+  //
+  //   res.sendStatus(200);
+  // } else {
+  //   res.sendStatus(300);
+  // }
 });
 
 

@@ -340,19 +340,18 @@ export default class ProductUpdate extends React.Component {
     const price = this.state.price;
     const size = this.state.size;
     let primary = this.state.primaryDropzone.files;
-    let secondary = this.state.secondaryDropzone.files;
+    let productId = this.props.params.id;
+    let reqPrimaryImg;
 
     // console.log(this.state.categoryId, '******* categoryId');
-    console.log(category, '******** category');
-    console.log(collections, '******* collections');
+    // console.log(category, '******** category');
+    // console.log(collections, '******* collections');
     // console.log(name, '********* name');
     // console.log(description, '*********** description');
     // console.log(price, '****** price');
     // console.log(size, '******* size');
     // console.log(primary, '*********** PRIMARY');
     // console.log(secondary, '*********** SECONDARY');
-
-    let reqPrimaryImg;
 
     // CHECK PRIMARY DROPZONE CHANGE
     if (this.state.initialPrimaryDropzone.files !== primary) {
@@ -374,34 +373,55 @@ export default class ProductUpdate extends React.Component {
       .field('size', this.state.size)
       .then((res) => {
         console.log(res, '******* res');
-        const initSecondDPZ = this.state.initialSecondaryDropzone;
+        const initSecondDPZ = this.state.initialSecondaryDropzone.files;
+        let secondary = this.state.secondaryDropzone.files;
+
+        console.log(initSecondDPZ, '****** initSecondDPZ');
+        console.log(secondary, '****** secondary');
 
         // CHECK SECONDARY DPZ FILES
-        if (initSecondDPZ !== secondary) {
-          console.log('Secondary file');
-
-          let productId = this.props.params.id;
+        // if (secondary && initSecondDPZ !== secondary) {
+        if (secondary.length > 0 && initSecondDPZ !== secondary) {
           let reqSecondaryImg = superagent.put('/api/images');
+          console.log(secondary, '******** secondary');
+
 
           // POST SECONDARY IMAGES
           secondary.forEach((img) => {
             reqSecondaryImg
               .field('id', productId)
-              .field('category', this.state.category)
-              .attach('images', img)
+              .field('category', category)
+              .attach('images', img);
           });
+
 
           reqSecondaryImg.end((err, res) => {
             if (err) {
               console.log(err);
               return;
             }
-
-            console.log('UPDATE COMPLETE');
+            console.log('2nd COMPLETE');
             return;
           });
+
+
+          this.setState({
+            initialPrimaryDropzone: primary,
+            initialSecondaryDropzone: secondary
+          });
+
+
         } else {
-          console.log('No 2nd files');
+          superagent.put('/api/images')
+            .field('id', productId)
+            .field('category', category)
+            .end((err, res) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+              console.log(res, '******* No 2nd file');
+            });
         }
       })
       .catch((err) => {
