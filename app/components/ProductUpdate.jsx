@@ -388,7 +388,6 @@ export default class ProductUpdate extends React.Component {
       .field('price', price)
       .field('size', size)
       .then((res) => {
-        console.log(res, '******* res');
         const initSecondDPZ = this.state.initSecondaryDropzone.files;
         let secondary = this.state.secondaryDropzone.files;
 
