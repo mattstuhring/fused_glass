@@ -179,43 +179,42 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   let { productId, collections, categoryId } = req.body;
   productId = parseInt(productId);
   categoryId = parseInt(categoryId);
-  console.log(collections, '*************** collections');
+  let knexProductsCollections;
+  let knexCollections;
 
-  if (!collections) {
-    collections = [];
-  }
+  console.log(req.body, '************************ req.body');
+  console.log(collections, '********************** collections');
 
-  // // IF COLLECTIONS EXIST, INSERT COLLECTIONS INTO DB
-  // if (collections && collections.length >= 1) {
-  // console.log('true and collections >= 1');
+  // CHECK IF COLLECTIONS EXISTS && COLLECTIONS LENGTH IS > 0
+  if (typeof collections !== 'undefined' && collections.length > 0) {
 
-  if (collections.length === 1) {
-    let collName = collections;
-    collections = [];
-    collections.push(collName);
-  } else if (collections.length > 1) {
-    collections = collections.split(',');
-  } else {
-    collections = [];
-  }
+    // COLLECTIONS VARIABLE CONFIG
+    if (collections.length === 1) {
+      let collName = collections;
+      collections = [];
+      collections.push(collName);
+    } else if (collections.length > 1) {
+      collections = collections.split(',');
+    } else {
+      collections = [];
+    }
 
-  // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
-  knex('products_collections')
-    .where('products_collections.product_id', productId)
-    .del()
-    .then(() => {
-      // CREATE ARRAY OF COLLECTION IDS
-      return knex('collections')
-        .select('collection_id')
-        .whereIn('collection_name', collections)
-        .then((collectionIdArray) => {
-          console.log(collectionIdArray, '******* coll Id Arr');
+    // SELECT ALL COLLECTION_ID's BY COLLECTION_NAME's
+    knex('collections')
+      .select('collection_id')
+      .whereIn('collection_name', collections)
+      .then((collectionIdArray) => {
+        console.log(collectionIdArray, '************** collectionIdArray');
 
-          if (collections.length > 0) {
+        // DELETE ALL PRODUCTS_COLLECTIONS ROWS IN DB BY PRODUCT_ID
+        return knex('products_collections')
+          .where('products_collections.product_id', productId)
+          .del()
+          .then((r) => {
             let db = knex.table('products_collections')
             let coll = [];
 
-            // CREATE COLLECTIONS ARRAY WITH COLLECTION OBJECT
+            // CREATE PRODUCTS_COLLECTIONS ROWS TO BE INSERTED
             collectionIdArray.forEach((item) => {
               coll.push({
                 product_id: productId,
@@ -223,7 +222,7 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
               })
             });
 
-            // INSERT COLLECTIONS ARRAY INTO DB
+            // INSERT NEW PRODUCTS_COLLECTIONS ROWS INTO DB
             db.insert(coll)
               .then(() => {
                 console.log('Insert collection sucessful!');
@@ -231,80 +230,306 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
               .catch((err) => {
                 next(err);
               });
-          }
+          })
+          .catch((err) => {
+            next(err);
+          });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    knex('products_collections')
+      .where('products_collections.product_id', productId)
+      .del()
+      .then((r) => {
+        console.log('Deleted products_collections!');
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 
-          // UPDATE PRODUCT IN DB
-          knex('products')
-            .select('*')
-            .where('products.product_id', productId)
-            .returning('product_image_public_id')
-            .update({
-              product_name: name,
-              product_price: price,
-              product_description: description,
-              product_size: size
-            })
-            .then((productImagePublicId) => {
-              console.log(req.file, '********** req.file');
+  // UPDATE PRODUCT DETAILS IN DB
+  knex('products')
+    .select('*')
+    .where('products.product_id', productId)
+    .returning('product_image_public_id')
+    .update({
+      product_name: name,
+      product_price: price,
+      product_description: description,
+      product_size: size
+    })
+    .then((productImagePublicId) => {
+      console.log(req.file, '********** req.file');
 
-              // IF THERE IS A PRIMARY IMAGE FILE:
-              // DELETE THE OLD IMAGE FROM CLOUDINARY
-              // UPLOAD NEW IMAGE TO CLOUDINARY
-              // UPDATE DB WITH NEW PUBLIC_ID
-              if (req.file) {
-                // DELETE PRIMARY IMAGE FROM CLOUDINARY
-                cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
-                  console.log(res, '*********  CLOUD DELETE SUCCESS');
-                });
-
-                const datauri = new Datauri();
-                datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
-
-                // UPLOAD NEW PRIMARY IMAGE TO CLOUDINARY
-                cloudinary.v2.uploader.upload(datauri.content,
-                  {
-                    folder: `${category}/${productId}/`,
-                    tags: productId,
-                    height: 400,
-                    weight: 500,
-                    crop: 'limit'
-                  },
-                  function(err, result) {
-                    if (err) {
-                      next(err)
-                    }
-
-                    // UPDATE PRODUCT WITH CLOUDINARY PUBLIC_ID
-                    knex('products')
-                      .where('products.product_id', productId)
-                      .update({
-                        product_image_public_id: result.public_id
-                      })
-                      .then((data) => {
-                        res.send(productId.toString());
-                      })
-                      .catch((err) => {
-                        next(err)
-                      });
-                  });
-              }
-              else {
-                // IF THERE IS NO IMAGE FILE:
-                // SEND BACK PRODUCT ID, MUST BE SENT AS A STRING.
-                res.send(productId.toString());
-              }
-            })
-            .catch((err) => {
-              next(err);
-            });
-        })
-        .catch((err) => {
-          next(err);
+      // IF THERE IS A PRIMARY IMAGE FILE:
+      // DELETE THE OLD IMAGE FROM CLOUDINARY
+      // UPLOAD NEW IMAGE TO CLOUDINARY
+      // UPDATE DB WITH NEW PUBLIC_ID
+      if (req.file) {
+        // DELETE PRIMARY IMAGE FROM CLOUDINARY
+        cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
+          console.log(res, '*********  CLOUD DELETE SUCCESS');
         });
+
+        const datauri = new Datauri();
+        datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+
+        // UPLOAD NEW PRIMARY IMAGE TO CLOUDINARY
+        cloudinary.v2.uploader.upload(datauri.content,
+          {
+            folder: `${category}/${productId}/`,
+            tags: productId,
+            height: 400,
+            weight: 500,
+            crop: 'limit'
+          },
+          function(err, result) {
+            if (err) {
+              next(err)
+            }
+
+            // UPDATE PRODUCT WITH CLOUDINARY PUBLIC_ID
+            knex('products')
+              .where('products.product_id', productId)
+              .update({
+                product_image_public_id: result.public_id
+              })
+              .then((data) => {
+                res.send(productId.toString());
+              })
+              .catch((err) => {
+                next(err)
+              });
+          });
+      }
+      else {
+        // IF THERE IS NO IMAGE FILE:
+        // SEND BACK PRODUCT ID, MUST BE SENT AS A STRING.
+        res.send(productId.toString());
+      }
     })
     .catch((err) => {
       next(err);
     });
+
+
+  // // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+  // knex('products_collections')
+  //   .where('products_collections.product_id', productId)
+  //   .del()
+  //   .then(() => {
+  //     // CREATE ARRAY OF COLLECTION IDS
+  //     return knex('collections')
+  //       .select('collection_id')
+  //       .whereIn('collection_name', collections)
+  //       .then((collectionIdArray) => {
+  //         console.log(collectionIdArray, '******* coll Id Arr');
+  //
+  //         if (collections.length > 0) {
+  //           let db = knex.table('products_collections')
+  //           let coll = [];
+  //
+  //           // PUSH COLLECTION OBJECTS INTO COLLECTIONS ARRAY
+  //           collectionIdArray.forEach((item) => {
+  //             coll.push({
+  //               product_id: productId,
+  //               collection_id: parseInt(item.collection_id)
+  //             })
+  //           });
+  //
+  //           // INSERT COLLECTIONS ARRAY INTO DB
+  //           db.insert(coll)
+  //             .then(() => {
+  //               console.log('Insert collection sucessful!');
+  //             })
+  //             .catch((err) => {
+  //               next(err);
+  //             });
+  //         }
+  //
+  //         // UPDATE PRODUCT IN DB
+  //         knex('products')
+  //           .select('*')
+  //           .where('products.product_id', productId)
+  //           .returning('product_image_public_id')
+  //           .update({
+  //             product_name: name,
+  //             product_price: price,
+  //             product_description: description,
+  //             product_size: size
+  //           })
+  //           .then((productImagePublicId) => {
+  //             console.log(req.file, '********** req.file');
+  //
+  //             // IF THERE IS A PRIMARY IMAGE FILE:
+  //             // DELETE THE OLD IMAGE FROM CLOUDINARY
+  //             // UPLOAD NEW IMAGE TO CLOUDINARY
+  //             // UPDATE DB WITH NEW PUBLIC_ID
+  //             if (req.file) {
+  //               // DELETE PRIMARY IMAGE FROM CLOUDINARY
+  //               cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
+  //                 console.log(res, '*********  CLOUD DELETE SUCCESS');
+  //               });
+  //
+  //               const datauri = new Datauri();
+  //               datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+  //
+  //               // UPLOAD NEW PRIMARY IMAGE TO CLOUDINARY
+  //               cloudinary.v2.uploader.upload(datauri.content,
+  //                 {
+  //                   folder: `${category}/${productId}/`,
+  //                   tags: productId,
+  //                   height: 400,
+  //                   weight: 500,
+  //                   crop: 'limit'
+  //                 },
+  //                 function(err, result) {
+  //                   if (err) {
+  //                     next(err)
+  //                   }
+  //
+  //                   // UPDATE PRODUCT WITH CLOUDINARY PUBLIC_ID
+  //                   knex('products')
+  //                     .where('products.product_id', productId)
+  //                     .update({
+  //                       product_image_public_id: result.public_id
+  //                     })
+  //                     .then((data) => {
+  //                       res.send(productId.toString());
+  //                     })
+  //                     .catch((err) => {
+  //                       next(err)
+  //                     });
+  //                 });
+  //             }
+  //             else {
+  //               // IF THERE IS NO IMAGE FILE:
+  //               // SEND BACK PRODUCT ID, MUST BE SENT AS A STRING.
+  //               res.send(productId.toString());
+  //             }
+  //           })
+  //           .catch((err) => {
+  //             next(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
+
+
+  // // DELETE ALL COLLECTIONS ATTACHED TO PRODUCT
+  // knex('products_collections')
+  //   .where('products_collections.product_id', productId)
+  //   .del()
+  //   .then(() => {
+  //     // CREATE ARRAY OF COLLECTION IDS
+  //     return knex('collections')
+  //       .select('collection_id')
+  //       .whereIn('collection_name', collections)
+  //       .then((collectionIdArray) => {
+  //         console.log(collectionIdArray, '******* coll Id Arr');
+  //
+  //         if (collections.length > 0) {
+  //           let db = knex.table('products_collections')
+  //           let coll = [];
+  //
+  //           // PUSH COLLECTION OBJECTS INTO COLLECTIONS ARRAY
+  //           collectionIdArray.forEach((item) => {
+  //             coll.push({
+  //               product_id: productId,
+  //               collection_id: parseInt(item.collection_id)
+  //             })
+  //           });
+  //
+  //           // INSERT COLLECTIONS ARRAY INTO DB
+  //           db.insert(coll)
+  //             .then(() => {
+  //               console.log('Insert collection sucessful!');
+  //             })
+  //             .catch((err) => {
+  //               next(err);
+  //             });
+  //         }
+  //
+  //         // UPDATE PRODUCT IN DB
+  //         knex('products')
+  //           .select('*')
+  //           .where('products.product_id', productId)
+  //           .returning('product_image_public_id')
+  //           .update({
+  //             product_name: name,
+  //             product_price: price,
+  //             product_description: description,
+  //             product_size: size
+  //           })
+  //           .then((productImagePublicId) => {
+  //             console.log(req.file, '********** req.file');
+  //
+  //             // IF THERE IS A PRIMARY IMAGE FILE:
+  //             // DELETE THE OLD IMAGE FROM CLOUDINARY
+  //             // UPLOAD NEW IMAGE TO CLOUDINARY
+  //             // UPDATE DB WITH NEW PUBLIC_ID
+  //             if (req.file) {
+  //               // DELETE PRIMARY IMAGE FROM CLOUDINARY
+  //               cloudinary.v2.api.delete_resources(productImagePublicId, function(err, res) {
+  //                 console.log(res, '*********  CLOUD DELETE SUCCESS');
+  //               });
+  //
+  //               const datauri = new Datauri();
+  //               datauri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+  //
+  //               // UPLOAD NEW PRIMARY IMAGE TO CLOUDINARY
+  //               cloudinary.v2.uploader.upload(datauri.content,
+  //                 {
+  //                   folder: `${category}/${productId}/`,
+  //                   tags: productId,
+  //                   height: 400,
+  //                   weight: 500,
+  //                   crop: 'limit'
+  //                 },
+  //                 function(err, result) {
+  //                   if (err) {
+  //                     next(err)
+  //                   }
+  //
+  //                   // UPDATE PRODUCT WITH CLOUDINARY PUBLIC_ID
+  //                   knex('products')
+  //                     .where('products.product_id', productId)
+  //                     .update({
+  //                       product_image_public_id: result.public_id
+  //                     })
+  //                     .then((data) => {
+  //                       res.send(productId.toString());
+  //                     })
+  //                     .catch((err) => {
+  //                       next(err)
+  //                     });
+  //                 });
+  //             }
+  //             else {
+  //               // IF THERE IS NO IMAGE FILE:
+  //               // SEND BACK PRODUCT ID, MUST BE SENT AS A STRING.
+  //               res.send(productId.toString());
+  //             }
+  //           })
+  //           .catch((err) => {
+  //             next(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         next(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     next(err);
+  //   });
 
   // // UPDATE PRODUCT IN DB
   // knex('products')

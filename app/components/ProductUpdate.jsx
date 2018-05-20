@@ -18,6 +18,7 @@ export default class ProductUpdate extends React.Component {
       category: '',
       categoryId: null,
       collections: '',
+      initCollections: '',
       collectionIds: [],
       options: null,
       description: '',
@@ -27,12 +28,12 @@ export default class ProductUpdate extends React.Component {
       price: '',
       size: '',
       primaryDropzone: {},
-      initialPrimaryDropzone: null,
+      initPrimaryDropzone: null,
       pdzValid: null,
       pdz: true,
       pdzError: false,
       secondaryDropzone: {},
-      initialSecondaryDropzone: null,
+      initSecondaryDropzone: null,
       sdzValid: null,
       sdz: true,
       sdzError: false
@@ -108,12 +109,13 @@ export default class ProductUpdate extends React.Component {
 
         this.setState({
           collections: collectionNames,
+          initCollections: collectionNames,
           collectionIds: collectionIds,
           description: product.product_description,
           name: product.product_name,
           price: product.product_price,
           size: product.product_size,
-          initialPrimaryDropzone: primeDrop,
+          initPrimaryDropzone: primeDrop,
           category: categoryName,
           categoryId: categoryId,
           options: options
@@ -150,7 +152,7 @@ export default class ProductUpdate extends React.Component {
               });
 
               this.setState({
-                initialSecondaryDropzone: secondDrop
+                initSecondaryDropzone: secondDrop
               });
             }
 
@@ -334,14 +336,17 @@ export default class ProductUpdate extends React.Component {
     event.preventDefault();
 
     const category = this.state.category;
+    const categoryId = this.state.categoryId;
     let collections = this.state.collections;
+    const initCollections = this.state.initCollections;
     const name = this.state.name;
     const description = this.state.description;
     const price = this.state.price;
     const size = this.state.size;
     let primary = this.state.primaryDropzone.files;
     let productId = this.props.params.id;
-    let reqPrimaryImg;
+    let initPrimaryDPZ = this.state.initPrimaryDropzone.files;
+    let superProductUpdate;
 
     // console.log(this.state.categoryId, '******* categoryId');
     // console.log(category, '******** category');
@@ -353,27 +358,38 @@ export default class ProductUpdate extends React.Component {
     // console.log(primary, '*********** PRIMARY');
     // console.log(secondary, '*********** SECONDARY');
 
-    // CHECK PRIMARY DROPZONE CHANGE
-    if (this.state.initialPrimaryDropzone.files !== primary) {
-      reqPrimaryImg = superagent.put('/api/products')
-        .attach('primary', primary[0]);
+    // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
+    if (initPrimaryDPZ !== primary) {
+      if (initCollections !== collections) {
+        superProductUpdate = superagent.put('/api/products')
+          .attach('primary', primary[0])
+          .field('collections', collections);
+      } else {
+        superProductUpdate = superagent.put('/api/products')
+          .attach('primary', primary[0]);
+      }
     } else {
-      reqPrimaryImg = superagent.put('/api/products');
+      if (initCollections !== collections) {
+        superProductUpdate = superagent.put('/api/products')
+          .field('collections', collections);
+      } else {
+        superProductUpdate = superagent.put('/api/products');
+      }
     }
 
+
     // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
-    reqPrimaryImg
-      .field('productId', this.props.params.id)
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', this.state.collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
+    superProductUpdate
+      .field('productId', productId)
+      .field('category', category)
+      .field('categoryId', categoryId)
+      .field('name', name)
+      .field('description', description)
+      .field('price', price)
+      .field('size', size)
       .then((res) => {
         console.log(res, '******* res');
-        const initSecondDPZ = this.state.initialSecondaryDropzone.files;
+        const initSecondDPZ = this.state.initSecondaryDropzone.files;
         let secondary = this.state.secondaryDropzone.files;
 
         console.log(initSecondDPZ, '****** initSecondDPZ');
@@ -382,34 +398,31 @@ export default class ProductUpdate extends React.Component {
         // CHECK SECONDARY DPZ FILES
         // if (secondary && initSecondDPZ !== secondary) {
         if (secondary.length > 0 && initSecondDPZ !== secondary) {
-          let reqSecondaryImg = superagent.put('/api/images');
-          console.log(secondary, '******** secondary');
-
+          let superSecondaryImg = superagent.put('/api/images');
+          console.log('There is a secondary file!');
 
           // POST SECONDARY IMAGES
           secondary.forEach((img) => {
-            reqSecondaryImg
+            superSecondaryImg
               .field('id', productId)
               .field('category', category)
               .attach('images', img);
           });
 
-
-          reqSecondaryImg.end((err, res) => {
+          superSecondaryImg.end((err, res) => {
             if (err) {
               console.log(err);
               return;
             }
-            console.log('2nd COMPLETE');
+            console.log('2nd file COMPLETE');
             return;
           });
 
-
           this.setState({
-            initialPrimaryDropzone: primary,
-            initialSecondaryDropzone: secondary
+            initPrimaryDropzone: primary,
+            initSecondaryDropzone: secondary,
+            initCollections: collections
           });
-
 
         } else {
           superagent.put('/api/images')
@@ -420,8 +433,13 @@ export default class ProductUpdate extends React.Component {
                 console.log(err);
                 return;
               }
-              console.log(res, '******* No 2nd file');
+              console.log(res, '******* No secondary file to send');
             });
+
+          this.setState({
+            initPrimaryDropzone: primary,
+            initCollections: collections
+          });
         }
       })
       .catch((err) => {
