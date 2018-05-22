@@ -186,7 +186,7 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
   console.log(collections, '********************** collections');
 
   // CHECK IF COLLECTIONS EXISTS && COLLECTIONS LENGTH IS > 0
-  if (typeof collections !== 'undefined' && collections.length > 0) {
+  if (typeof collections !== 'undefined') {
 
     // COLLECTIONS VARIABLE CONFIG
     if (collections.length === 1) {
@@ -204,7 +204,6 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
       .select('collection_id')
       .whereIn('collection_name', collections)
       .then((collectionIdArray) => {
-        console.log(collectionIdArray, '************** collectionIdArray');
 
         // DELETE ALL PRODUCTS_COLLECTIONS ROWS IN DB BY PRODUCT_ID
         return knex('products_collections')
@@ -234,16 +233,6 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
           .catch((err) => {
             next(err);
           });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else {
-    knex('products_collections')
-      .where('products_collections.product_id', productId)
-      .del()
-      .then((r) => {
-        console.log('Deleted products_collections!');
       })
       .catch((err) => {
         next(err);

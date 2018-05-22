@@ -105,30 +105,7 @@ router.put('/images', upload.array('images'), (req, res, next) => {
   console.log(req.body, '*********** req.body');
   console.log(req.files, '********** req.files');
 
-  res.sendStatus(200);
-
-  // req.body = { id: '10', category: 'decorative' };
-  // req.files = [{
-  //   fieldname: 'images',
-  //   originalname: 'test_salmon_1.jpg',
-  //   encoding: '7bit',
-  //   mimetype: 'image/jpeg',
-  //   size: 346757
-  // }];
-
-
-  // req.body = { id: '10', category: 'decorative' };
-  // req.files = undefined;
-
-
-  // req.body = {
-  //   id: [ '10', '10', '10', '10' ],
-  //   category: [ 'decorative', 'decorative', 'decorative', 'decorative' ]
-  // }
-  // req.files = [{...}]
-
   let { id, category } = req.body;
-
   let productId;
   let categoryName;
 
@@ -144,6 +121,10 @@ router.put('/images', upload.array('images'), (req, res, next) => {
     categoryName = req.body.category;
   }
 
+  console.log(productId, '********* productId');
+  console.log(categoryName, '************** categoryName');
+
+  res.sendStatus(200);
 
   // if (req.files) {
   //   knex('images')
@@ -190,6 +171,9 @@ router.put('/images', upload.array('images'), (req, res, next) => {
   //               })
   //               .then((r) => {
   //                 console.log(r, '********* r');
+  //
+  //                 // COMPLETE WITH STATUS 200
+  //                 res.sendStatus(200);
   //               })
   //               .catch((err) => {
   //                 next(err);
@@ -200,8 +184,6 @@ router.put('/images', upload.array('images'), (req, res, next) => {
   //     .catch((err) => {
   //       next(err);
   //     });
-  //
-  //   res.sendStatus(200);
   // } else {
   //   res.sendStatus(300);
   // }

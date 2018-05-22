@@ -318,7 +318,6 @@ export default class ProductUpdate extends React.Component {
 
   // SDZ -> REMOVE IMAGE
   handleSecondaryRemoveImage(file) {
-    console.log(file, 'removed secondary image');
     if (this.state.secondaryDropzone.files.length > 0) {
       this.setState({ sdzValid: true, sdz: false, sdzError: false });
     } else {
@@ -388,15 +387,15 @@ export default class ProductUpdate extends React.Component {
       .field('price', price)
       .field('size', size)
       .then((res) => {
-        const initSecondDPZ = this.state.initSecondaryDropzone.files;
         let secondary = this.state.secondaryDropzone.files;
 
-        console.log(initSecondDPZ, '****** initSecondDPZ');
-        console.log(secondary, '****** secondary');
-
         // CHECK SECONDARY DPZ FILES
-        // if (secondary && initSecondDPZ !== secondary) {
         if (secondary.length > 0 && initSecondDPZ !== secondary) {
+          const initSecondDPZ = this.state.initSecondaryDropzone.files;
+          
+          console.log(initSecondDPZ, '****** initSecondDPZ');
+          console.log(secondary, '****** secondary');
+
           let superSecondaryImg = superagent.put('/api/images');
           console.log('There is a secondary file!');
 
@@ -432,6 +431,7 @@ export default class ProductUpdate extends React.Component {
                 console.log(err);
                 return;
               }
+
               console.log(res, '******* No secondary file to send');
             });
 
