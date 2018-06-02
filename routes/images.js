@@ -105,27 +105,22 @@ router.put('/images', upload.array('images'), (req, res, next) => {
   console.log(req.body, '*********** req.body');
   console.log(req.files, '********** req.files');
 
-  let { id, category } = req.body;
-  let productId;
-  let categoryName;
-
-  if (Array.isArray(id) === true) {
-    productId = parseInt(req.body.id[0]);
-  } else {
-    productId = parseInt(req.body.id);
-  }
-
-  if (Array.isArray(category) === true) {
-    categoryName = req.body.category[0];
-  } else {
-    categoryName = req.body.category;
-  }
-
-  console.log(productId, '********* productId');
-  console.log(categoryName, '************** categoryName');
-
-  res.sendStatus(200);
-
+  // let { id, category } = req.body;
+  // let productId;
+  // let categoryName;
+  //
+  // if (Array.isArray(id) === true) {
+  //   productId = parseInt(req.body.id[0]);
+  // } else {
+  //   productId = parseInt(req.body.id);
+  // }
+  //
+  // if (Array.isArray(category) === true) {
+  //   categoryName = req.body.category[0];
+  // } else {
+  //   categoryName = req.body.category;
+  // }
+  //
   // if (req.files) {
   //   knex('images')
   //     .select('*')
