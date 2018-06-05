@@ -149,7 +149,6 @@ export default class ProductUpdate extends React.Component {
               dz2.options.maxFiles = dz2.options.maxFiles - existingFileCount;
             });
 
-            console.log(secondDrop, '******** secondDrop');
             if (secondDrop === undefined) {
               this.setState({
                 initSecondaryDropzoneFiles: []
@@ -388,35 +387,48 @@ export default class ProductUpdate extends React.Component {
         console.log(secondaryFiles, '****** secondaryFiles');
         console.log(initSecondaryFiles, '****** initSecondaryFiles');
 
-
         // COMPARE SECONDARY DROPZONE FILES
         let checkSecondaryFiles = _.isEqual(secondaryFiles, initSecondaryFiles);
 
-        if (checkSecondaryFiles === false) {
+        if (checkSecondaryFiles === false ) {
           console.log(checkSecondaryFiles, '******** changed!');
 
           let superSecondaryImg = superagent.put('/api/images');
 
-          // POST SECONDARY IMAGES
-          secondaryFiles.forEach((img) => {
-            superSecondaryImg
+          if (secondaryFiles.length > 0) {
+            // POST SECONDARY IMAGES
+            secondaryFiles.forEach((img) => {
+              superSecondaryImg
+                .field('id', productId)
+                .field('category', category)
+                .attach('images', img);
+            });
+
+            superSecondaryImg.end((err, res) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+              console.log('2nd COMPLETE');
+              return;
+            });
+          } else {
+            superagent.put('/api/images')
               .field('id', productId)
               .field('category', category)
-              .attach('images', img);
-          });
-
-          superSecondaryImg.end((err, res) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log('2nd COMPLETE');
-            return;
-          });
+              .end((err, res) => {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                console.log('2nd COMPLETE');
+                return;
+              })
+          }
 
           this.setState({
             initPrimaryDropzoneFiles: primaryFiles,
-            initSecondaryDropzoneFiles: secondary,
+            initSecondaryDropzoneFiles: secondaryFiles,
             initCollections: collections
           });
         } else {
