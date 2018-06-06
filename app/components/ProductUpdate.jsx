@@ -384,14 +384,14 @@ export default class ProductUpdate extends React.Component {
         let secondaryFiles = this.state.secondaryDropzone.files;
         const initSecondaryFiles = this.state.initSecondaryDropzoneFiles;
 
-        console.log(secondaryFiles, '****** secondaryFiles');
-        console.log(initSecondaryFiles, '****** initSecondaryFiles');
+        // console.log(secondaryFiles, '****** secondaryFiles');
+        // console.log(initSecondaryFiles, '****** initSecondaryFiles');
 
         // COMPARE SECONDARY DROPZONE FILES
         let checkSecondaryFiles = _.isEqual(secondaryFiles, initSecondaryFiles);
 
         if (checkSecondaryFiles === false ) {
-          console.log(checkSecondaryFiles, '******** changed!');
+          // console.log(checkSecondaryFiles, '******** changed!');
 
           let superSecondaryImg = superagent.put('/api/images');
 
@@ -409,7 +409,7 @@ export default class ProductUpdate extends React.Component {
                 console.log(err);
                 return;
               }
-              console.log('2nd COMPLETE');
+              // console.log('2nd COMPLETE');
               return;
             });
           } else {
@@ -421,7 +421,7 @@ export default class ProductUpdate extends React.Component {
                   console.log(err);
                   return;
                 }
-                console.log('2nd COMPLETE');
+                // console.log('2nd COMPLETE');
                 return;
               })
           }
@@ -432,7 +432,7 @@ export default class ProductUpdate extends React.Component {
             initCollections: collections
           });
         } else {
-          console.log(checkSecondaryFiles, '********* Nothing to do');
+          // console.log(checkSecondaryFiles, '********* Nothing to do');
 
           this.setState({
             initPrimaryDropzoneFiles: primaryFiles,
