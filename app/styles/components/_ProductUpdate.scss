@@ -1,5 +1,10 @@
 .product-update {
 
+  .alert-danger {
+    margin-top: 15px;
+    margin-bottom: 0px;
+  }
+
   .pdz-valid {
     div.filepicker {
       border-color: green;
@@ -11,11 +16,11 @@
       border-color: red;
     }
 
-    // span.pdz-error {
-    //   position: relative;
-    //   top: 7px;
-    //   color: red;
-    // }
+    span.pdz-error {
+      position: relative;
+      top: 7px;
+      color: red;
+    }
   }
 
   .sdz-valid {
@@ -29,11 +34,11 @@
       border-color: red;
     }
 
-    // span.sdz-error {
-    //   position: relative;
-    //   top: 7px;
-    //   color: red;
-    // }
+    span.sdz-error {
+      position: relative;
+      top: 7px;
+      color: red;
+    }
   }
 
   button.btn.btn-primary, button.btn.btn-danger {
