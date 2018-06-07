@@ -54,9 +54,9 @@ router.post('/images', upload.array('images'), (req, res, next) => {
 
   // CHECK IF THERE ARE ANY SECONARY IMAGES
   if (req.files) {
-    req.files.forEach((img) => {
+    req.files.forEach((file) => {
       const datauri = new Datauri();
-      datauri.format(path.extname(img.originalname).toString(), img.buffer);
+      datauri.format(path.extname(file.originalname).toString(), file.buffer);
 
       cloudinary.v2.uploader.upload(datauri.content,
         {
@@ -122,112 +122,48 @@ router.put('/images', upload.array('images'), (req, res, next) => {
   }
 
   if (req.files.length > 0) {
-    console.log('We made it!');
     // NORMAL PROCESS FLOW
-    knex('images')
-      .select('*')
-      .where('images.product_id', productId)
-      .returning('image_public_id')
-      .then((productImagePublicId) => {
-        console.log(productImagePublicId, '******* productImagePublicId');
+    // UPLOAD ALL IMAGES TO CLOUDINARY AND INSERT ALL IMAGES INTO DB
+    req.files.forEach((file) => {
+      const datauri = new Datauri();
+      datauri.format(path.extname(file.originalname).toString(), file.buffer);
 
-        // DELETE ALL PRIMARY IMAGE FROM CLOUDINARY
-        productImagePublicId.forEach((img) => {
-          cloudinary.v2.api.delete_resources(img, function(err, res) {
-            console.log(res, '*********  CLOUD DELETE SUCCESS');
-          });
-        })
+      // UPLOAD ALL IMAGES TO CLOUDINARY
+      cloudinary.v2.uploader.upload(datauri.content,
+        {
+          folder: `${categoryName}/${productId}/`,
+          tags: productId,
+          height: 400,
+          weight: 500,
+          crop: 'limit'
+        },
+        function(error, result) {
+          if (error) {
+            next(error);
+          }
 
-        // NEED TO DELETE ALL SECONDARY IMAGES FROM DB
-        return knex('images')
-          .where('images.product_id', productId)
-          .del()
-          .then((r) => {
-            console.log(r, '********* DELETE');
+          // INSERT ALL IMAGES INTO DB
+          knex('images')
+            .insert({
+              image_public_id: result.public_id,
+              product_id: productId
+            })
+            .then((r) => {
+              console.log(r.command, '********* success');
 
-            // UPLOAD ALL IMAGES TO CLOUDINARY AND INSERT ALL IMAGES INTO DB
-            req.files.forEach((img) => {
-              const datauri = new Datauri();
-              datauri.format(path.extname(img.originalname).toString(), img.buffer);
-
-              // UPLOAD ALL IMAGES TO CLOUDINARY
-              cloudinary.v2.uploader.upload(datauri.content,
-                {
-                  folder: `${categoryName}/${productId}/`,
-                  tags: productId,
-                  height: 400,
-                  weight: 500,
-                  crop: 'limit'
-                },
-                function(error, result) {
-                  if (error) {
-                    next(error);
-                  }
-
-                  console.log(result, '******** cloundinary result');
-                  console.log(error, '********** cloundinary error');
-
-                  // INSERT ALL IMAGES INTO DB
-                  knex('images')
-                    .insert({
-                      image_public_id: result.public_id,
-                      product_id: productId
-                    })
-                    .then((r) => {
-                      console.log(r, '********* r');
-
-                      // COMPLETE WITH STATUS 200
-                      res.sendStatus(200);
-                    })
-                    .catch((err) => {
-                      next(err);
-                    });
-                });
+              // COMPLETE WITH STATUS 200
+              res.sendStatus(200);
+            })
+            .catch((err) => {
+              next(err);
             });
-          })
-          .catch((err) => {
-            next(err);
-          });
-      })
-      .catch((err) => {
-        next(err);
-      });
+        });
+    });
   } else {
-    console.log('DELETE ALL SECONDARY');
-    // DELETE ALL SECONDARY IMAGES FROM CLOUDINARY & DB
-    knex('images')
-      .select('*')
-      .where('images.product_id', productId)
-      .returning('image_public_id')
-      .then((productImagePublicId) => {
-        console.log(productImagePublicId, '******* productImagePublicId');
+    console.log('Nothing to do!');
 
-        // DELETE ALL PRIMARY IMAGE FROM CLOUDINARY
-        productImagePublicId.forEach((img) => {
-          cloudinary.v2.api.delete_resources(img, function(err, res) {
-            console.log(res, '*********  CLOUD DELETE SUCCESS');
-          });
-        })
-
-        // INSERT ALL IMAGES INTO DB
-        return knex('images')
-          .where('images.product_id', productId)
-          .del()
-          .then((r) => {
-            console.log(r, '********* DELETE');
-
-            // COMPLETE WITH STATUS 200
-            res.sendStatus(200);
-          })
-          .catch((err) => {
-            next(err);
-          });
-      })
-      .catch((err) => {
-        next(err);
-      });
+    res.sendStatus(300);
   }
-
 });
 
 
@@ -237,53 +173,31 @@ router.put('/images', upload.array('images'), (req, res, next) => {
 
 
 
-// UPDATE PRIMARY & SECONDARY DROPZONE IMAGE TO AN EMPTY STRING
-router.delete('/images/:name/:id', (req, res, next) => {
-  const name = req.params.name;
-  const productId = req.params.id;
+// DELETE SECONDARY IMAGE FROM CLOUDINARY & DB
+router.delete('/images/:imagePublicId', (req, res, next) => {
+  const imagePublicId = req.params.imagePublicId;
 
-  console.log(name, '************* name');
-  console.log(productId, '********* productId');
+  // DELETE SECONDARY IMAGE FROM CLOUDINARY
+  cloudinary.v2.api.delete_resources(imagePublicId, function(err, res) {
+    if (err) {
+      next(err);
+    }
+    console.log(res, '*********  CLOUD DELETE SUCCESS');
+  });
 
-  // if (component === 'primary') {
-  //   fs.unlink(`public/images/uploads/${name}`, (err) => {
-  //     if (err) {
-  //       next(err);
-  //     }
-  //
-  //     knex('products')
-  //       .where('products.id', productId)
-  //       .update('product_image', '')
-  //       .then((product) => {
-  //         res.send('success');
-  //       })
-  //       .catch((err) => {
-  //         next(err);
-  //       });
-  //   });
-  // }
-  // else {
-  //   fs.unlink(`public/images/uploads/${name}`, (err) => {
-  //     if (err) {
-  //       next(err);
-  //     }
-  //
-  //     knex('images')
-  //       .where({
-  //         product_id: productId,
-  //         image_name: name
-  //       })
-  //       .del()
-  //       .then((product) => {
-  //         res.send('success');
-  //       })
-  //       .catch((err) => {
-  //         next(err);
-  //       });
-  //   });
-  // }
+  // DELETE ROW FROM DB BY IMAGE PUBLIC ID
+  knex('images')
+    .where('images.image_public_id', imagePublicId)
+    .del()
+    .then((r) => {
+      console.log('********* DELETE');
 
-  res.send('SUCCESS')
+      // COMPLETE WITH STATUS 200
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 

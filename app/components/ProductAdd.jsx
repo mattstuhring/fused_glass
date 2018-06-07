@@ -252,7 +252,7 @@ export default class ProductAdd extends React.Component {
     // console.log(primary, '*********** PRIMARY');
     // console.log(secondary, '*********** SECONDARY');
 
-    // if (category === '' || name === '' || description === '' || price === '' || primary === []) {
+    // if (category === '' || name === '' || description === '' || price === '' || primary.length === 0) {
     //   // THROW ERROR MESSAGE
     //   this.setState({ alertVisible: true, requireError: true})
     // }

@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup}
+import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup, Alert}
   from 'react-bootstrap';
 import Header from 'Header';
 import Select from 'react-select';
@@ -19,7 +19,7 @@ export default class ProductUpdate extends React.Component {
       category: '',
       categoryId: null,
       collections: '',
-      initCollections: '',
+      checkCollections: false,
       collectionIds: [],
       options: null,
       description: '',
@@ -27,15 +27,17 @@ export default class ProductUpdate extends React.Component {
       price: '',
       size: '',
       primaryDropzone: {},
-      initPrimaryDropzoneFiles: [],
+      checkPrimaryFiles: false,
       pdzValid: null,
       pdz: true,
       pdzError: false,
       secondaryDropzone: {},
-      initSecondaryDropzoneFiles: [],
+      checkSecondaryFiles: false,
       sdzValid: null,
       sdz: true,
-      sdzError: false
+      sdzError: false,
+      alertVisible: false,
+      requireError: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -47,9 +49,13 @@ export default class ProductUpdate extends React.Component {
     this.handlePrimaryDropzone = this.handlePrimaryDropzone.bind(this);
     this.handlePrimaryImage = this.handlePrimaryImage.bind(this);
     this.handlePrimaryRemoveImage = this.handlePrimaryRemoveImage.bind(this);
+    this.handlePrimarySuccess = this.handlePrimarySuccess.bind(this);
     this.handleSecondaryDropzone = this.handleSecondaryDropzone.bind(this);
     this.handleSecondaryImages = this.handleSecondaryImages.bind(this);
     this.handleSecondaryRemoveImage = this.handleSecondaryRemoveImage.bind(this);
+    this.handleSecondarySuccess = this.handleSecondarySuccess.bind(this);
+    this.handleAlertShow = this.handleAlertShow.bind(this);
+    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
     this.categoryValidation = this.categoryValidation.bind(this);
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
@@ -108,13 +114,11 @@ export default class ProductUpdate extends React.Component {
 
         this.setState({
           collections: collectionNames,
-          initCollections: collectionNames,
           collectionIds: collectionIds,
           description: product.product_description,
           name: product.product_name,
           price: product.product_price,
           size: product.product_size,
-          initPrimaryDropzoneFiles: primeDrop.files,
           category: categoryName,
           categoryId: categoryId,
           options: options
@@ -128,7 +132,7 @@ export default class ProductUpdate extends React.Component {
             r.data.forEach((item) => {
               const dz2 = this.state.secondaryDropzone;
               const imgName = item.image_public_id;
-              const thumb = { name: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
+              const thumb = { accepted: false, imagePublicId: imgName, size: 0, dataURL: 'https://res.cloudinary.com/fusedglassbyceleste/image/upload/' + imgName };
 
               secondDrop = Object.assign({}, this.state.secondaryDropzone);
               secondDrop.files.push(thumb);
@@ -148,16 +152,6 @@ export default class ProductUpdate extends React.Component {
               var existingFileCount = secondDrop.files.length; // The number of files already uploaded
               dz2.options.maxFiles = dz2.options.maxFiles - existingFileCount;
             });
-
-            if (secondDrop === undefined) {
-              this.setState({
-                initSecondaryDropzoneFiles: []
-              });
-            } else {
-              this.setState({
-                initSecondaryDropzoneFiles: secondDrop.files
-              });
-            }
           })
           .catch((err) => {
             console.log(err);
@@ -166,7 +160,6 @@ export default class ProductUpdate extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-
   }
 
 
@@ -226,7 +219,7 @@ export default class ProductUpdate extends React.Component {
 
   // HANDLE NEW COLLECTION INPUT CHANGE EVENTS
   handleCollections(val) {
-    this.setState({collections: val})
+    this.setState({ collections: val, checkCollections: true });
   }
 
   // GET ALL COLLECTIONS FOR CATEGORY -> ON CLICK OF COLLECTIONS INPUT
@@ -258,6 +251,7 @@ export default class ProductUpdate extends React.Component {
 
   handleRemoveCollection(val) {
     console.log(val, '************ val');
+    this.setState({ checkCollections: true });
   }
 
 
@@ -282,12 +276,17 @@ export default class ProductUpdate extends React.Component {
 
   // PDZ -> REMOVE IMAGE
   handlePrimaryRemoveImage(file) {
-    console.log(file, '******** remove file');
     if (this.state.primaryDropzone.files.length === 1) {
-      this.setState({ pdzValid: true, pdz: false, pdzError: false });
+      this.setState({ pdzValid: true, pdz: false, pdzError: false, checkPrimaryFiles: true });
     } else if (file) {
-      this.setState({ pdzValid: false, pdz: false, pdzError: true });
+      this.setState({ pdzValid: false, pdz: false, pdzError: true, checkPrimaryFiles: true });
     }
+  }
+
+  // PDZ -> SUCCESS
+  handlePrimarySuccess(file) {
+    console.log('********* primary success');
+    this.setState({ checkPrimaryFiles: true });
   }
 
 
@@ -319,11 +318,31 @@ export default class ProductUpdate extends React.Component {
 
   // SDZ -> REMOVE IMAGE
   handleSecondaryRemoveImage(file) {
-    if (this.state.secondaryDropzone.files.length > 0) {
-      this.setState({ sdzValid: true, sdz: false, sdzError: false });
-    } else {
-      this.setState({ sdzValid: null, sdz: true, sdzError: false });
+    console.log(file, '************ remove sec img');
+    if (!file.accepted) {
+      // REMOVE SECONDARY FILE FROM CLOUDINARY & DB
+      const imgPublicIdEncoded = encodeURIComponent(file.imagePublicId);
+
+      axios.delete(`/api/images/${imgPublicIdEncoded}`)
+        .then((res) => {
+          console.log(res, '********* delete res');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+
+    if (this.state.secondaryDropzone.files.length > 0) {
+      this.setState({ sdzValid: true, sdz: false, sdzError: false, checkSecondaryFiles: true });
+    } else {
+      this.setState({ sdzValid: null, sdz: true, sdzError: false, checkSecondaryFiles: true });
+    }
+  }
+
+  // PDZ -> SUCCESS
+  handleSecondarySuccess(file) {
+    console.log('********* secondary success');
+    this.setState({ checkSecondaryFiles: true });
   }
 
 
@@ -338,23 +357,24 @@ export default class ProductUpdate extends React.Component {
     const category = this.state.category;
     const categoryId = this.state.categoryId;
     let collections = this.state.collections;
-    const initCollections = this.state.initCollections;
     const name = this.state.name;
     const description = this.state.description;
     const price = this.state.price;
     const size = this.state.size;
     let productId = this.props.params.id;
     let primaryFiles = this.state.primaryDropzone.files;
-    let initPrimaryFiles = this.state.initPrimaryDropzoneFiles;
+    const checkPrimaryFiles = this.state.checkPrimaryFiles;
+    const checkCollections = this.state.checkCollections;
     let superProductUpdate;
 
+    console.log(checkPrimaryFiles, '********* checkPrimaryFiles');
+    console.log(checkCollections, '********* checkCollections');
+    // THROW ERROR MESSAGE
+    // this.setState({ alertVisible: true, requireError: true})
 
     // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
-    let checkPrimaryFiles = _.isEqual(initPrimaryFiles, primaryFiles);
-    let checkCollections = _.isEqual(initCollections, collections);
-
-    if (checkPrimaryFiles === false) {
-      if (checkCollections === false) {
+    if (checkPrimaryFiles) {
+      if (checkCollections) {
         superProductUpdate = superagent.put('/api/products')
           .attach('primary', primaryFiles[0])
           .field('collections', collections);
@@ -363,7 +383,7 @@ export default class ProductUpdate extends React.Component {
           .attach('primary', primaryFiles[0]);
       }
     } else {
-      if (checkCollections === false) {
+      if (checkCollections) {
         superProductUpdate = superagent.put('/api/products')
           .field('collections', collections);
       } else {
@@ -382,16 +402,11 @@ export default class ProductUpdate extends React.Component {
       .field('size', size)
       .then((res) => {
         let secondaryFiles = this.state.secondaryDropzone.files;
-        const initSecondaryFiles = this.state.initSecondaryDropzoneFiles;
+        const checkSecondaryFiles = this.state.checkSecondaryFiles;
+        console.log(secondaryFiles, '********* secondaryFiles');
 
-        // console.log(secondaryFiles, '****** secondaryFiles');
-        // console.log(initSecondaryFiles, '****** initSecondaryFiles');
-
-        // COMPARE SECONDARY DROPZONE FILES
-        let checkSecondaryFiles = _.isEqual(secondaryFiles, initSecondaryFiles);
-
-        if (checkSecondaryFiles === false ) {
-          // console.log(checkSecondaryFiles, '******** changed!');
+        if (checkSecondaryFiles) {
+          console.log('******** changed!');
 
           let superSecondaryImg = superagent.put('/api/images');
 
@@ -425,20 +440,15 @@ export default class ProductUpdate extends React.Component {
                 return;
               })
           }
-
-          this.setState({
-            initPrimaryDropzoneFiles: primaryFiles,
-            initSecondaryDropzoneFiles: secondaryFiles,
-            initCollections: collections
-          });
         } else {
-          // console.log(checkSecondaryFiles, '********* Nothing to do');
-
-          this.setState({
-            initPrimaryDropzoneFiles: primaryFiles,
-            initCollections: collections
-          });
+          console.log('********* Nothing to do');
         }
+
+        this.setState({
+          checkPrimaryFiles: false,
+          checkSecondaryFiles: false,
+          checkCollections: false
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -446,7 +456,14 @@ export default class ProductUpdate extends React.Component {
   }
 
 
+  // -----------  BOOTSTRAP ALERT TOGGLES ------------
+  handleAlertDismiss() {
+    this.setState({ alertVisible: false });
+  }
 
+  handleAlertShow() {
+    this.setState({ alertVisible: true });
+  }
 
 
   // CATEGORY FORM VALIDATION
@@ -475,7 +492,6 @@ export default class ProductUpdate extends React.Component {
       'pdz': this.state.pdz,
       'pdz-valid': this.state.pdzValid && !this.state.pdz,
       'pdz-invalid': !this.state.pdzValid && !this.state.pdz
-
     });
 
     let sdzValidation = classNames({
@@ -484,6 +500,35 @@ export default class ProductUpdate extends React.Component {
       'sdz-invalid': !this.state.sdzValid && !this.state.sdz
     });
 
+    const pdzError = () => {
+      if (this.state.pdzError) {
+        return <span className="pdz-error"><small><em>* Display image is required!</em></small></span>;
+      }
+    };
+
+    const sdzError = () => {
+      if (this.state.sdzError) {
+        return <span className="sdz-error"><small><em>* Only 4 images allowed! required!</em></small></span>;
+      }
+    };
+
+    const alertVisible = () => {
+      if (this.state.alertVisible) {
+        return (
+          <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
+            <h4>Oops! You got an error!</h4>
+            <p>Please fill in all required form fields.</p>
+          </Alert>
+        );
+      }
+    };
+
+    const requireError = () => {
+      if (this.state.requireError) {
+        return <span><small><em>* Required</em></small></span>
+      }
+    }
+
     return (
       <div className="product-update">
 
@@ -491,6 +536,9 @@ export default class ProductUpdate extends React.Component {
         <Header category="Admin"/>
 
         <Panel header="UPDATE PRODUCT DETAILS" bsStyle="warning">
+
+          {alertVisible()}
+
           <form onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-sm-6">
@@ -630,10 +678,13 @@ export default class ProductUpdate extends React.Component {
                     eventHandlers={{
                       addedfile: (file) => this.handlePrimaryImage(file),
                       removedfile: (file) => this.handlePrimaryRemoveImage(file, 'primary'),
-                      init: (obj) => this.handlePrimaryDropzone(obj)
+                      init: (obj) => this.handlePrimaryDropzone(obj),
+                      success: (file) => this.handlePrimarySuccess(file)
                     }}
                     djsConfig={{addRemoveLinks: true, maxFiles: 1}}
                   />
+
+                  {pdzError()}
                 </div>
 
                 <div className="page-header">
@@ -652,10 +703,13 @@ export default class ProductUpdate extends React.Component {
                     eventHandlers={{
                       addedfile: (file) => this.handleSecondaryImages(file),
                       removedfile: (file) => this.handleSecondaryRemoveImage(file, 'secondary'),
-                      init: (obj) => this.handleSecondaryDropzone(obj)
+                      init: (obj) => this.handleSecondaryDropzone(obj),
+                      success: (file) => this.handleSecondarySuccess(file)
                     }}
                     djsConfig={{addRemoveLinks: true, maxFiles: 4}}
                   />
+
+                  {sdzError()}
                 </div>
               </div>
             </div>
