@@ -66,22 +66,11 @@ export default class Collections extends React.Component {
     this.setState({ showModal: true, name, description, price, id });
   }
 
-  // DELETE PRODUCT FROM DATABASE BY ID
+  // DELETE PRODUCT FROM DB BY ID
   handleProductDelete(productId) {
     axios.delete(`/api/products/${productId}`)
       .then((res) => {
-        return;
-      })
-      .then(() => {
-        axios.get(`/api/collections/${this.state.collectionId}`)
-          .then((res) => {
-            this.setState({
-              products: res.data
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        console.log(res, '********* delete res');
       })
       .catch((err) => {
         console.log(error);

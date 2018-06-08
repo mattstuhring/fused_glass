@@ -307,24 +307,11 @@ router.put('/products', upload.single('primary'), (req, res, next) => {
 
 
 // DELETE PRODUCT BY ID
-router.delete('/products/:id', (req, res, next) => {
-  knex('products')
-    .where('products.id', req.params.id)
-    .del()
-    .then((products) => {
-      return knex('images')
-        .where('product_id', req.params.id)
-        .del()
-        .then(() => {
-          res.sendStatus(200);
-        })
-        .catch((err) => {
-          next(err);
-        });
-    })
-    .catch((err) => {
-      next(err);
-    });
+router.delete('/products/:productId', (req, res, next) => {
+
+  console.log(req.params.id, '********** product ID');
+
+  res.sendStatus(200);
 });
 
 module.exports = router;

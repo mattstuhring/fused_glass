@@ -1,59 +1,6 @@
 import React from 'react';
-// import $ from 'jQuery';
 import { Link, IndexLink } from 'react-router';
 import { Button } from 'react-bootstrap';
-
-
-// Show and hide menu bar
-// $(document).ready(function() {
-//   'use strict';
-//
-//   var lastScroll = 0;
-//   $(window).scroll(function(event){
-//       //Sets the current scroll position
-//       var st = $(this).scrollTop();
-//       //Determines up-or-down scrolling
-//       if (st > lastScroll){
-//         $('.navbar').css({
-//           'margin-top': '-100px',
-//           'opacity': '0',
-//           'transition': 'all 1s',
-//           '-webkit-transition': 'all 1s',
-//           '-o-transition': 'all 1s',
-//           '-moz-transition': 'all 1s'
-//         });
-//
-//         $('.navbar-default').css({
-//           'background-color': 'rgba(59, 59, 59, 0)',
-//           'transition': 'all 1s',
-//           '-webkit-transition': 'all 1s',
-//           '-o-transition': 'all 1s',
-//           '-moz-transition': 'all 1s'
-//         });
-//       }
-//       else {
-//         $('.navbar').css({
-//           'margin-top': '0px',
-//           'opacity': '1',
-//           'transition': 'all 1s',
-//           '-webkit-transition': 'all 1s',
-//           '-o-transition': 'all 1s',
-//           '-moz-transition': 'all 1s'
-//         });
-//
-//         $('.navbar-default').css({
-//           'background-color': 'rgba(59, 59, 59, 0.7)',
-//           'border-color': '#444',
-//           'transition': 'all 1s',
-//           '-webkit-transition': 'all 1s',
-//           '-o-transition': 'all 1s',
-//           '-moz-transition': 'all 1s'
-//         });
-//       }
-//       //Updates scroll position
-//       lastScroll = st;
-//   });
-// });
 
 
 export default class Navigation extends React.Component {
