@@ -1,6 +1,7 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import axios from 'axios';
-import {Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup, Alert}
+import { Button, Image, FormGroup, ControlLabel, FormControl, Thumbnail, Panel, Checkbox, InputGroup, Alert, Modal }
   from 'react-bootstrap';
 import Header from 'Header';
 import Select from 'react-select';
@@ -16,6 +17,7 @@ export default class ProductUpdate extends React.Component {
     super(props);
 
     this.state = {
+      productId: null,
       category: '',
       categoryId: null,
       collections: '',
@@ -37,7 +39,8 @@ export default class ProductUpdate extends React.Component {
       sdz: true,
       sdzError: false,
       alertVisible: false,
-      requireError: false
+      requireError: false,
+      showModal: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -59,12 +62,17 @@ export default class ProductUpdate extends React.Component {
     this.categoryValidation = this.categoryValidation.bind(this);
     this.collectionValidation = this.collectionValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
+    this.close = this.close.bind(this);
+    this.open = this.open.bind(this);
+    this.handleProductDelete = this.handleProductDelete.bind(this);
   }
 
 
   componentDidMount() {
-    axios.get(`api/products/${this.props.params.id}`)
+    console.log(this.props.params.id);
+    axios.get(`/api/products/${this.props.params.id}`)
       .then((res) => {
+        console.log(res, '********* res');
         const product = res.data[0];
         const collections = res.data[1];
         const categoryName = product.category_name.toLowerCase();
@@ -113,6 +121,7 @@ export default class ProductUpdate extends React.Component {
         }
 
         this.setState({
+          productId: this.props.params.id,
           collections: collectionNames,
           collectionIds: collectionIds,
           description: product.product_description,
@@ -125,7 +134,7 @@ export default class ProductUpdate extends React.Component {
         });
       })
       .then(() => {
-        return axios.get(`api/images/${this.props.params.id}`)
+        return axios.get(`/api/images/${this.props.params.id}`)
           .then((r) => {
             let secondDrop;
 
@@ -289,17 +298,6 @@ export default class ProductUpdate extends React.Component {
     this.setState({ checkPrimaryFiles: true });
   }
 
-
-
-
-
-
-
-
-
-
-
-
   // ----------  SECONDARY DROPZONE  --------------
   // ----------------------------------------------
   // SDZ -> CAPTURE DROPZONE OBJ
@@ -456,6 +454,32 @@ export default class ProductUpdate extends React.Component {
   }
 
 
+  // DELETE PRODUCT FROM DATABASE BY ID
+  handleProductDelete(productId, category) {
+    axios.delete(`/api/products/${productId}/${category}`)
+      .then((res) => {
+        console.log(res, '******* delete res');
+        this.close();
+      })
+      .catch((err) => {
+        console.log(error);
+      });
+
+    // this.setState({ showModal: false, name: '', description: '', price: '', id: null });
+  }
+
+
+  // CLOSE PRODUCT DELETE MODAL
+  close() {
+    this.setState({ showModal: false });
+  }
+
+  // OPEN PRODUCT DELETE MODAL
+  open() {
+    this.setState({ showModal: true });
+  }
+
+
   // -----------  BOOTSTRAP ALERT TOGGLES ------------
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
@@ -531,6 +555,23 @@ export default class ProductUpdate extends React.Component {
 
     return (
       <div className="product-update">
+        {/* DELETE PRODUCT MODAL */}
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Product</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete this product?</p>
+            <p>Product ID: {this.state.productId}</p>
+            <p>{this.state.category}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => this.handleProductDelete(this.state.productId, this.state.category)}>
+              Yes
+            </Button>
+            <Button onClick={this.close}>No</Button>
+          </Modal.Footer>
+        </Modal>
 
         {/* HEADER */}
         <Header category="Admin"/>
@@ -730,6 +771,17 @@ export default class ProductUpdate extends React.Component {
               </div>
             </div>
           </form>
+
+          <div className="row delete-product">
+            <div className="col-sm-12 text-center">
+              <Button
+                bsStyle="link"
+                onClick={() => this.open()}
+                >
+                  Or completely remove product
+                </Button>
+            </div>
+          </div>
         </Panel>
       </div>
     );

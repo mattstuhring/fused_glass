@@ -31,7 +31,7 @@ export default class ProductDetails extends React.Component {
     console.log(this.props.params.id, '********** params id');
 
 
-    axios.get(`api/products/${this.props.params.id}`)
+    axios.get(`/api/products/${this.props.params.id}`)
       .then((res) => {
         console.log(res, '******** res');
         const data = res.data[0];
@@ -49,7 +49,7 @@ export default class ProductDetails extends React.Component {
         });
       })
       .then(() => {
-        axios.get(`api/images/${this.props.params.id}`)
+        axios.get(`/api/images/${this.props.params.id}`)
           .then((r) => {
             console.log(r, '********* response');
             let images = Object.assign([], this.state.secondaryImages);

@@ -1,6 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var { Route, Router, IndexRoute, hashHistory } = require('react-router');
+var { Route, Router, IndexRoute, browserHistory } = require('react-router');
 import About from 'About';
 import Cart from 'Cart';
 import Categories from 'Categories';
@@ -31,23 +31,23 @@ require('style!css!font-awesome/css/font-awesome.css');
 require('style!css!sass!applicationStyles');
 
 ReactDOM.render(
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
     <Route path="/" component={Main}>
       <IndexRoute component={Home}/>
-      <Route path="about" component={About}/>
-      <Route path="gallery" component={Gallery}/>
-      <Route path="contact" component={Contact}/>
-      <Route path="productadd" component={ProductAdd}/>
-      <Route path="productupdate/:id" component={ProductUpdate}/>
-      <Route path="cart(/:id)" component={Cart}/>
+      <Route path="/about" component={About}/>
+      <Route path="/gallery" component={Gallery}/>
+      <Route path="/contact" component={Contact}/>
+      <Route path="/productadd" component={ProductAdd}/>
+      <Route path="/productupdate/:id" component={ProductUpdate}/>
+      <Route path="/cart(/:id)" component={Cart}/>
 
-      <Route path="products/:id/:category" component={Categories}/>
+      <Route path="/products/:id/:category" component={Categories}/>
 
-      <Route path="collections/:category/:id/:collection" component={Collections}/>
+      <Route path="/collections/:category/:id/:collection" component={Collections}/>
 
-      <Route path="productdetails/:id" component={ProductDetails} />
+      <Route path="/productdetails/:id" component={ProductDetails} />
 
-      <Route path="playground" component={Playground} />
+      <Route path="/playground" component={Playground} />
     </Route>
   </Router>,
   document.getElementById('app')

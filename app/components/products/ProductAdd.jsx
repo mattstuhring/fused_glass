@@ -8,7 +8,7 @@ import DropzoneComponent from 'react-dropzone-component';
 import superagent from 'superagent';
 import classNames from 'classnames';
 
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router';
 
 export default class ProductAdd extends React.Component {
   constructor(props) {

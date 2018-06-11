@@ -20,7 +20,7 @@ exports.seed = function(knex) {
         product_price: '$28.50',
         product_description: 'Seattle skyline night light',
         product_size: '5x3',
-        product_image_public_id: 'decorative/2/jgqlsddcyrtfctsscmxs',
+        product_image_public_id: 'decorative/2/ql41pluxufglocautheo',
         category_id: 1,
         created_at: new Date('2017-09-16 12:46:16 UTC'),
         updated_at: new Date('2017-09-16 12:46:16 UTC')

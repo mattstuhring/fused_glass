@@ -15,16 +15,11 @@ export default class Collections extends React.Component {
     this.state = {
       products: [],
       collectionId: null,
-      showModal: false,
       name: '',
       description: '',
       price: '',
       id: null
     };
-
-    this.close = this.close.bind(this);
-    this.open = this.open.bind(this);
-    this.handleProductDelete = this.handleProductDelete.bind(this);
   }
 
   componentDidMount() {
@@ -56,39 +51,12 @@ export default class Collections extends React.Component {
     }
   }
 
-  // CLOSE PRODUCT DELETE MODAL
-  close() {
-    this.setState({ showModal: false, name: '', description: '', price: '', id: null });
-  }
-
-  // OPEN PRODUCT DELETE MODAL
-  open(name, description, price, id) {
-    this.setState({ showModal: true, name, description, price, id });
-  }
-
-  // DELETE PRODUCT FROM DB BY ID
-  handleProductDelete(productId) {
-    axios.delete(`/api/products/${productId}`)
-      .then((res) => {
-        console.log(res, '********* delete res');
-      })
-      .catch((err) => {
-        console.log(error);
-      });
-
-    this.setState({ showModal: false, name: '', description: '', price: '', id: null });
-  }
-
   // *********************  RENDER  ****************************
   render() {
-    const {collection} = this.props.params;
+    const { collection } = this.props.params;
 
     const edit = (
       <Tooltip id="tooltip"><strong>Edit</strong></Tooltip>
-    );
-
-    const remove = (
-      <Tooltip id="tooltip"><strong>Delete</strong></Tooltip>
     );
 
     return (
@@ -98,27 +66,6 @@ export default class Collections extends React.Component {
         {this.state.products.map((p) => {
           return <div className="col-sm-4" key={p.product_id}>
             <div>
-
-              {/* DELETE PRODUCT MODAL */}
-              <Modal show={this.state.showModal} onHide={this.close}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Delete Product</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p>Are you sure you want to delete this product?</p>
-                  <h4>{this.state.name}</h4>
-                  <p>{this.state.description}</p>
-                  <p>{this.state.price}</p>
-                  <p>Product ID: {this.state.id}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button onClick={() => this.handleProductDelete(this.state.id)}>
-                    Yes
-                  </Button>
-                  <Button onClick={this.close}>No</Button>
-                </Modal.Footer>
-              </Modal>
-
               <div className="thumbnail">
                 <div className="row btn-wrap">
                   <div className="col-sm-12 text-right">
@@ -128,14 +75,6 @@ export default class Collections extends React.Component {
                           <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                         </Button>
                       </Link>
-                    </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={remove}>
-                      <Button
-                        bsStyle="danger"
-                        onClick={() => this.open(p.product_name, p.product_description, p.product_price, p.product_id)}
-                      >
-                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                      </Button>
                     </OverlayTrigger>
                   </div>
                 </div>
