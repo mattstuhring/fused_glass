@@ -19,7 +19,6 @@ cloudinary.config({
 // GET PRODUCT DETAILS BY ID
 router.get('/products/:id', (req, res, next) => {
   const productId = req.params.id;
-  console.log(productId, '******* productId');
 
   // GET PRODUCT TABLE
   knex('products')
@@ -173,7 +172,7 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
 
 
-// UPDATE PRODUCT
+// UPDATE PRODUCT IN CLOUDINARY & DB
 router.put('/products', upload.single('primary'), (req, res, next) => {
   // VARIABLES
   const { category, name, description, price, size } = req.body;
