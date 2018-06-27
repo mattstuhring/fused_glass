@@ -1,4 +1,6 @@
-var expect = require('expect');
+import expect from 'expect';
+import ReactTestUtils from 'react-dom/test-utils';
+
 
 describe('App', () => {
   it('should properly run tests', () => {

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "karma start",
+    "test-multi": "karma start --single-run=false",
     "knex": "knex",
     "start": "nodemon server.js"
   },
