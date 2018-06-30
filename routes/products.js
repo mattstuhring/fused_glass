@@ -174,7 +174,6 @@ router.post('/products', upload.single('primary'), (req, res, next) => {
 
 // UPDATE PRODUCT IN CLOUDINARY & DB
 router.put('/products', upload.single('primary'), (req, res, next) => {
-  // VARIABLES
   const { category, name, description, price, size } = req.body;
   let { productId, collections, categoryId } = req.body;
   productId = parseInt(productId);

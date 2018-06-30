@@ -316,7 +316,7 @@ export default class ProductUpdate extends React.Component {
 
   // SDZ -> REMOVE IMAGE
   handleSecondaryRemoveImage(file) {
-    console.log(file, '************ remove sec img');
+    // console.log(file, '************ remove sec img');
     if (!file.accepted) {
       // REMOVE SECONDARY FILE FROM CLOUDINARY & DB
       const imgPublicIdEncoded = encodeURIComponent(file.imagePublicId);
@@ -401,11 +401,8 @@ export default class ProductUpdate extends React.Component {
       .then((res) => {
         let secondaryFiles = this.state.secondaryDropzone.files;
         const checkSecondaryFiles = this.state.checkSecondaryFiles;
-        console.log(secondaryFiles, '********* secondaryFiles');
 
         if (checkSecondaryFiles) {
-          console.log('******** changed!');
-
           let superSecondaryImg = superagent.put('/api/images');
 
           if (secondaryFiles.length > 0) {
@@ -436,7 +433,7 @@ export default class ProductUpdate extends React.Component {
                 }
                 // console.log('2nd COMPLETE');
                 return;
-              })
+              });
           }
         } else {
           console.log('********* Nothing to do');

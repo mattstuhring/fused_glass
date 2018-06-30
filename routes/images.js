@@ -84,11 +84,9 @@ router.post('/images', upload.array('images'), (req, res, next) => {
             });
         });
     });
-    res.sendStatus(200);
-
-  } else {
-    res.sendStatus(300);
   }
+
+  res.sendStatus(200);
 });
 
 
@@ -102,8 +100,8 @@ router.put('/images', upload.array('images'), (req, res, next) => {
     api_secret: process.env.API_SECRET
   });
 
-  console.log(req.body, '*********** req.body');
-  console.log(req.files, '********** req.files');
+  // console.log(req.body, '*********** req.body');
+  // console.log(req.files, '********** req.files');
 
   let { id, category } = req.body;
   let productId;
@@ -150,20 +148,15 @@ router.put('/images', upload.array('images'), (req, res, next) => {
             })
             .then((r) => {
               console.log(r.command, '********* success');
-
-              // COMPLETE WITH STATUS 200
-              res.sendStatus(200);
             })
             .catch((err) => {
               next(err);
             });
         });
     });
-  } else {
-    console.log('Nothing to do!');
-
-    res.sendStatus(300);
   }
+
+  res.sendStatus(200);
 });
 
 
