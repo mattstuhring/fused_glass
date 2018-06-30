@@ -40,7 +40,8 @@ export default class ProductUpdate extends React.Component {
       sdzError: false,
       alertVisible: false,
       requireError: false,
-      showModal: false
+      showModal: false,
+      textValidationState: null
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -69,10 +70,8 @@ export default class ProductUpdate extends React.Component {
 
 
   componentDidMount() {
-    console.log(this.props.params.id);
     axios.get(`/api/products/${this.props.params.id}`)
       .then((res) => {
-        console.log(res, '********* res');
         const product = res.data[0];
         const collections = res.data[1];
         const categoryName = product.category_name.toLowerCase();
@@ -273,7 +272,6 @@ export default class ProductUpdate extends React.Component {
   handlePrimaryDropzone(dropzone) {
     this.setState({ primaryDropzone: dropzone });
   }
-
   // PDZ -> ADD IMAGE
   handlePrimaryImage(file) {
     if (this.state.primaryDropzone.files.length >= 2) {
@@ -282,7 +280,6 @@ export default class ProductUpdate extends React.Component {
       this.setState({ pdzValid: true, pdz: false, pdzError: false });
     }
   }
-
   // PDZ -> REMOVE IMAGE
   handlePrimaryRemoveImage(file) {
     if (this.state.primaryDropzone.files.length === 1) {
@@ -291,12 +288,12 @@ export default class ProductUpdate extends React.Component {
       this.setState({ pdzValid: false, pdz: false, pdzError: true, checkPrimaryFiles: true });
     }
   }
-
   // PDZ -> SUCCESS
   handlePrimarySuccess(file) {
     console.log('********* primary success');
     this.setState({ checkPrimaryFiles: true });
   }
+
 
   // ----------  SECONDARY DROPZONE  --------------
   // ----------------------------------------------
@@ -304,16 +301,15 @@ export default class ProductUpdate extends React.Component {
   handleSecondaryDropzone(dropzone) {
     this.setState({ secondaryDropzone: dropzone });
   }
-
   // SDZ -> ADD IMAGE
   handleSecondaryImages(file) {
     if (this.state.secondaryDropzone.files.length > 4) {
       this.state.secondaryDropzone.removeFile(file);
+      this.setState({ sdzError: true });
     } else {
       this.setState({ sdzValid: true, sdz: false, sdzError: false });
     }
   }
-
   // SDZ -> REMOVE IMAGE
   handleSecondaryRemoveImage(file) {
     // console.log(file, '************ remove sec img');
@@ -336,8 +332,7 @@ export default class ProductUpdate extends React.Component {
       this.setState({ sdzValid: null, sdz: true, sdzError: false, checkSecondaryFiles: true });
     }
   }
-
-  // PDZ -> SUCCESS
+  // SDZ -> SUCCESS
   handleSecondarySuccess(file) {
     console.log('********* secondary success');
     this.setState({ checkSecondaryFiles: true });
@@ -367,87 +362,94 @@ export default class ProductUpdate extends React.Component {
 
     console.log(checkPrimaryFiles, '********* checkPrimaryFiles');
     console.log(checkCollections, '********* checkCollections');
-    // THROW ERROR MESSAGE
-    // this.setState({ alertVisible: true, requireError: true})
 
-    // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
-    if (checkPrimaryFiles) {
-      if (checkCollections) {
-        superProductUpdate = superagent.put('/api/products')
-          .attach('primary', primaryFiles[0])
-          .field('collections', collections);
-      } else {
-        superProductUpdate = superagent.put('/api/products')
-          .attach('primary', primaryFiles[0]);
-      }
+    console.log(primaryFiles, '********* primaryFiles');
+
+
+    if (primaryFiles.length === 0) {
+      console.log('Display image is required!');
+      // // THROW ERROR MESSAGE
+      // this.setState({ alertVisible: true, requireError: true})
     } else {
-      if (checkCollections) {
-        superProductUpdate = superagent.put('/api/products')
-          .field('collections', collections);
-      } else {
-        superProductUpdate = superagent.put('/api/products');
-      }
+      // // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
+      // if (checkPrimaryFiles) {
+      //   if (checkCollections) {
+      //     superProductUpdate = superagent.put('/api/products')
+      //       .attach('primary', primaryFiles[0])
+      //       .field('collections', collections);
+      //   } else {
+      //     superProductUpdate = superagent.put('/api/products')
+      //       .attach('primary', primaryFiles[0]);
+      //   }
+      // } else {
+      //   if (checkCollections) {
+      //     superProductUpdate = superagent.put('/api/products')
+      //       .field('collections', collections);
+      //   } else {
+      //     superProductUpdate = superagent.put('/api/products');
+      //   }
+      // }
+      //
+      // // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
+      // superProductUpdate
+      //   .field('productId', productId)
+      //   .field('category', category)
+      //   .field('categoryId', categoryId)
+      //   .field('name', name)
+      //   .field('description', description)
+      //   .field('price', price)
+      //   .field('size', size)
+      //   .then((res) => {
+      //     let secondaryFiles = this.state.secondaryDropzone.files;
+      //     const checkSecondaryFiles = this.state.checkSecondaryFiles;
+      //
+      //     if (checkSecondaryFiles) {
+      //       let superSecondaryImg = superagent.put('/api/images');
+      //
+      //       if (secondaryFiles.length > 0) {
+      //         // POST SECONDARY IMAGES
+      //         secondaryFiles.forEach((img) => {
+      //           superSecondaryImg
+      //             .field('id', productId)
+      //             .field('category', category)
+      //             .attach('images', img);
+      //         });
+      //
+      //         superSecondaryImg.end((err, res) => {
+      //           if (err) {
+      //             console.log(err);
+      //             return;
+      //           }
+      //           // console.log('2nd COMPLETE');
+      //           return;
+      //         });
+      //       } else {
+      //         superagent.put('/api/images')
+      //           .field('id', productId)
+      //           .field('category', category)
+      //           .end((err, res) => {
+      //             if (err) {
+      //               console.log(err);
+      //               return;
+      //             }
+      //             // console.log('2nd COMPLETE');
+      //             return;
+      //           });
+      //       }
+      //     } else {
+      //       console.log('********* Nothing to do');
+      //     }
+      //
+      //     this.setState({
+      //       checkPrimaryFiles: false,
+      //       checkSecondaryFiles: false,
+      //       checkCollections: false
+      //     });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
-
-    // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
-    superProductUpdate
-      .field('productId', productId)
-      .field('category', category)
-      .field('categoryId', categoryId)
-      .field('name', name)
-      .field('description', description)
-      .field('price', price)
-      .field('size', size)
-      .then((res) => {
-        let secondaryFiles = this.state.secondaryDropzone.files;
-        const checkSecondaryFiles = this.state.checkSecondaryFiles;
-
-        if (checkSecondaryFiles) {
-          let superSecondaryImg = superagent.put('/api/images');
-
-          if (secondaryFiles.length > 0) {
-            // POST SECONDARY IMAGES
-            secondaryFiles.forEach((img) => {
-              superSecondaryImg
-                .field('id', productId)
-                .field('category', category)
-                .attach('images', img);
-            });
-
-            superSecondaryImg.end((err, res) => {
-              if (err) {
-                console.log(err);
-                return;
-              }
-              // console.log('2nd COMPLETE');
-              return;
-            });
-          } else {
-            superagent.put('/api/images')
-              .field('id', productId)
-              .field('category', category)
-              .end((err, res) => {
-                if (err) {
-                  console.log(err);
-                  return;
-                }
-                // console.log('2nd COMPLETE');
-                return;
-              });
-          }
-        } else {
-          console.log('********* Nothing to do');
-        }
-
-        this.setState({
-          checkPrimaryFiles: false,
-          checkSecondaryFiles: false,
-          checkCollections: false
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }
 
 
@@ -481,24 +483,22 @@ export default class ProductUpdate extends React.Component {
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
   }
-
   handleAlertShow() {
     this.setState({ alertVisible: true });
   }
 
 
+  // -----------  FORM VALIDATION RULES ------------
   // CATEGORY FORM VALIDATION
   categoryValidation() {
     if (this.state.category === '') return null;
     else if (this.state.category.length > 0) return 'success';
   }
-
   // COLLECTIONS FORM VALIDATION
   collectionValidation() {
     if (this.state.collections === []) return null;
     else if (this.state.collections.length > 0) return 'success';
   }
-
   // TEXT FORM VALIDATION
   textValidation(field) {
     if (field === '') return null;
@@ -529,7 +529,7 @@ export default class ProductUpdate extends React.Component {
 
     const sdzError = () => {
       if (this.state.sdzError) {
-        return <span className="sdz-error"><small><em>* Only 4 images allowed! required!</em></small></span>;
+        return <span className="sdz-error"><small><em>* The 4 image maximum has been reached!</em></small></span>;
       }
     };
 

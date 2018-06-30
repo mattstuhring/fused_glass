@@ -33,7 +33,11 @@ export default class ProductAdd extends React.Component {
       sdzError: false,
       options: null,
       alertVisible: false,
-      requireError: false
+      requireError: false,
+      nameValidationState: null,
+      descriptionValidationState: null,
+      priceValidationState: null,
+      sizeValidationState: null
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -57,18 +61,76 @@ export default class ProductAdd extends React.Component {
   }
 
 
-  // HANDLE ALL FORM INPUT CHANGE EVENTS
+  // -------------  HANDLE CHANGE ----------------
+  // ---------------------------------------------
   handleChange(event) {
     const value = event.target.value;
     const name = event.target.name;
+    const field = `${name}ValidationState`;
 
-    this.setState({
-      [name]: value
-    });
+    if (value.length > 0) {
+      this.setState({
+        [name]: value,
+        [field]: true
+      });
+    } else {
+      this.setState({
+        [name]: value,
+        [field]: false
+      });
+    }
+  }
+
+
+  // -------------  FORM VALIDATIONS -------------
+  // ---------------------------------------------
+  // CATEGORY
+  categoryValidation() {
+    if (this.state.category !== '') return 'success';
+  }
+
+  // COLLECTIONS
+  collectionValidation() {
+    if (this.state.category !== '') return 'success';
+  }
+
+  // // TEXT
+  // textValidation(field) {
+  //   console.log(field, '***** field');
+  //   if (field.length > 0) return 'success';
+  //   else if (field === '')  return 'error';
+  // }
+
+  textValidation(field) {
+    let fieldValidationState;
+
+    switch (field) {
+      case 'name':
+        fieldValidationState = this.state.nameValidationState;
+        break;
+      case 'description':
+        fieldValidationState = this.state.descriptionValidationState;
+        break;
+      case 'price':
+        fieldValidationState = this.state.priceValidationState;
+        break;
+      case 'size':
+        fieldValidationState = this.state.sizeValidationState;
+        break;
+    }
+
+    if (fieldValidationState === null) {
+      return null;
+    } else if (fieldValidationState) {
+      return 'success';
+    } else {
+      return 'error';
+    };
   }
 
 
   // GET ALL COLLECTIONS FROM CATEGORY
+  // ---------------------------------
   handleCategory(event, val) {
     const value = event.target.value;
     let categoryId;
@@ -111,10 +173,11 @@ export default class ProductAdd extends React.Component {
 
 
   // HANDLE NEW COLLECTION CHANGE
+  // ----------------------------
   handleCollections(val) {
     this.setState({collections: val})
   }
-
+  // REMOVE COLLECTION
   handleRemoveCollection(val) {
     console.log(val, '************ val');
   }
@@ -129,7 +192,6 @@ export default class ProductAdd extends React.Component {
   handleInitPDZ(dropzone) {
     this.setState({ primaryDropzone: dropzone });
   }
-
   // PDZ -> ADD IMAGE
   handleAddImgPDZ(file) {
     if (this.state.primaryDropzone.files.length >= 2) {
@@ -138,7 +200,6 @@ export default class ProductAdd extends React.Component {
       this.setState({ pdzValid: true, pdz: false, pdzError: false });
     }
   }
-
   // PDZ -> REMOVE IMAGE
   handleRemoveImgPDZ(file) {
     if (this.state.primaryDropzone.files.length === 1) {
@@ -147,7 +208,6 @@ export default class ProductAdd extends React.Component {
       this.setState({ pdzValid: false, pdz: false, pdzError: true });
     }
   }
-
   // PDZ -> SUCCESS
   handleSuccessPDZ(file) {
     console.log(file, '********* success');
@@ -161,7 +221,6 @@ export default class ProductAdd extends React.Component {
   handleInitSDZ(dropzone) {
     this.setState({ secondaryDropzone: dropzone });
   }
-
   // SDZ -> ADD IMAGE
   handleAddImgSDZ(file) {
     if (this.state.secondaryDropzone.files.length > 4) {
@@ -170,7 +229,6 @@ export default class ProductAdd extends React.Component {
       this.setState({ sdzValid: true, sdz: false, sdzError: false });
     }
   }
-
   // SDZ -> REMOVE IMAGE
   handleRemoveImgSDZ(file) {
     if (this.state.secondaryDropzone.files.length > 0) {
@@ -230,6 +288,7 @@ export default class ProductAdd extends React.Component {
 
 
   // -------------  FORM SUBMIT NEW PRODUCT -------------
+  // ----------------------------------------------------
   handleSubmit(event) {
     event.preventDefault();
 
@@ -252,72 +311,71 @@ export default class ProductAdd extends React.Component {
     // console.log(primary, '*********** PRIMARY');
     // console.log(secondary, '*********** SECONDARY');
 
-    // if (category === '' || name === '' || description === '' || price === '' || primary.length === 0) {
-    //   // THROW ERROR MESSAGE
-    //   this.setState({ alertVisible: true, requireError: true})
-    // }
+    if (category === '' || name === '' || description === '' || price === '' || primary.length === 0) {
+      // THROW ERROR MESSAGE
+      this.setState({ alertVisible: true, requireError: true});
+    } else {
+      this.setState({ alertVisible: false, requireError: false });
 
-    superagent.post('/api/products')
-      .field('category', this.state.category)
-      .field('categoryId', this.state.categoryId)
-      .field('collections', collections)
-      .field('name', this.state.name)
-      .field('description', this.state.description)
-      .field('price', this.state.price)
-      .field('size', this.state.size)
-      .attach('primary', primary[0])
-      .then((res) => {
-        let productId = parseInt(res.text);
+      superagent.post('/api/products')
+        .field('category', this.state.category)
+        .field('categoryId', this.state.categoryId)
+        .field('collections', collections)
+        .field('name', this.state.name)
+        .field('description', this.state.description)
+        .field('price', this.state.price)
+        .field('size', this.state.size)
+        .attach('primary', primary[0])
+        .then((res) => {
+          let productId = parseInt(res.text);
 
-        if (secondary.length > 0) {
-          let reqImg = superagent.post('/api/images');
+          if (secondary.length > 0) {
+            let reqImg = superagent.post('/api/images');
 
-          // POST SECONDARY IMAGES
-          secondary.forEach((img) => {
-            reqImg
-              .field('id', productId)
-              .field('category', this.state.category)
-              .attach('images', img)
+            // POST SECONDARY IMAGES
+            secondary.forEach((img) => {
+              reqImg
+                .field('id', productId)
+                .field('category', this.state.category)
+                .attach('images', img)
+            });
+
+            reqImg.end((err, res) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+            });
+          }
+
+          this.state.primaryDropzone.removeAllFiles();
+          this.state.secondaryDropzone.removeAllFiles();
+
+          this.setState({
+            category: '',
+            categoryId: null,
+            collections: '',
+            name: '',
+            description: '',
+            price: '',
+            size: '',
+            pdzValid: null,
+            pdz: true,
+            pdzError: false,
+            sdzValid: null,
+            sdz: true,
+            sdzError: false
           });
-
-          reqImg.end((err, res) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-          });
-        }
-
-        this.state.primaryDropzone.removeAllFiles();
-        this.state.secondaryDropzone.removeAllFiles();
-
-        this.setState({
-          category: '',
-          categoryId: null,
-          collections: '',
-          name: '',
-          description: '',
-          price: '',
-          size: '',
-          pdzValid: null,
-          pdz: true,
-          pdzError: false,
-          sdzValid: null,
-          sdz: true,
-          sdzError: false
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
   }
 
 
-
-
-
-
   // -----------  BOOTSTRAP ALERT TOGGLES ------------
+  // -------------------------------------------------
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
   }
@@ -326,23 +384,10 @@ export default class ProductAdd extends React.Component {
     this.setState({ alertVisible: true });
   }
 
-  // ----------  FORM VALIDATIONS -------------
-  // CATEGORY
-  categoryValidation() {
-    if (this.state.category !== '') return 'success';
-  }
-  // COLLECTIONS
-  collectionValidation() {
-    if (this.state.category !== '') return 'success';
-  }
-  // TEXT
-  textValidation(field) {
-    if (field.length > 0) return 'success';
-  }
-
 
 
   // **************************   RENDER   ***********************************
+  // *************************************************************************
   render() {
     let pdzValidation = classNames({
       'pdz': this.state.pdz,
@@ -359,13 +404,13 @@ export default class ProductAdd extends React.Component {
 
     const pdzError = () => {
       if (this.state.pdzError) {
-        return <span className="pdz-error"><small><em>* Single display image is required!</em></small></span>;
+        return <span className="pdz-error"><small><em>* Display image is required!</em></small></span>;
       }
     };
 
     const sdzError = () => {
       if (this.state.sdzError) {
-        return <span className="sdz-error"><small><em>* Only 4 images allowed! required!</em></small></span>;
+        return <span className="sdz-error"><small><em>* The 4 image maximum has been reached!</em></small></span>;
       }
     };
 
@@ -443,7 +488,7 @@ export default class ProductAdd extends React.Component {
                 {/* NAME */}
                 <FormGroup
                   controlId="formControlsText"
-                  validationState={this.textValidation(this.state.name)}
+                  validationState={this.textValidation('name')}
                 >
                   <ControlLabel>Name</ControlLabel>
                   <FormControl
@@ -458,7 +503,7 @@ export default class ProductAdd extends React.Component {
                 {/* DESCRIPTION */}
                 <FormGroup
                   controlId="formControlsTextarea"
-                  validationState={this.textValidation(this.state.description)}
+                  validationState={this.textValidation('description')}
                 >
                   <ControlLabel>Description</ControlLabel>
                   <FormControl
@@ -476,7 +521,7 @@ export default class ProductAdd extends React.Component {
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
-                      validationState={this.textValidation(this.state.price)}
+                      validationState={this.textValidation('price')}
                     >
                       <ControlLabel>Price</ControlLabel>
                       <InputGroup>
@@ -495,7 +540,7 @@ export default class ProductAdd extends React.Component {
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
-                      validationState={this.textValidation(this.state.size)}
+                      validationState={this.textValidation('size')}
                     >
                       <ControlLabel>Size</ControlLabel>
                       <FormControl
