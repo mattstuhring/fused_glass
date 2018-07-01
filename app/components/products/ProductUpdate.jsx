@@ -41,7 +41,10 @@ export default class ProductUpdate extends React.Component {
       alertVisible: false,
       requireError: false,
       showModal: false,
-      textValidationState: null
+      nameValidationState: true,
+      descriptionValidationState: true,
+      priceValidationState: true,
+      sizeValidationState: true
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -61,7 +64,7 @@ export default class ProductUpdate extends React.Component {
     this.handleAlertShow = this.handleAlertShow.bind(this);
     this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
     this.categoryValidation = this.categoryValidation.bind(this);
-    this.collectionValidation = this.collectionValidation.bind(this);
+    this.collectionsValidation = this.collectionsValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
@@ -172,14 +175,67 @@ export default class ProductUpdate extends React.Component {
 
 
 
-  // HANDLE ALL FORM INPUT CHANGE EVENTS
+  // -------------  HANDLE CHANGE ----------------
+  // ---------------------------------------------
   handleChange(event) {
     const value = event.target.value;
     const name = event.target.name;
+    const field = `${name}ValidationState`;
 
-    this.setState({
-      [name]: value
-    });
+    if (value.length > 0) {
+      this.setState({
+        [name]: value,
+        [field]: true
+      });
+    } else {
+      this.setState({
+        [name]: value,
+        [field]: null
+      });
+    }
+  }
+
+
+  // -------------  FORM VALIDATIONS -------------
+  // ---------------------------------------------
+  categoryValidation() {
+    return 'success';
+  }
+
+  collectionsValidation() {
+    return 'success';
+  }
+
+  textValidation(field) {
+    let fieldValidationState;
+
+    switch (field) {
+      case 'name':
+        fieldValidationState = this.state.nameValidationState;
+        break;
+      case 'name':
+        fieldValidationState = this.state.nameValidationState;
+        break;
+      case 'description':
+        fieldValidationState = this.state.descriptionValidationState;
+        break;
+      case 'price':
+        fieldValidationState = this.state.priceValidationState;
+        break;
+      case 'size':
+        fieldValidationState = this.state.sizeValidationState;
+        break;
+    }
+
+    if (fieldValidationState === null) {
+      return null;
+    } else if (fieldValidationState) {
+      return 'success';
+    } else if (!fieldValidationState) {
+      return 'error';
+    } else {
+      return null;
+    };
   }
 
 
@@ -360,17 +416,27 @@ export default class ProductUpdate extends React.Component {
     const checkCollections = this.state.checkCollections;
     let superProductUpdate;
 
-    console.log(checkPrimaryFiles, '********* checkPrimaryFiles');
-    console.log(checkCollections, '********* checkCollections');
+    if (name.length === 0) {
+      this.setState({ nameValidationState: false });
+    }
+    if (description.length === 0) {
+      this.setState({ descriptionValidationState: false });
+    }
+    if (price.length === 0) {
+      this.setState({ priceValidationState: false });
+    }
+    if (size.length === 0) {
+      this.setState({ sizeValidationState: false });
+    }
 
-    console.log(primaryFiles, '********* primaryFiles');
-
-
-    if (primaryFiles.length === 0) {
-      console.log('Display image is required!');
-      // // THROW ERROR MESSAGE
-      // this.setState({ alertVisible: true, requireError: true})
+    if (name.length === 0 || description.length === 0 || price.length === 0 || primaryFiles.length === 0) {
+      if (primaryFiles.length === 0) {
+        this.setState({ pdzError: true, pdzValid: false, pdz: false });
+      }
+      this.setState({ alertVisible: true });
     } else {
+      this.setState({ alertVisible: false });
+
       // // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
       // if (checkPrimaryFiles) {
       //   if (checkCollections) {
@@ -467,12 +533,11 @@ export default class ProductUpdate extends React.Component {
     // this.setState({ showModal: false, name: '', description: '', price: '', id: null });
   }
 
-
+  // ----------  -------------
   // CLOSE PRODUCT DELETE MODAL
   close() {
     this.setState({ showModal: false });
   }
-
   // OPEN PRODUCT DELETE MODAL
   open() {
     this.setState({ showModal: true });
@@ -480,34 +545,21 @@ export default class ProductUpdate extends React.Component {
 
 
   // -----------  BOOTSTRAP ALERT TOGGLES ------------
+  // -------------------------------------------------
+  // DISMISS
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
   }
+  // SHOW
   handleAlertShow() {
     this.setState({ alertVisible: true });
   }
 
 
-  // -----------  FORM VALIDATION RULES ------------
-  // CATEGORY FORM VALIDATION
-  categoryValidation() {
-    if (this.state.category === '') return null;
-    else if (this.state.category.length > 0) return 'success';
-  }
-  // COLLECTIONS FORM VALIDATION
-  collectionValidation() {
-    if (this.state.collections === []) return null;
-    else if (this.state.collections.length > 0) return 'success';
-  }
-  // TEXT FORM VALIDATION
-  textValidation(field) {
-    if (field === '') return null;
-    else if (field.length > 0) return 'success';
-  }
-
 
 
   // **************************   RENDER   ***********************************
+  // *************************************************************************
   render() {
     let pdzValidation = classNames({
       'pdz': this.state.pdz,
@@ -537,18 +589,13 @@ export default class ProductUpdate extends React.Component {
       if (this.state.alertVisible) {
         return (
           <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
-            <h4>Oops! You got an error!</h4>
-            <p>Please fill in all required form fields.</p>
+            <h4>Whoops!</h4>
+            <p>Please fill in all form fields highlighted in red.</p>
           </Alert>
         );
       }
     };
 
-    const requireError = () => {
-      if (this.state.requireError) {
-        return <span><small><em>* Required</em></small></span>
-      }
-    }
 
     return (
       <div className="product-update">
@@ -607,13 +654,14 @@ export default class ProductUpdate extends React.Component {
                 </FormGroup>
                 <FormGroup
                   controlId="formControlsSelect"
-                  validationState={this.collectionValidation()}
+                  validationState={this.collectionsValidation()}
                 >
                   {/* COLLECTION */}
                   <ControlLabel>Collection</ControlLabel>
                   <Select
                     multi={true}
                     simpleValue={true}
+                    placeholder="Optional..."
                     value={this.state.collections}
                     options={this.state.options}
                     onChange={this.handleCollections}
@@ -625,7 +673,7 @@ export default class ProductUpdate extends React.Component {
                 {/* NAME */}
                 <FormGroup
                   controlId="formControlsText"
-                  validationState={this.textValidation(this.state.name)}
+                  validationState={this.textValidation('name')}
                 >
                   <ControlLabel>Name</ControlLabel>
                   <FormControl
@@ -641,7 +689,7 @@ export default class ProductUpdate extends React.Component {
                 {/* DESCRIPTION */}
                 <FormGroup
                   controlId="formControlsTextarea"
-                  validationState={this.textValidation(this.state.description)}
+                  validationState={this.textValidation('description')}
                 >
                   <ControlLabel>Description</ControlLabel>
                   <FormControl
@@ -659,7 +707,7 @@ export default class ProductUpdate extends React.Component {
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
-                      validationState={this.textValidation(this.state.price)}
+                      validationState={this.textValidation('price')}
                     >
                       {/* PRICE */}
                       <ControlLabel>Price</ControlLabel>
@@ -678,7 +726,7 @@ export default class ProductUpdate extends React.Component {
                   <div className="col-sm-6">
                     <FormGroup
                       controlId="formControlsText"
-                      validationState={this.textValidation(this.state.size)}
+                      validationState={this.textValidation('size')}
                     >
                       {/* SIZE */}
                       <ControlLabel>Size</ControlLabel>

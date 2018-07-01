@@ -33,7 +33,8 @@ export default class ProductAdd extends React.Component {
       sdzError: false,
       options: null,
       alertVisible: false,
-      requireError: false,
+      categoryValidationState: null,
+      collectionsValidationState: null,
       nameValidationState: null,
       descriptionValidationState: null,
       priceValidationState: null,
@@ -53,8 +54,6 @@ export default class ProductAdd extends React.Component {
     this.handleInitSDZ = this.handleInitSDZ.bind(this);
     this.handleAddImgSDZ = this.handleAddImgSDZ.bind(this);
     this.handleRemoveImgSDZ = this.handleRemoveImgSDZ.bind(this);
-    // this.collectionValidation = this.collectionValidation.bind(this);
-    this.categoryValidation = this.categoryValidation.bind(this);
     this.textValidation = this.textValidation.bind(this);
     this.handleAlertShow = this.handleAlertShow.bind(this);
     this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
@@ -76,7 +75,7 @@ export default class ProductAdd extends React.Component {
     } else {
       this.setState({
         [name]: value,
-        [field]: false
+        [field]: null
       });
     }
   }
@@ -84,27 +83,19 @@ export default class ProductAdd extends React.Component {
 
   // -------------  FORM VALIDATIONS -------------
   // ---------------------------------------------
-  // CATEGORY
-  categoryValidation() {
-    if (this.state.category !== '') return 'success';
-  }
-
-  // COLLECTIONS
-  collectionValidation() {
-    if (this.state.category !== '') return 'success';
-  }
-
-  // // TEXT
-  // textValidation(field) {
-  //   console.log(field, '***** field');
-  //   if (field.length > 0) return 'success';
-  //   else if (field === '')  return 'error';
-  // }
-
   textValidation(field) {
     let fieldValidationState;
 
     switch (field) {
+      case 'category':
+        fieldValidationState = this.state.categoryValidationState;
+        break;
+      case 'collections':
+        fieldValidationState = this.state.collectionsValidationState;
+        break;
+      case 'name':
+        fieldValidationState = this.state.nameValidationState;
+        break;
       case 'name':
         fieldValidationState = this.state.nameValidationState;
         break;
@@ -123,8 +114,10 @@ export default class ProductAdd extends React.Component {
       return null;
     } else if (fieldValidationState) {
       return 'success';
-    } else {
+    } else if (!fieldValidationState) {
       return 'error';
+    } else {
+      return null;
     };
   }
 
@@ -162,7 +155,9 @@ export default class ProductAdd extends React.Component {
         this.setState({
           category: value,
           categoryId: categoryId,
-          options: options
+          options: options,
+          categoryValidationState: true,
+          collectionsValidationState: true
         });
       })
       .catch((err) => {
@@ -301,21 +296,29 @@ export default class ProductAdd extends React.Component {
     let primary = this.state.primaryDropzone.files;
     let secondary = this.state.secondaryDropzone.files;
 
-    // console.log(category, '******** category');
-    // console.log(this.state.categoryId, '******* cat ID');
-    // console.log(collections, '******* collections');
-    // console.log(name, '********* name');
-    // console.log(description, '*********** description');
-    // console.log(price, '****** price');
-    // console.log(size, '******* size');
-    // console.log(primary, '*********** PRIMARY');
-    // console.log(secondary, '*********** SECONDARY');
+    if (category.length === 0) {
+      this.setState({ categoryValidationState: false });
+    }
+    if (name.length === 0) {
+      this.setState({ nameValidationState: false });
+    }
+    if (description.length === 0) {
+      this.setState({ descriptionValidationState: false });
+    }
+    if (price.length === 0) {
+      this.setState({ priceValidationState: false });
+    }
+    if (size.length === 0) {
+      this.setState({ sizeValidationState: false });
+    }
 
-    if (category === '' || name === '' || description === '' || price === '' || primary.length === 0) {
-      // THROW ERROR MESSAGE
-      this.setState({ alertVisible: true, requireError: true});
+    if (category.length === 0 || name.length === 0 || description.length === 0 || price.length === 0 || primary.length === 0) {
+      if (primary.length === 0) {
+        this.setState({ pdzError: true, pdzValid: false, pdz: false });
+      }
+      this.setState({ alertVisible: true });
     } else {
-      this.setState({ alertVisible: false, requireError: false });
+      this.setState({ alertVisible: false });
 
       superagent.post('/api/products')
         .field('category', this.state.category)
@@ -364,7 +367,13 @@ export default class ProductAdd extends React.Component {
             pdzError: false,
             sdzValid: null,
             sdz: true,
-            sdzError: false
+            sdzError: false,
+            categoryValidationState: null,
+            collectionsValidationState: null,
+            nameValidationState: null,
+            descriptionValidationState: null,
+            priceValidationState: null,
+            sizeValidationState: null
           });
         })
         .catch((err) => {
@@ -376,10 +385,11 @@ export default class ProductAdd extends React.Component {
 
   // -----------  BOOTSTRAP ALERT TOGGLES ------------
   // -------------------------------------------------
+  // DISMISS
   handleAlertDismiss() {
     this.setState({ alertVisible: false });
   }
-
+  // SHOW
   handleAlertShow() {
     this.setState({ alertVisible: true });
   }
@@ -418,18 +428,13 @@ export default class ProductAdd extends React.Component {
       if (this.state.alertVisible) {
         return (
           <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
-            <h4>Oops! You got an error!</h4>
-            <p>Please fill in all required form fields.</p>
+            <h4>Whoops!</h4>
+            <p>Please fill in all form fields highlighted in red.</p>
           </Alert>
         );
       }
     };
 
-    const requireError = () => {
-      if (this.state.requireError) {
-        return <span><small><em>* Required</em></small></span>
-      }
-    }
 
     return (
       <div className="product-add">
@@ -452,7 +457,7 @@ export default class ProductAdd extends React.Component {
                 {/* CATEGORY */}
                 <FormGroup
                   controlId="formControlsSelect"
-                  validationState={this.categoryValidation()}
+                  validationState={this.textValidation('category')}
                 >
                   <ControlLabel>Category</ControlLabel>
                   <FormControl
@@ -471,7 +476,7 @@ export default class ProductAdd extends React.Component {
                 {/* COLLECTIONS */}
                 <FormGroup
                   controlId="formControlsSelect"
-                  validationState={this.collectionValidation()}
+                  validationState={this.textValidation('collections')}
                 >
                   <ControlLabel>Collections</ControlLabel>
                   <Select

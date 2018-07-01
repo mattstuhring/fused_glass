@@ -13,13 +13,13 @@
 
   .pdz-invalid {
     div.filepicker {
-      border-color: red;
+      border-color: #a94442;
     }
 
     span.pdz-error {
       position: relative;
       top: 7px;
-      color: red;
+      color: #a94442;
     }
   }
 
@@ -32,7 +32,7 @@
   span.sdz-error {
     position: relative;
     top: 7px;
-    color: red;
+    color: #a94442;
   }
 
   button.btn.btn-primary, button.btn.btn-danger {
