@@ -312,34 +312,31 @@ router.delete('/products/:productId/:categoryName', (req, res, next) => {
   let categoryName = req.params.categoryName;
   categoryName = categoryName[0].toUpperCase() + categoryName.substr(1);
 
-  console.log(productId);
-  console.log(categoryName);
+  // DELETE IMAGE FROM CLOUDINARY BY PRODUCT ID TAG NAME
+  cloudinary.v2.api.delete_resources_by_tag(productId, function(err, res) {
+    console.log(res, '*********  CLOUD DELETE BY TAG NAME');
+  });
 
-  // // DELETE IMAGE FROM CLOUDINARY BY PRODUCT ID TAG NAME
-  // cloudinary.v2.api.delete_resources_by_tag(productId, function(err, res) {
-  //   console.log(res, '*********  CLOUD DELETE BY TAG NAME');
-  // });
-  //
-  // exec(`curl -X DELETE -u ${process.env.API_KEY}:${process.env.API_SECRET} "https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/folders/${categoryName}/${productId}"`, (err, stdout, stderr) => {
-  //   if (err) {
-  //     console.error(`exec error: ${err}`);
-  //     return;
-  //   }
-  //
-  //   console.log(`Something was successful`);
-  // });
-  //
-  // // UPDATE PRODUCT DETAILS IN DB
-  // knex('products')
-  //   .where('products.product_id', productId)
-  //   .del()
-  //   .then((r) => {
-  //     console.log(r, '******** DELETE RES');
-  //     res.sendStatus(200);
-  //   })
-  //   .catch((err) => {
-  //     next(err);
-  //   });
+  exec(`curl -X DELETE -u ${process.env.API_KEY}:${process.env.API_SECRET} "https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/folders/${categoryName}/${productId}"`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      return;
+    }
+
+    console.log(`Something was successful`);
+  });
+
+  // UPDATE PRODUCT DETAILS IN DB
+  knex('products')
+    .where('products.product_id', productId)
+    .del()
+    .then((r) => {
+      console.log(r, '******** DELETE RES');
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 module.exports = router;
