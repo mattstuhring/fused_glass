@@ -21,6 +21,7 @@ const products = require('./routes/products');
 const images = require('./routes/images');
 const cloudinary = require('./routes/cloudinary');
 const test = require('./routes/test');
+// const login = require('./routes/login');
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use('/api', products);
 app.use('/api', images);
 app.use('/api', cloudinary);
 app.use('/api', test);
+// app.use('/api', login);
 
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

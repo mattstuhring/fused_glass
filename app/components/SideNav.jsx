@@ -179,50 +179,54 @@ export default class SideNav extends React.Component {
               <Link to={`/products/${1}/Decorative`} onClick={() => this.handleCollections(1, 'decorative')}>
                 Decorative
               </Link>
-              <Panel collapsible expanded={this.state.open1}>
-                <ListGroup fill>
+              <Panel expanded={this.state.open1} onToggle={()=>{}}>
+                <Panel.Collapse>
+                  <Panel.Body>
+                    <ListGroup>
 
-                  {/* CREATE NEW COLLECTION FORM */}
-                  <ListGroupItem>
-                    <form onSubmit={this.handleSubmit}>
-                      <FormGroup controlId="formControlsText">
-                        <InputGroup>
-                          <FormControl
-                            type="text"
-                            placeholder="Enter name"
-                            name={1}
-                            value={this.state.collection}
-                            onChange={this.handleChange}
-                          />
-                          <InputGroup.Button>
-                            <Button type="submit">Add</Button>
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </form>
-                  </ListGroupItem>
-
-                  {/* DISPLAY ALL DECORATIVE PRODUCTS */}
-                  {this.state.decoratives.map(function(c) {
-                    return <ListGroupItem key={c.collection_id}>
-                        <div className="row">
-                          <div className="col-sm-8">
-                            <Link to={`/collections/Decorative/${c.collection_id}/${c.collection_name}`}>
-                              {c.collection_name}
-                            </Link>
-                          </div>
-                          <div className="col-sm-4 text-right">
-                            <Link
-                              to={`/products/${1}/Decorative`}
-                              onClick={() => this.open(c.category_id, c.collection_id)}
-                            >
-                              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
-                          </div>
-                        </div>
+                      {/* CREATE NEW COLLECTION FORM */}
+                      <ListGroupItem>
+                        <form onSubmit={this.handleSubmit}>
+                          <FormGroup controlId="formControlsText">
+                            <InputGroup>
+                              <FormControl
+                                type="text"
+                                placeholder="Enter name"
+                                name={1}
+                                value={this.state.collection}
+                                onChange={this.handleChange}
+                              />
+                              <InputGroup.Button>
+                                <Button type="submit">Add</Button>
+                              </InputGroup.Button>
+                            </InputGroup>
+                          </FormGroup>
+                        </form>
                       </ListGroupItem>
-                  }, this)}
-                </ListGroup>
+
+                      {/* DISPLAY ALL DECORATIVE PRODUCTS */}
+                      {this.state.decoratives.map(function(c) {
+                        return <ListGroupItem key={c.collection_id}>
+                            <div className="row">
+                              <div className="col-sm-8">
+                                <Link to={`/collections/Decorative/${c.collection_id}/${c.collection_name}`}>
+                                  {c.collection_name}
+                                </Link>
+                              </div>
+                              <div className="col-sm-4 text-right">
+                                <Link
+                                  to={`/products/${1}/Decorative`}
+                                  onClick={() => this.open(c.category_id, c.collection_id)}
+                                >
+                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </Link>
+                              </div>
+                            </div>
+                          </ListGroupItem>
+                      }, this)}
+                    </ListGroup>
+                  </Panel.Body>
+                </Panel.Collapse>
               </Panel>
             </div>
           </div>
@@ -234,46 +238,50 @@ export default class SideNav extends React.Component {
               <Link to={`/products/${2}/Houseware`} onClick={() => this.handleCollections(2, 'houseware')}>
                 Houseware
               </Link>
-              <Panel collapsible expanded={this.state.open2}>
-                <ListGroup fill>
-                  <ListGroupItem>
-                    <form onSubmit={this.handleSubmit}>
-                      <FormGroup controlId="formControlsText">
-                        <InputGroup>
-                          <FormControl
-                            type="text"
-                            placeholder="Enter name"
-                            name={2}
-                            value={this.state.collection}
-                            onChange={this.handleChange}
-                          />
-                          <InputGroup.Button>
-                            <Button type="submit">Add</Button>
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </form>
-                  </ListGroupItem>
-                  {this.state.housewares.map(function(c) {
-                    return <ListGroupItem key={c.collection_id}>
-                        <div className="row">
-                          <div className="col-sm-8">
-                            <Link to={`/collections/Houseware/${c.collection_id}/${c.collection_name}`}>
-                              {c.collection_name}
-                            </Link>
-                          </div>
-                          <div className="col-sm-4 text-right">
-                            <Link
-                              to={`/products/${2}/Houseware`}
-                              onClick={() => this.open(c.category_id, c.collection_id)}
-                            >
-                              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
-                          </div>
-                        </div>
+              <Panel expanded={this.state.open2} onToggle={()=>{}}>
+                <Panel.Collapse>
+                  <Panel.Body>
+                    <ListGroup>
+                      <ListGroupItem>
+                        <form onSubmit={this.handleSubmit}>
+                          <FormGroup controlId="formControlsText">
+                            <InputGroup>
+                              <FormControl
+                                type="text"
+                                placeholder="Enter name"
+                                name={2}
+                                value={this.state.collection}
+                                onChange={this.handleChange}
+                              />
+                              <InputGroup.Button>
+                                <Button type="submit">Add</Button>
+                              </InputGroup.Button>
+                            </InputGroup>
+                          </FormGroup>
+                        </form>
                       </ListGroupItem>
-                  }, this)}
-                </ListGroup>
+                      {this.state.housewares.map(function(c) {
+                        return <ListGroupItem key={c.collection_id}>
+                            <div className="row">
+                              <div className="col-sm-8">
+                                <Link to={`/collections/Houseware/${c.collection_id}/${c.collection_name}`}>
+                                  {c.collection_name}
+                                </Link>
+                              </div>
+                              <div className="col-sm-4 text-right">
+                                <Link
+                                  to={`/products/${2}/Houseware`}
+                                  onClick={() => this.open(c.category_id, c.collection_id)}
+                                >
+                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </Link>
+                              </div>
+                            </div>
+                          </ListGroupItem>
+                      }, this)}
+                    </ListGroup>
+                  </Panel.Body>
+                </Panel.Collapse>
               </Panel>
             </div>
           </div>
@@ -285,46 +293,50 @@ export default class SideNav extends React.Component {
               <Link to={`/products/${3}/Jewelry`}  onClick={() => this.handleCollections(3, 'jewelry')}>
                 Jewelry
               </Link>
-              <Panel collapsible expanded={this.state.open3}>
-                <ListGroup fill>
-                  <ListGroupItem>
-                    <form onSubmit={this.handleSubmit}>
-                      <FormGroup controlId="formControlsText">
-                        <InputGroup>
-                          <FormControl
-                            type="text"
-                            placeholder="Enter name"
-                            name={3}
-                            value={this.state.collection}
-                            onChange={this.handleChange}
-                          />
-                          <InputGroup.Button>
-                            <Button type="submit">Add</Button>
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </form>
-                  </ListGroupItem>
-                  {this.state.jewelrys.map(function(c) {
-                    return <ListGroupItem key={c.collection_id}>
-                        <div className="row">
-                          <div className="col-sm-8">
-                            <Link to={`/collections/Jewelry/${c.collection_id}/${c.collection_name}`}>
-                              {c.collection_name}
-                            </Link>
-                          </div>
-                          <div className="col-sm-4 text-right">
-                            <Link
-                              to={`/products/${3}/Jewelry`}
-                              onClick={() => this.open(c.category_id, c.collection_id)}
-                            >
-                              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
-                          </div>
-                        </div>
+              <Panel expanded={this.state.open3} onToggle={()=>{}}>
+                <Panel.Collapse>
+                  <Panel.Body>
+                    <ListGroup>
+                      <ListGroupItem>
+                        <form onSubmit={this.handleSubmit}>
+                          <FormGroup controlId="formControlsText">
+                            <InputGroup>
+                              <FormControl
+                                type="text"
+                                placeholder="Enter name"
+                                name={3}
+                                value={this.state.collection}
+                                onChange={this.handleChange}
+                              />
+                              <InputGroup.Button>
+                                <Button type="submit">Add</Button>
+                              </InputGroup.Button>
+                            </InputGroup>
+                          </FormGroup>
+                        </form>
                       </ListGroupItem>
-                  }, this)}
-                </ListGroup>
+                      {this.state.jewelrys.map(function(c) {
+                        return <ListGroupItem key={c.collection_id}>
+                            <div className="row">
+                              <div className="col-sm-8">
+                                <Link to={`/collections/Jewelry/${c.collection_id}/${c.collection_name}`}>
+                                  {c.collection_name}
+                                </Link>
+                              </div>
+                              <div className="col-sm-4 text-right">
+                                <Link
+                                  to={`/products/${3}/Jewelry`}
+                                  onClick={() => this.open(c.category_id, c.collection_id)}
+                                >
+                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </Link>
+                              </div>
+                            </div>
+                          </ListGroupItem>
+                      }, this)}
+                    </ListGroup>
+                  </Panel.Body>
+                </Panel.Collapse>
               </Panel>
             </div>
           </div>
@@ -336,46 +348,50 @@ export default class SideNav extends React.Component {
               <Link to={`/products/${4}/Garden`} onClick={() => this.handleCollections(4, 'garden')}>
                 Garden
               </Link>
-              <Panel collapsible expanded={this.state.open4}>
-                <ListGroup fill>
-                  <ListGroupItem>
-                    <form onSubmit={this.handleSubmit}>
-                      <FormGroup controlId="formControlsText">
-                        <InputGroup>
-                          <FormControl
-                            type="text"
-                            placeholder="Enter name"
-                            name={4}
-                            value={this.state.collection}
-                            onChange={this.handleChange}
-                          />
-                          <InputGroup.Button>
-                            <Button type="submit">Add</Button>
-                          </InputGroup.Button>
-                        </InputGroup>
-                      </FormGroup>
-                    </form>
-                  </ListGroupItem>
-                  {this.state.gardens.map(function(c) {
-                    return <ListGroupItem key={c.collection_id}>
-                        <div className="row">
-                          <div className="col-sm-8">
-                            <Link to={`/collections/Garden/${c.collection_id}/${c.collection_name}`}>
-                              {c.collection_name}
-                            </Link>
-                          </div>
-                          <div className="col-sm-4 text-right">
-                            <Link
-                              to={`/products/${4}/Garden`}
-                              onClick={() => this.open(c.category_id, c.collection_id)}
-                            >
-                              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </Link>
-                          </div>
-                        </div>
+              <Panel expanded={this.state.open4} onToggle={()=>{}}>
+                <Panel.Collapse>
+                  <Panel.Body>
+                    <ListGroup>
+                      <ListGroupItem>
+                        <form onSubmit={this.handleSubmit}>
+                          <FormGroup controlId="formControlsText">
+                            <InputGroup>
+                              <FormControl
+                                type="text"
+                                placeholder="Enter name"
+                                name={4}
+                                value={this.state.collection}
+                                onChange={this.handleChange}
+                              />
+                              <InputGroup.Button>
+                                <Button type="submit">Add</Button>
+                              </InputGroup.Button>
+                            </InputGroup>
+                          </FormGroup>
+                        </form>
                       </ListGroupItem>
-                  }, this)}
-                </ListGroup>
+                      {this.state.gardens.map(function(c) {
+                        return <ListGroupItem key={c.collection_id}>
+                            <div className="row">
+                              <div className="col-sm-8">
+                                <Link to={`/collections/Garden/${c.collection_id}/${c.collection_name}`}>
+                                  {c.collection_name}
+                                </Link>
+                              </div>
+                              <div className="col-sm-4 text-right">
+                                <Link
+                                  to={`/products/${4}/Garden`}
+                                  onClick={() => this.open(c.category_id, c.collection_id)}
+                                >
+                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </Link>
+                              </div>
+                            </div>
+                          </ListGroupItem>
+                      }, this)}
+                    </ListGroup>
+                  </Panel.Body>
+                </Panel.Collapse>
               </Panel>
             </div>
           </div>
