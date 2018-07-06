@@ -20,14 +20,6 @@ export default class Login extends React.Component {
     this.Auth = new AuthService();
   }
 
-  // componentWillMount() {
-  //   if (!this.Auth.loggedIn()) {
-  //     browserHistory.push('/');
-  //   }
-  //   else {
-  //     browserHistory.push('/success');
-  //   }
-  // }
 
   handleChange(e) {
     this.setState({

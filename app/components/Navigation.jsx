@@ -31,16 +31,10 @@ export default class Navigation extends React.Component {
   render() {
     const checkUserLogin = () => {
       if (this.Auth.getToken()) {
-        console.log('token');
-
-        // let user = this.Auth.getProfile();
-
         return <li className="nav-item">
           <a className="nav-link" href="#" onClick={() => {this.handleLogout()}}>LOGOUT</a>
         </li>;
       } else {
-        console.log('NO token');
-
         return <li>
           <Link to="/login" activeClassName="active-link">LOGIN</Link>
         </li>;
