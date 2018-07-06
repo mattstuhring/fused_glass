@@ -442,194 +442,198 @@ export default class ProductAdd extends React.Component {
         {/* HEADER */}
         <Header category="Admin"/>
 
-        <Panel header="ADD NEW PRODUCT" bsStyle="success">
+        <Panel bsStyle="success">
 
           {alertVisible()}
+          <Panel.Heading>
+            <Panel.Title componentClass="h3">ADD NEW PRODUCT</Panel.Title>
+          </Panel.Heading>
+          <Panel.Body>
+            <form onSubmit={this.handleSubmit}>
+              <div className="row">
+                <div className="col-sm-6">
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="row">
-              <div className="col-sm-6">
+                  <div className="page-header text-center">
+                    <h4>PRODUCT DETAILS</h4>
+                  </div>
 
-                <div className="page-header text-center">
-                  <h4>PRODUCT DETAILS</h4>
-                </div>
-
-                {/* CATEGORY */}
-                <FormGroup
-                  controlId="formControlsSelect"
-                  validationState={this.textValidation('category')}
-                >
-                  <ControlLabel>Category</ControlLabel>
-                  <FormControl
-                    componentClass="select"
-                    onChange={this.handleCategory}
-                    value={this.state.category}
+                  {/* CATEGORY */}
+                  <FormGroup
+                    controlId="formControlsSelect"
+                    validationState={this.textValidation('category')}
                   >
-                    <option></option>
-                    <option value="decorative">Decorative</option>
-                    <option value="houseware">Houseware</option>
-                    <option value="jewelry">Jewelry</option>
-                    <option value="garden">Garden</option>
-                  </FormControl>
-                </FormGroup>
-
-                {/* COLLECTIONS */}
-                <FormGroup
-                  controlId="formControlsSelect"
-                  validationState={this.textValidation('collections')}
-                >
-                  <ControlLabel>Collections</ControlLabel>
-                  <Select
-                    multi={true}
-                    simpleValue={true}
-                    placeholder="Optional..."
-                    value={this.state.collections}
-                    options={this.state.options}
-                    onChange={this.handleCollections}
-                  />
-                </FormGroup>
-
-
-                {/* NAME */}
-                <FormGroup
-                  controlId="formControlsText"
-                  validationState={this.textValidation('name')}
-                >
-                  <ControlLabel>Name</ControlLabel>
-                  <FormControl
-                    type="text"
-                    name="name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                  />
-                </FormGroup>
-
-
-                {/* DESCRIPTION */}
-                <FormGroup
-                  controlId="formControlsTextarea"
-                  validationState={this.textValidation('description')}
-                >
-                  <ControlLabel>Description</ControlLabel>
-                  <FormControl
-                    componentClass="textarea"
-                    name="description"
-                    value={this.state.description}
-                    onChange={this.handleChange}
-                  />
-                </FormGroup>
-
-
-                <div className="row">
-
-                  {/* PRICE */}
-                  <div className="col-sm-6">
-                    <FormGroup
-                      controlId="formControlsText"
-                      validationState={this.textValidation('price')}
+                    <ControlLabel>Category</ControlLabel>
+                    <FormControl
+                      componentClass="select"
+                      onChange={this.handleCategory}
+                      value={this.state.category}
                     >
-                      <ControlLabel>Price</ControlLabel>
-                      <InputGroup>
-                        <InputGroup.Addon>$</InputGroup.Addon>
+                      <option></option>
+                      <option value="decorative">Decorative</option>
+                      <option value="houseware">Houseware</option>
+                      <option value="jewelry">Jewelry</option>
+                      <option value="garden">Garden</option>
+                    </FormControl>
+                  </FormGroup>
+
+                  {/* COLLECTIONS */}
+                  <FormGroup
+                    controlId="formControlsSelect"
+                    validationState={this.textValidation('collections')}
+                  >
+                    <ControlLabel>Collections</ControlLabel>
+                    <Select
+                      multi={true}
+                      simpleValue={true}
+                      placeholder="Optional..."
+                      value={this.state.collections}
+                      options={this.state.options}
+                      onChange={this.handleCollections}
+                    />
+                  </FormGroup>
+
+
+                  {/* NAME */}
+                  <FormGroup
+                    controlId="formControlsText"
+                    validationState={this.textValidation('name')}
+                  >
+                    <ControlLabel>Name</ControlLabel>
+                    <FormControl
+                      type="text"
+                      name="name"
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                    />
+                  </FormGroup>
+
+
+                  {/* DESCRIPTION */}
+                  <FormGroup
+                    controlId="formControlsTextarea"
+                    validationState={this.textValidation('description')}
+                  >
+                    <ControlLabel>Description</ControlLabel>
+                    <FormControl
+                      componentClass="textarea"
+                      name="description"
+                      value={this.state.description}
+                      onChange={this.handleChange}
+                    />
+                  </FormGroup>
+
+
+                  <div className="row">
+
+                    {/* PRICE */}
+                    <div className="col-sm-6">
+                      <FormGroup
+                        controlId="formControlsText"
+                        validationState={this.textValidation('price')}
+                      >
+                        <ControlLabel>Price</ControlLabel>
+                        <InputGroup>
+                          <InputGroup.Addon>$</InputGroup.Addon>
+                          <FormControl
+                            type="text"
+                            name="price"
+                            value={this.state.price}
+                            onChange={this.handleChange}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                    </div>
+
+                    {/* SIZE */}
+                    <div className="col-sm-6">
+                      <FormGroup
+                        controlId="formControlsText"
+                        validationState={this.textValidation('size')}
+                      >
+                        <ControlLabel>Size</ControlLabel>
                         <FormControl
                           type="text"
-                          name="price"
-                          value={this.state.price}
+                          name="size"
+                          value={this.state.size}
                           onChange={this.handleChange}
                         />
-                      </InputGroup>
-                    </FormGroup>
-                  </div>
-
-                  {/* SIZE */}
-                  <div className="col-sm-6">
-                    <FormGroup
-                      controlId="formControlsText"
-                      validationState={this.textValidation('size')}
-                    >
-                      <ControlLabel>Size</ControlLabel>
-                      <FormControl
-                        type="text"
-                        name="size"
-                        value={this.state.size}
-                        onChange={this.handleChange}
-                      />
-                    </FormGroup>
+                      </FormGroup>
+                    </div>
                   </div>
                 </div>
+
+
+
+
+
+                {/* REACT DROPZONE COMONENTS */}
+                <div className="col-sm-6 text-center">
+                  <div className="page-header">
+                    <h4>DISPLAY IMAGE <small><em>(Choose: 1)</em></small></h4>
+                  </div>
+
+                  {/* PRIMARY DROPZONE */}
+                  <div className={pdzValidation}>
+                    <DropzoneComponent
+                      config={{
+                        iconFiletypes: ['.jpg', '.png'],
+                        showFiletypeIcon: true,
+                        postUrl: 'no-url'
+                      }}
+                      eventHandlers={{
+                        addedfile: (file) => this.handleAddImgPDZ(file),
+                        removedfile: (file) => this.handleRemoveImgPDZ(file),
+                        init: (obj) => this.handleInitPDZ(obj),
+                        success: (file) => this.handleSuccessPDZ(file)
+                      }}
+                      djsConfig={{
+                        addRemoveLinks: true,
+                        maxFiles: 1,
+                        acceptedFiles: "image/jpeg,image/png"
+                      }}
+                    />
+
+                    {pdzError()}
+                  </div>
+
+                  <div className="page-header">
+                    <h4>MORE IMAGES <small><em>(Max: 4)</em></small></h4>
+                  </div>
+
+
+                  {/* SECONDARY DROPZONE */}
+                  <div className={sdzValidation}>
+                    <DropzoneComponent
+                      config={{
+                        iconFiletypes: ['.jpg', '.png'],
+                        showFiletypeIcon: true,
+                        postUrl: 'no-url'
+                      }}
+                      eventHandlers={{
+                        addedfile: (file) => this.handleAddImgSDZ(file),
+                        removedfile: (file) => this.handleRemoveImgSDZ(file),
+                        init: (obj) => this.handleInitSDZ(obj)
+                      }}
+                      djsConfig={{
+                        addRemoveLinks: true,
+                        maxFiles: 4,
+                        acceptedFiles: "image/jpeg,image/png"
+                      }}
+                    />
+
+                    {sdzError()}
+                  </div>
+                </div>
               </div>
 
 
-
-
-
-              {/* REACT DROPZONE COMONENTS */}
-              <div className="col-sm-6 text-center">
-                <div className="page-header">
-                  <h4>DISPLAY IMAGE <small><em>(Choose: 1)</em></small></h4>
-                </div>
-
-                {/* PRIMARY DROPZONE */}
-                <div className={pdzValidation}>
-                  <DropzoneComponent
-                    config={{
-                      iconFiletypes: ['.jpg', '.png'],
-                      showFiletypeIcon: true,
-                      postUrl: 'no-url'
-                    }}
-                    eventHandlers={{
-                      addedfile: (file) => this.handleAddImgPDZ(file),
-                      removedfile: (file) => this.handleRemoveImgPDZ(file),
-                      init: (obj) => this.handleInitPDZ(obj),
-                      success: (file) => this.handleSuccessPDZ(file)
-                    }}
-                    djsConfig={{
-                      addRemoveLinks: true,
-                      maxFiles: 1,
-                      acceptedFiles: "image/jpeg,image/png"
-                    }}
-                  />
-
-                  {pdzError()}
-                </div>
-
-                <div className="page-header">
-                  <h4>MORE IMAGES <small><em>(Max: 4)</em></small></h4>
-                </div>
-
-
-                {/* SECONDARY DROPZONE */}
-                <div className={sdzValidation}>
-                  <DropzoneComponent
-                    config={{
-                      iconFiletypes: ['.jpg', '.png'],
-                      showFiletypeIcon: true,
-                      postUrl: 'no-url'
-                    }}
-                    eventHandlers={{
-                      addedfile: (file) => this.handleAddImgSDZ(file),
-                      removedfile: (file) => this.handleRemoveImgSDZ(file),
-                      init: (obj) => this.handleInitSDZ(obj)
-                    }}
-                    djsConfig={{
-                      addRemoveLinks: true,
-                      maxFiles: 4,
-                      acceptedFiles: "image/jpeg,image/png"
-                    }}
-                  />
-
-                  {sdzError()}
+              <div className="row">
+                <div className="col-sm-4 col-sm-offset-4">
+                  <Button bsStyle="primary" type="submit">ADD NEW PRODUCT</Button>
                 </div>
               </div>
-            </div>
-
-
-            <div className="row">
-              <div className="col-sm-4 col-sm-offset-4">
-                <Button bsStyle="primary" type="submit">ADD NEW PRODUCT</Button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </Panel.Body>
         </Panel>
       </div>
     );

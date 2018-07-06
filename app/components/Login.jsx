@@ -63,6 +63,7 @@ export default class Login extends React.Component {
               </Panel.Heading>
               <Panel.Body>
                 <form onSubmit={this.handleSubmitLogin}>
+
                   <FormGroup controlId="formControlsEmail">
                     <ControlLabel>Email</ControlLabel>
                     <FormControl

@@ -20,7 +20,7 @@ export default class Navigation extends React.Component {
     // Clear token from localStorage
     this.Auth.logout();
 
-    browserHistory.push('/');
+    browserHistory.push('/login');
 
     this.setState({
       user: null

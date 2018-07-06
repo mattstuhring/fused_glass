@@ -23,7 +23,7 @@ export default class AuthService {
 
     setToken(idToken) {
       // Saves user token to localStorage
-      return localStorage.setItem('id_token', idToken)
+      return localStorage.setItem('id_token', idToken);
     }
 
     loggedIn() {
