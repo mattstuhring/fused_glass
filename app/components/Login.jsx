@@ -53,6 +53,12 @@ export default class Login extends React.Component {
   }
 
   render() {
+    const loggedOut = () => {
+      if (this.props.params.action) {
+        return <p>You have successfully logged out!</p>;
+      }
+    }
+
     return (
       <div className="login">
         <div className="row">
@@ -61,7 +67,15 @@ export default class Login extends React.Component {
               <Panel.Heading>
                 <Panel.Title>Login</Panel.Title>
               </Panel.Heading>
+
               <Panel.Body>
+
+                <div className="row">
+                  <div className="col-sm-12 text-center">
+                    {loggedOut()}
+                  </div>
+                </div>
+
                 <form onSubmit={this.handleSubmitLogin}>
 
                   <FormGroup controlId="formControlsEmail">

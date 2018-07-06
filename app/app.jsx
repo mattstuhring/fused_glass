@@ -42,7 +42,7 @@ ReactDOM.render(
       <Route path="/productupdate/:id" component={ProductUpdate}/>
       <Route path="/cart(/:id)" component={Cart}/>
 
-      <Route path="/login" component={Login}/>
+      <Route path="/login(/:action)" component={Login}/>
 
       <Route path="/products/:id/:category" component={Categories}/>
 
