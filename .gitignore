@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 package-lock.json
-public/
+public
+public/bundle.js
 logs
 *.log
 .env
