@@ -1,7 +1,8 @@
-var React = require('react');
-var axios = require('axios')
-var { Link } = require('react-router');
-var { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup, Modal } = require('react-bootstrap');
+import React from 'react';
+import axios from 'axios';
+import { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup, Modal } from 'react-bootstrap';
+import { Link } from 'react-router';
+import AuthService from 'AuthService';
 
 export default class SideNav extends React.Component {
   constructor(props) {
@@ -31,6 +32,8 @@ export default class SideNav extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
+
+    this.Auth = new AuthService();
   }
 
   close() {
@@ -143,6 +146,44 @@ export default class SideNav extends React.Component {
 
   // **************************  RENDER  ************************************
   render() {
+    const addCollectionInput = () => {
+      if (this.Auth.loggedIn()) {
+        return <ListGroupItem>
+          <form onSubmit={this.handleSubmit}>
+            <FormGroup controlId="formControlsText">
+              <InputGroup>
+                <FormControl
+                  type="text"
+                  placeholder="Enter name"
+                  name={1}
+                  value={this.state.collection}
+                  onChange={this.handleChange}
+                />
+                <InputGroup.Button>
+                  <Button type="submit">Add</Button>
+                </InputGroup.Button>
+              </InputGroup>
+            </FormGroup>
+          </form>
+        </ListGroupItem>
+      }
+    };
+
+    const removeCollection = (catId, collId) => {
+      if (this.Auth.loggedIn()) {
+        return <div className="col-sm-4 text-right">
+          <Link
+            to={`/products/${1}/Decorative`}
+            onClick={() => this.open(catId, collId)}
+          >
+            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          </Link>
+        </div>
+      }
+    }
+
+
+
     return (
       <div className="panel panel-primary side-nav">
 
@@ -172,7 +213,6 @@ export default class SideNav extends React.Component {
         </div>
         <div className="panel-body">
 
-
           {/* DECORATIVE */}
           <div className="row">
             <div className="col-sm-12">
@@ -184,25 +224,7 @@ export default class SideNav extends React.Component {
                   <Panel.Body>
                     <ListGroup>
 
-                      {/* CREATE NEW COLLECTION FORM */}
-                      <ListGroupItem>
-                        <form onSubmit={this.handleSubmit}>
-                          <FormGroup controlId="formControlsText">
-                            <InputGroup>
-                              <FormControl
-                                type="text"
-                                placeholder="Enter name"
-                                name={1}
-                                value={this.state.collection}
-                                onChange={this.handleChange}
-                              />
-                              <InputGroup.Button>
-                                <Button type="submit">Add</Button>
-                              </InputGroup.Button>
-                            </InputGroup>
-                          </FormGroup>
-                        </form>
-                      </ListGroupItem>
+                      {addCollectionInput()}
 
                       {/* DISPLAY ALL DECORATIVE PRODUCTS */}
                       {this.state.decoratives.map(function(c) {
@@ -213,14 +235,9 @@ export default class SideNav extends React.Component {
                                   {c.collection_name}
                                 </Link>
                               </div>
-                              <div className="col-sm-4 text-right">
-                                <Link
-                                  to={`/products/${1}/Decorative`}
-                                  onClick={() => this.open(c.category_id, c.collection_id)}
-                                >
-                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </Link>
-                              </div>
+
+                              {removeCollection(c.category_id, c.collection_id)}
+
                             </div>
                           </ListGroupItem>
                       }, this)}
@@ -241,25 +258,11 @@ export default class SideNav extends React.Component {
               <Panel expanded={this.state.open2} onToggle={()=>{}}>
                 <Panel.Collapse>
                   <Panel.Body>
+
                     <ListGroup>
-                      <ListGroupItem>
-                        <form onSubmit={this.handleSubmit}>
-                          <FormGroup controlId="formControlsText">
-                            <InputGroup>
-                              <FormControl
-                                type="text"
-                                placeholder="Enter name"
-                                name={2}
-                                value={this.state.collection}
-                                onChange={this.handleChange}
-                              />
-                              <InputGroup.Button>
-                                <Button type="submit">Add</Button>
-                              </InputGroup.Button>
-                            </InputGroup>
-                          </FormGroup>
-                        </form>
-                      </ListGroupItem>
+
+                      {addCollectionInput()}
+
                       {this.state.housewares.map(function(c) {
                         return <ListGroupItem key={c.collection_id}>
                             <div className="row">
@@ -268,14 +271,9 @@ export default class SideNav extends React.Component {
                                   {c.collection_name}
                                 </Link>
                               </div>
-                              <div className="col-sm-4 text-right">
-                                <Link
-                                  to={`/products/${2}/Houseware`}
-                                  onClick={() => this.open(c.category_id, c.collection_id)}
-                                >
-                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </Link>
-                              </div>
+
+                              {removeCollection(c.category_id, c.collection_id)}
+
                             </div>
                           </ListGroupItem>
                       }, this)}
@@ -297,24 +295,9 @@ export default class SideNav extends React.Component {
                 <Panel.Collapse>
                   <Panel.Body>
                     <ListGroup>
-                      <ListGroupItem>
-                        <form onSubmit={this.handleSubmit}>
-                          <FormGroup controlId="formControlsText">
-                            <InputGroup>
-                              <FormControl
-                                type="text"
-                                placeholder="Enter name"
-                                name={3}
-                                value={this.state.collection}
-                                onChange={this.handleChange}
-                              />
-                              <InputGroup.Button>
-                                <Button type="submit">Add</Button>
-                              </InputGroup.Button>
-                            </InputGroup>
-                          </FormGroup>
-                        </form>
-                      </ListGroupItem>
+
+                      {addCollectionInput()}
+
                       {this.state.jewelrys.map(function(c) {
                         return <ListGroupItem key={c.collection_id}>
                             <div className="row">
@@ -323,14 +306,9 @@ export default class SideNav extends React.Component {
                                   {c.collection_name}
                                 </Link>
                               </div>
-                              <div className="col-sm-4 text-right">
-                                <Link
-                                  to={`/products/${3}/Jewelry`}
-                                  onClick={() => this.open(c.category_id, c.collection_id)}
-                                >
-                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </Link>
-                              </div>
+
+                              {removeCollection(c.category_id, c.collection_id)}
+
                             </div>
                           </ListGroupItem>
                       }, this)}
@@ -352,24 +330,9 @@ export default class SideNav extends React.Component {
                 <Panel.Collapse>
                   <Panel.Body>
                     <ListGroup>
-                      <ListGroupItem>
-                        <form onSubmit={this.handleSubmit}>
-                          <FormGroup controlId="formControlsText">
-                            <InputGroup>
-                              <FormControl
-                                type="text"
-                                placeholder="Enter name"
-                                name={4}
-                                value={this.state.collection}
-                                onChange={this.handleChange}
-                              />
-                              <InputGroup.Button>
-                                <Button type="submit">Add</Button>
-                              </InputGroup.Button>
-                            </InputGroup>
-                          </FormGroup>
-                        </form>
-                      </ListGroupItem>
+
+                      {addCollectionInput()}
+
                       {this.state.gardens.map(function(c) {
                         return <ListGroupItem key={c.collection_id}>
                             <div className="row">
@@ -378,14 +341,9 @@ export default class SideNav extends React.Component {
                                   {c.collection_name}
                                 </Link>
                               </div>
-                              <div className="col-sm-4 text-right">
-                                <Link
-                                  to={`/products/${4}/Garden`}
-                                  onClick={() => this.open(c.category_id, c.collection_id)}
-                                >
-                                  <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </Link>
-                              </div>
+
+                              {removeCollection(c.category_id, c.collection_id)}
+
                             </div>
                           </ListGroupItem>
                       }, this)}
