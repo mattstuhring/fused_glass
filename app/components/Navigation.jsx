@@ -1,16 +1,52 @@
 import React from 'react';
-import { Link, IndexLink } from 'react-router';
 import { Button } from 'react-bootstrap';
-
+import { Link, IndexLink, browserHistory } from 'react-router';
+import decode from 'jwt-decode';
+import AuthService from 'AuthService';
 
 export default class Navigation extends React.Component {
   constructor(props) {
     super(props)
 
+    this.state = {
+      user: null
+    }
+
+    this.handleLogout = this.handleLogout.bind(this);
+    this.Auth = new AuthService();
+  }
+
+  handleLogout() {
+    // Clear token from localStorage
+    this.Auth.logout();
+
+    browserHistory.push('/');
+
+    this.setState({
+      user: null
+    });
   }
 
 
   render() {
+    const checkUserLogin = () => {
+      if (this.Auth.getToken()) {
+        console.log('token');
+
+        // let user = this.Auth.getProfile();
+
+        return <li className="nav-item">
+          <a className="nav-link" href="#" onClick={() => {this.handleLogout()}}>LOGOUT</a>
+        </li>;
+      } else {
+        console.log('NO token');
+
+        return <li>
+          <Link to="/login" activeClassName="active-link">LOGIN</Link>
+        </li>;
+      }
+    };
+
     return (
       <div className="top-nav">
         <nav className="navbar navbar-default navbar-fixed-top">
@@ -41,6 +77,8 @@ export default class Navigation extends React.Component {
               </ul>
 
               <ul className="nav navbar-nav navbar-right">
+
+                {checkUserLogin()}
 
                 <li>
                   <Link to={`/productadd`} activeClassName="active-link">ADD</Link>

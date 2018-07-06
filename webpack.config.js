@@ -24,6 +24,7 @@ module.exports = {
     alias: {
       applicationStyles: 'app/styles/app.scss',
       About: 'app/components/About.jsx',
+      AuthService: 'app/components/services/AuthService',
       Cart: 'app/components/Cart.jsx',
       Categories: 'app/components/products/product/Categories.jsx',
       Collections: 'app/components/products/product/Collections.jsx',
@@ -31,6 +32,7 @@ module.exports = {
       Gallery: 'app/components/Gallery.jsx',
       Header: 'app/components/Header.jsx',
       Home: 'app/components/Home.jsx',
+      Login: 'app/components/Login.jsx',
       Main: 'app/components/Main.jsx',
       Navigation: 'app/components/Navigation.jsx',
       ProductAdd: 'app/components/products/ProductAdd.jsx',
