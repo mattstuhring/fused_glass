@@ -437,84 +437,84 @@ export default class ProductUpdate extends React.Component {
     } else {
       this.setState({ alertVisible: false });
 
-      // // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
-      // if (checkPrimaryFiles) {
-      //   if (checkCollections) {
-      //     superProductUpdate = superagent.put('/api/products')
-      //       .attach('primary', primaryFiles[0])
-      //       .field('collections', collections);
-      //   } else {
-      //     superProductUpdate = superagent.put('/api/products')
-      //       .attach('primary', primaryFiles[0]);
-      //   }
-      // } else {
-      //   if (checkCollections) {
-      //     superProductUpdate = superagent.put('/api/products')
-      //       .field('collections', collections);
-      //   } else {
-      //     superProductUpdate = superagent.put('/api/products');
-      //   }
-      // }
-      //
-      // // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
-      // superProductUpdate
-      //   .field('productId', productId)
-      //   .field('category', category)
-      //   .field('categoryId', categoryId)
-      //   .field('name', name)
-      //   .field('description', description)
-      //   .field('price', price)
-      //   .field('size', size)
-      //   .then((res) => {
-      //     let secondaryFiles = this.state.secondaryDropzone.files;
-      //     const checkSecondaryFiles = this.state.checkSecondaryFiles;
-      //
-      //     if (checkSecondaryFiles) {
-      //       let superSecondaryImg = superagent.put('/api/images');
-      //
-      //       if (secondaryFiles.length > 0) {
-      //         // POST SECONDARY IMAGES
-      //         secondaryFiles.forEach((img) => {
-      //           superSecondaryImg
-      //             .field('id', productId)
-      //             .field('category', category)
-      //             .attach('images', img);
-      //         });
-      //
-      //         superSecondaryImg.end((err, res) => {
-      //           if (err) {
-      //             console.log(err);
-      //             return;
-      //           }
-      //           // console.log('2nd COMPLETE');
-      //           return;
-      //         });
-      //       } else {
-      //         superagent.put('/api/images')
-      //           .field('id', productId)
-      //           .field('category', category)
-      //           .end((err, res) => {
-      //             if (err) {
-      //               console.log(err);
-      //               return;
-      //             }
-      //             // console.log('2nd COMPLETE');
-      //             return;
-      //           });
-      //       }
-      //     } else {
-      //       console.log('********* Nothing to do');
-      //     }
-      //
-      //     this.setState({
-      //       checkPrimaryFiles: false,
-      //       checkSecondaryFiles: false,
-      //       checkCollections: false
-      //     });
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      // CHECK PRIMARY DROPZONE CHANGE & COLLECTIONS CHANGE
+      if (checkPrimaryFiles) {
+        if (checkCollections) {
+          superProductUpdate = superagent.put('/api/products')
+            .attach('primary', primaryFiles[0])
+            .field('collections', collections);
+        } else {
+          superProductUpdate = superagent.put('/api/products')
+            .attach('primary', primaryFiles[0]);
+        }
+      } else {
+        if (checkCollections) {
+          superProductUpdate = superagent.put('/api/products')
+            .field('collections', collections);
+        } else {
+          superProductUpdate = superagent.put('/api/products');
+        }
+      }
+
+      // SEND UPDATE REQUEST TO PRODUCTS PUT ROUTE
+      superProductUpdate
+        .field('productId', productId)
+        .field('category', category)
+        .field('categoryId', categoryId)
+        .field('name', name)
+        .field('description', description)
+        .field('price', price)
+        .field('size', size)
+        .then((res) => {
+          let secondaryFiles = this.state.secondaryDropzone.files;
+          const checkSecondaryFiles = this.state.checkSecondaryFiles;
+
+          if (checkSecondaryFiles) {
+            let superSecondaryImg = superagent.put('/api/images');
+
+            if (secondaryFiles.length > 0) {
+              // POST SECONDARY IMAGES
+              secondaryFiles.forEach((img) => {
+                superSecondaryImg
+                  .field('id', productId)
+                  .field('category', category)
+                  .attach('images', img);
+              });
+
+              superSecondaryImg.end((err, res) => {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                // console.log('2nd COMPLETE');
+                return;
+              });
+            } else {
+              superagent.put('/api/images')
+                .field('id', productId)
+                .field('category', category)
+                .end((err, res) => {
+                  if (err) {
+                    console.log(err);
+                    return;
+                  }
+                  // console.log('2nd COMPLETE');
+                  return;
+                });
+            }
+          } else {
+            console.log('********* Nothing to do');
+          }
+
+          this.setState({
+            checkPrimaryFiles: false,
+            checkSecondaryFiles: false,
+            checkCollections: false
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 
