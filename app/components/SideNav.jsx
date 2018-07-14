@@ -51,7 +51,6 @@ export default class SideNav extends React.Component {
   handleCollections(id, category) {
     axios.get(`/api/categories/${id}/collections`)
       .then((res) => {
-        console.log(res, '***** handleCollections');
         switch (category) {
           case 'decorative':
             this.setState({ decoratives: res.data, open1: true, open2: false, open3: false, open4: false });
