@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Button, ListGroup, ListGroupItem, Panel, FormGroup, FormControl, InputGroup, Modal } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import AuthService from 'AuthService';
 
 export default class SideNav extends React.Component {
@@ -51,6 +51,7 @@ export default class SideNav extends React.Component {
   handleCollections(id, category) {
     axios.get(`/api/categories/${id}/collections`)
       .then((res) => {
+        console.log(res, '***** handleCollections');
         switch (category) {
           case 'decorative':
             this.setState({ decoratives: res.data, open1: true, open2: false, open3: false, open4: false });
@@ -78,16 +79,20 @@ export default class SideNav extends React.Component {
       .then((res) => {
         switch (categoryId) {
           case 1:
-            this.setState({ decoratives: res.data, open1: true });
+            this.setState({ decoratives: res.data, open1: true, open2: false, open3: false, open4: false });
+            browserHistory.push(`/products/${1}/Decorative`);
             break;
           case 2:
-            this.setState({ housewares: res.data, open2: true });
+            this.setState({ housewares: res.data, open2: true, open1: false, open3: false, open4: false });
+            browserHistory.push(`/products/${2}/Houseware`);
             break;
           case 3:
-            this.setState({ jewelrys: res.data, open4: true });
+            this.setState({jewelrys: res.data, open3: true, open2: false, open1: false, open4: false });
+            browserHistory.push(`/products/${3}/Jewelry`);
             break;
           case 4:
-            this.setState({ gardens: res.data, open4: true });
+            this.setState({ gardens: res.data, open4: true, open2: false, open3: false, open1: false });
+            browserHistory.push(`/products/${4}/Garden`);
             break;
         }
       })
