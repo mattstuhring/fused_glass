@@ -1,8 +1,8 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import axios from 'axios';
 import Header from 'Header';
-import { Table, Image, Button } from 'react-bootstrap';
-
+import { Thumbnail, Table, Image, Button } from 'react-bootstrap';
 
 export default class Cart extends React.Component {
   constructor(props) {
@@ -17,73 +17,125 @@ export default class Cart extends React.Component {
 
 
   componentDidMount() {
-    axios.get(`api/products/${this.props.params.id}`)
-      .then((res) => {
-        const data = res.data[0];
-        const entry = {
-          productId: this.props.params.id,
-          name: data.product_name,
-          image: data.product_image,
-          price: data.product_price,
-          size: data.product_size
-        };
+    if (this.props.params.id) {
+      axios.get(`/api/products/${this.props.params.id}`)
+        .then((res) => {
+          console.log(res, '******** res');
+          const data = res.data[0];
 
-        let existingEntries = JSON.parse(sessionStorage.getItem("allEntries"));
+          const product = {
+            productId: this.props.params.id,
+            name: data.product_name,
+            image: data.product_image_public_id,
+            price: data.product_price,
+            size: data.product_size
+          };
 
-        if (existingEntries === null) {
-          existingEntries = [];
-          console.log('storage is null');
-        }
+          let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
 
-        if (existingEntries.length >= 1) {
+          if (!existingProducts) {
+            console.log('storage does not exist');
+
+            existingProducts = [];
+          }
+
           let exists = false;
 
-          for (let i = 0; i < existingEntries.length; i++) {
-            if (existingEntries[i].productId === this.props.params.id) {
+          for (let i = 0; i < existingProducts.length; i++) {
+            if (existingProducts[i].productId === this.props.params.id) {
               exists = true;
               break;
             }
           }
 
-          if (exists === true) {
-            this.setState({products: JSON.parse(sessionStorage.getItem("allEntries"))});
+          if (exists) {
             console.log('Product already in shopping cart!');
 
-            return;
+            sessionStorage.removeItem('product');
+
+            this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
+          } else {
+            console.log(product, '***** product to add in shopping cart ');
+
+            sessionStorage.setItem('product', JSON.stringify(product));
+
+            // Save allProducts back to local storage
+            existingProducts.push(product);
+            sessionStorage.setItem('allProducts', JSON.stringify(existingProducts));
+
+            this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
           }
-        }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
 
-        sessionStorage.setItem("entry", JSON.stringify(entry));
+      if (!existingProducts) {
+        console.log('storage does not exist');
 
-        // Save allEntries back to local storage
-        existingEntries.push(entry);
-        sessionStorage.setItem("allEntries", JSON.stringify(existingEntries));
+        existingProducts = [];
+      }
 
-        this.setState({products: JSON.parse(sessionStorage.getItem("allEntries"))});
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      this.setState({ products: existingProducts });
+    }
   }
 
 
   removeProduct(productId) {
-    let existingEntries = JSON.parse(sessionStorage.getItem("allEntries"));
+    let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
 
-    for (let i = 0; i < existingEntries.length; i++) {
-      if (existingEntries[i].productId === productId) {
-        existingEntries.splice(i, 1);
+    for (let i = 0; i < existingProducts.length; i++) {
+      if (existingProducts[i].productId === productId) {
+        existingProducts.splice(i, 1);
         break;
       }
     }
 
-    sessionStorage.setItem("allEntries", JSON.stringify(existingEntries));
-    this.setState({products: JSON.parse(sessionStorage.getItem("allEntries"))});
+    sessionStorage.removeItem('product');
+    sessionStorage.setItem('allProducts', JSON.stringify(existingProducts));
+
+    this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
+
+    browserHistory.push('/cart');
   }
 
 
   // ***************************  RENDER  ********************************
   render() {
+    const checkProducts = () => {
+      if (this.state.products.length > 0) {
+        return this.state.products.map((p) => {
+          return <tr key={p.productId}>
+            <td style={{width: '200px'}}>
+
+              <Thumbnail
+                href="#"
+                src={`https://res.cloudinary.com/fusedglassbyceleste/w_300,h_200,c_pad/${p.image}`}
+                onClick={() => this.handleImage(p.image)}
+              />
+
+            </td>
+            <td>{p.name}</td>
+            <td>{p.price}</td>
+            <td>
+              <Button
+                bsStyle="danger"
+                onClick={() => this.removeProduct(p.productId)}
+              >
+                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </Button>
+            </td>
+          </tr>
+        });
+      } else {
+        return <tr>
+          <td>Your shopping cart is empty.  Time to go shopping!</td>
+        </tr>
+      }
+    };
+
     return (
       <div className="row">
         <div className="col-sm-12">
@@ -109,23 +161,7 @@ export default class Cart extends React.Component {
               </tr>
             </tfoot>
             <tbody>
-              {this.state.products.map((p) => {
-                return <tr key={p.productId}>
-                  <td style={{width: '200px'}}>
-                    <Image src={`images/uploads/${p.image}`} thumbnail responsive />
-                  </td>
-                  <td>{p.name}</td>
-                  <td>{p.price}</td>
-                  <td>
-                    <Button
-                      bsStyle="danger"
-                      onClick={() => this.removeProduct(p.productId)}
-                    >
-                      <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </Button>
-                  </td>
-                </tr>
-              })}
+              { checkProducts() }
             </tbody>
 
           </Table>
