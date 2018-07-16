@@ -9,59 +9,75 @@ export default class Cart extends React.Component {
     super(props);
 
     this.state = {
-      products: []
+      products: [],
+      total: '0.00' // DISPLAY AS STRING DATA TYPE
     }
 
     this.removeProduct = this.removeProduct.bind(this);
+    this.handleAddTotal = this.handleAddTotal.bind(this);
+    this.handleSubtractTotal = this.handleSubtractTotal.bind(this);
   }
 
 
   componentDidMount() {
-    if (this.props.params.id) {
-      axios.get(`/api/products/${this.props.params.id}`)
+    let productId = this.props.params.id;
+
+    if (productId) {
+      axios.get(`/api/products/${productId}`)
         .then((res) => {
-          console.log(res, '******** res');
           const data = res.data[0];
 
           const product = {
-            productId: this.props.params.id,
+            productId: productId,
             name: data.product_name,
             image: data.product_image_public_id,
             price: data.product_price,
             size: data.product_size
           };
 
+          // CHECK STORAGE FOR ALL EXISTING PRODUCTS
           let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
 
+          // IF NO PRODUCTS EXIST
           if (!existingProducts) {
-            console.log('storage does not exist');
-
             existingProducts = [];
           }
 
           let exists = false;
 
+          // CHECK STORAGE ALL EXISTING PRODUCTS FOR IF PRODUCT ALREADY EXISTING IN STORAGE
           for (let i = 0; i < existingProducts.length; i++) {
-            if (existingProducts[i].productId === this.props.params.id) {
+            if (existingProducts[i].productId === productId) {
               exists = true;
               break;
             }
           }
 
+          // IF PRODUCT ALREADY EXISTS IN ALL PRODUCTS STORAGE
           if (exists) {
-            console.log('Product already in shopping cart!');
+            console.log('already in cart!');
 
+            // REMOVE PRODUCT FROM PRODUCT STORAGE
             sessionStorage.removeItem('product');
 
-            this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
-          } else {
-            console.log(product, '***** product to add in shopping cart ');
+            // GET CART TOTAL FROM STORAGE
+            let existingTotal = sessionStorage.getItem('total');
 
+            this.setState({products: JSON.parse(sessionStorage.getItem('allProducts')), total: existingTotal });
+          } else {
+            console.log(product, '***** add in cart ');
+
+            // SAVE PRODUCT TO PRODUCT STORAGE
             sessionStorage.setItem('product', JSON.stringify(product));
 
-            // Save allProducts back to local storage
+            // PUSH NEW PRODUCT IN EXISTING PRODUCTS ARRAY
             existingProducts.push(product);
+
+            // SAVE ALL PRODUCTS TO ALL EXISTING PRODUCTS STORAGE
             sessionStorage.setItem('allProducts', JSON.stringify(existingProducts));
+
+            // HANDLE CART CURRENCY TOTAL ADDITION
+            this.handleAddTotal(data.product_price);
 
             this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
           }
@@ -70,21 +86,78 @@ export default class Cart extends React.Component {
           console.log(err);
         });
     } else {
+      // IF NO PRODUCT ID PARAMS EXISTS
+
+      // GET ALL EXISTING PRODUCTS FROM STORAGE
       let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
 
-      if (!existingProducts) {
-        console.log('storage does not exist');
+      // GET CART TOTAL FROM STORAGE
+      let existingTotal = sessionStorage.getItem('total');
 
+      if (!existingProducts) {
         existingProducts = [];
       }
 
-      this.setState({ products: existingProducts });
+      if (!existingTotal) {
+        existingTotal = '0.00'
+      }
+
+      this.setState({ products: existingProducts, total: existingTotal });
     }
   }
 
 
-  removeProduct(productId) {
+
+
+
+
+
+  handleAddTotal(price) {
+    let total = parseFloat(sessionStorage.getItem('total'));
+    let sum;
+
+    if (!total) {
+      total = parseFloat(this.state.total);
+    }
+
+    price = parseFloat(price);
+    sum = (total + price).toFixed(2); // RETURNS STRING
+
+    sessionStorage.setItem('total', sum);
+
+    this.setState({ total: sum });
+  }
+
+
+
+
+  handleSubtractTotal(price) {
+    let total = parseFloat(sessionStorage.getItem('total'));
+    let sum;
+
+    price = parseFloat(price);
+    sum = (total - price).toFixed(2); // RETURNS STRING
+
+    if (parseFloat(sum) <= 0) {
+      sum = '0.00';
+    }
+
+    sessionStorage.setItem('total', sum);
+
+    this.setState({ total: sum });
+  }
+
+
+
+
+
+
+
+
+  removeProduct(productId, price) {
     let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
+
+    this.handleSubtractTotal(price);
 
     for (let i = 0; i < existingProducts.length; i++) {
       if (existingProducts[i].productId === productId) {
@@ -93,10 +166,13 @@ export default class Cart extends React.Component {
       }
     }
 
+    // GET CART TOTAL FROM STORAGE
+    let existingTotal = sessionStorage.getItem('total');
+
     sessionStorage.removeItem('product');
     sessionStorage.setItem('allProducts', JSON.stringify(existingProducts));
 
-    this.setState({products: JSON.parse(sessionStorage.getItem('allProducts'))});
+    this.setState({products: JSON.parse(sessionStorage.getItem('allProducts')), total: existingTotal});
 
     browserHistory.push('/cart');
   }
@@ -122,7 +198,7 @@ export default class Cart extends React.Component {
             <td>
               <Button
                 bsStyle="danger"
-                onClick={() => this.removeProduct(p.productId)}
+                onClick={() => this.removeProduct(p.productId, p.price)}
               >
                 <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
               </Button>
@@ -156,12 +232,12 @@ export default class Cart extends React.Component {
               <tr>
                 <td></td>
                 <td></td>
-                <td>Total:</td>
+                <td>Total: ${this.state.total}</td>
                 <td></td>
               </tr>
             </tfoot>
             <tbody>
-              { checkProducts() }
+              {checkProducts()}
             </tbody>
 
           </Table>

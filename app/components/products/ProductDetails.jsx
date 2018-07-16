@@ -28,15 +28,9 @@ export default class ProductDetails extends React.Component {
 
   // GET PRODUCT DETAILS BY ID
   componentDidMount() {
-    console.log(this.props.params.id, '********** params id');
-
-
     axios.get(`/api/products/${this.props.params.id}`)
       .then((res) => {
-        console.log(res, '******** res');
         const data = res.data[0];
-
-        console.log(data, '************* data');
 
         this.setState({
           productId: this.props.params.id,
@@ -51,7 +45,6 @@ export default class ProductDetails extends React.Component {
       .then(() => {
         axios.get(`/api/images/${this.props.params.id}`)
           .then((r) => {
-            console.log(r, '********* response');
             let images = Object.assign([], this.state.secondaryImages);
 
             r.data.forEach((img) => {
@@ -117,7 +110,7 @@ export default class ProductDetails extends React.Component {
                 onClick={() => this.handleImage(primaryImage)}/>
             </div>
 
-            { secondaryImages() }
+            {secondaryImages()}
           </div>
         </div>
 
