@@ -180,6 +180,68 @@ export default class Cart extends React.Component {
 
   // ***************************  RENDER  ********************************
   render() {
+
+
+
+    const checkoutPayPal = () => {
+      return paypal.Button.render({
+
+        // Set up a getter to create a Payment ID using the payments api, on your server side:
+
+        payment: function() {
+            return new paypal.Promise(function(resolve, reject) {
+
+                // Make an ajax call to get the Payment ID. This should call your back-end,
+                // which should invoke the PayPal Payment Create api to retrieve the Payment ID.
+
+                // When you have a Payment ID, you need to call the `resolve` method, e.g `resolve(data.paymentID)`
+                // Or, if you have an error from your server side, you need to call `reject`, e.g. `reject(err)`
+
+                axios.post('/my-api/create-payment')
+                  .then(function(data) {
+                    resolve(data.paymentID);
+                  })
+                  .catch(function(err)  {
+                    reject(err);
+                  });
+            });
+        },
+
+        // Pass a function to be called when the customer approves the payment,
+        // then call execute payment on your server:
+
+        onAuthorize: function(data) {
+
+            console.log('The payment was authorized!');
+            console.log('Payment ID = ',   data.paymentID);
+            console.log('PayerID = ', data.payerID);
+
+            // At this point, the payment has been authorized, and you will need to call your back-end to complete the
+            // payment. Your back-end should invoke the PayPal Payment Execute api to finalize the transaction.
+
+            axios.post('/my-api/execute-payment', { paymentID: data.paymentID, payerID: data.payerID })
+                .done(function(data) { /* Go to a success page */ })
+                .fail(function(err)  { /* Go to an error page  */  });
+        },
+
+        // Pass a function to be called when the customer cancels the payment
+
+        onCancel: function(data) {
+
+            console.log('The payment was cancelled!');
+            console.log('Payment ID = ', data.paymentID);
+        }
+
+      });
+    }
+
+
+
+
+
+
+
+
     const checkProducts = () => {
       if (this.state.products.length > 0) {
         return this.state.products.map((p) => {
@@ -243,6 +305,13 @@ export default class Cart extends React.Component {
           </Table>
         </div>
 
+        <div className="row">
+          <div className="col-sm-12">
+
+
+
+          </div>
+        </div>
       </div>
     );
   }

@@ -230,7 +230,6 @@ export default class SideNav extends React.Component {
 
                       {addCollectionInput()}
 
-                      {/* DISPLAY ALL DECORATIVE PRODUCTS */}
                       {this.state.decoratives.map(function(c) {
                         return <ListGroupItem key={c.collection_id}>
                             <div className="row">

@@ -35,6 +35,7 @@ module.exports = {
       Login: 'app/components/Login.jsx',
       Main: 'app/components/Main.jsx',
       Navigation: 'app/components/Navigation.jsx',
+      PaypalButton: 'app/components/PaypalButton.jsx',
       ProductAdd: 'app/components/products/ProductAdd.jsx',
       ProductDetails: 'app/components/products/ProductDetails.jsx',
       ProductUpdate: 'app/components/products/ProductUpdate.jsx',
