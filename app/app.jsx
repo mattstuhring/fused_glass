@@ -15,7 +15,6 @@ import ProductAdd from 'ProductAdd';
 import ProductUpdate from 'ProductUpdate';
 import Playground from 'Playground';
 
-
 // Be sure to include styles at some point, probably during your bootstrapping
 require('style!css!react-select/dist/react-select.css');
 
@@ -30,6 +29,7 @@ require('style!css!font-awesome/css/font-awesome.css');
 
 // App scss
 require('style!css!sass!applicationStyles');
+
 
 ReactDOM.render(
   <Router history={browserHistory}>
