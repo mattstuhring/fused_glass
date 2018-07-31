@@ -16,8 +16,7 @@ export default class Cart extends React.Component {
       total: '0.00', // DISPLAY AS STRING DATA TYPE
       env: 'sandbox',
       client: {
-          sandbox: 'AX3x_CybpUYv5tqxs48pCnRO4yifsqtc8ZPnS_DHTfx9aXP5JkXeUMvXBM-Fn9W90WqMjwsTYLyX-4-k',
-          production: '<insert production client id>'
+          sandbox: 'AX3x_CybpUYv5tqxs48pCnRO4yifsqtc8ZPnS_DHTfx9aXP5JkXeUMvXBM-Fn9W90WqMjwsTYLyX-4-k'
       },
       commit: true
     }
@@ -25,8 +24,8 @@ export default class Cart extends React.Component {
     this.removeProduct = this.removeProduct.bind(this);
     this.handleAddTotal = this.handleAddTotal.bind(this);
     this.handleSubtractTotal = this.handleSubtractTotal.bind(this);
-    this.payment = this.payment.bind(this);
-    this.onAuthorize = this.onAuthorize.bind(this);
+    // this.payment = this.payment.bind(this);
+    // this.onAuthorize = this.onAuthorize.bind(this);
   }
 
 
@@ -190,23 +189,49 @@ export default class Cart extends React.Component {
 
 
 
+  // payment(data, actions) {
+  //   return axios.post('/api/createPayment')
+  //     .then((res) => {
+  //       console.log(res, '******** create payment res');
+  //
+  //       return res.id;
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+  //
+  //
+  // onAuthorize(data, actions) {
+  //   const payload = { paymentID: data.paymentID, payerID: data.payerID }
+  //
+  //   return axios.post('/api/executePayment', payload)
+  //     .then((res) => {
+  //       console.log(res, '******** Successful payment!');
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+
+  // payment(data, actions) {
+  //   return actions.payment.create({
+  //     transactions: [
+  //       {
+  //         amount: { total: '0.01', currency: 'USD' }
+  //       }
+  //     ]
+  //   });
+  // }
+  //
+  //
+  // onAuthorize(data, actions) {
+  //   return actions.payment.execute().then(function(paymentData) {
+  //       // Show a success page to the buyer
+  //   });
+  // }
 
 
-  payment(data, actions) {
-    return actions.payment.create({
-      transactions: [
-        {
-          amount: { total: '0.01', currency: 'USD' }
-        }
-      ]
-    });
-  }
-
-  onAuthorize(data, actions) {
-    return actions.payment.execute().then(function(paymentData) {
-        // Show a success page to the buyer
-    });
-  }
 
 
 
@@ -214,6 +239,31 @@ export default class Cart extends React.Component {
 
   // ***************************  RENDER  ********************************
   render() {
+
+    let payment = (data, actions) => {
+      return actions.request.post('/api/createPayment')
+        .then((res) => {
+          // 3. Return res.id from the response
+          return res.id;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+
+    let onAuthorize = (data, actions) => {
+      return actions.request.post('/api/executePayment', {
+          paymentID: data.paymentID,
+          payerID:   data.payerID
+        })
+        .then(function(res) {
+          console.log(res, '******* onAuthorize success!')
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
 
     const checkProducts = () => {
       if (this.state.products.length > 0) {
@@ -284,9 +334,8 @@ export default class Cart extends React.Component {
             <PayPalButton
               commit={this.state.commit}
               env={this.state.env}
-              client={this.state.client}
-              payment={(data, actions) => this.payment(data, actions)}
-              onAuthorize={(data, actions) => this.onAuthorize(data, actions)}
+              payment={payment}
+              onAuthorize={onAuthorize}
             />
 
           </div>
