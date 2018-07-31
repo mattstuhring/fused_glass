@@ -9,8 +9,6 @@ const CLIENT = 'AX3x_CybpUYv5tqxs48pCnRO4yifsqtc8ZPnS_DHTfx9aXP5JkXeUMvXBM-Fn9W9
 const SECRET = 'EFOC5Fh4bd0bWLk9C-mGBh8HYQqAd-quiRkBOZgi6EdIcAJ70i9cEcmJ4OBG8B1JOuC1KPbU15gFu7go';
 
 router.post('/executePayment', (req, res, next) => {
-  console.log('Execute Payment!');
-
   var paymentID = req.body.paymentID;
   var payerID   = req.body.payerID;
 

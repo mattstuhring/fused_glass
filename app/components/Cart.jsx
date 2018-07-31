@@ -253,11 +253,15 @@ export default class Cart extends React.Component {
 
 
     let onAuthorize = (data, actions) => {
-      return actions.request.post('/api/executePayment', {
-          paymentID: data.paymentID,
-          payerID:   data.payerID
-        })
-        .then(function(res) {
+      console.log(data, '***** data');
+      console.log(actions, '******* actions');
+      let payload = {
+        paymentID: data.paymentID,
+        payerID:   data.payerID
+      }
+
+      return axios.post('/api/executePayment', payload)
+        .then((res) => {
           console.log(res, '******* onAuthorize success!')
         })
         .catch((err) => {
