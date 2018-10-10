@@ -5,6 +5,7 @@ import axios from 'axios';
 import Header from 'Header';
 import { Thumbnail, Table, Image, Button } from 'react-bootstrap';
 import paypal from 'paypal-checkout';
+import qs from 'qs';
 let PayPalButton = paypal.Button.driver('react', { React, ReactDOM });
 
 export default class Cart extends React.Component {
@@ -24,8 +25,6 @@ export default class Cart extends React.Component {
     this.removeProduct = this.removeProduct.bind(this);
     this.handleAddTotal = this.handleAddTotal.bind(this);
     this.handleSubtractTotal = this.handleSubtractTotal.bind(this);
-    // this.payment = this.payment.bind(this);
-    // this.onAuthorize = this.onAuthorize.bind(this);
   }
 
 
@@ -109,7 +108,7 @@ export default class Cart extends React.Component {
       }
 
       if (!existingTotal) {
-        existingTotal = '0.00'
+        existingTotal = '0.00';
       }
 
       this.setState({ products: existingProducts, total: existingTotal });
@@ -189,72 +188,95 @@ export default class Cart extends React.Component {
 
 
 
-  // payment(data, actions) {
-  //   return axios.post('/api/createPayment')
-  //     .then((res) => {
-  //       console.log(res, '******** create payment res');
-  //
-  //       return res.id;
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
-  //
-  //
-  // onAuthorize(data, actions) {
-  //   const payload = { paymentID: data.paymentID, payerID: data.payerID }
-  //
-  //   return axios.post('/api/executePayment', payload)
-  //     .then((res) => {
-  //       console.log(res, '******** Successful payment!');
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
-
-  // payment(data, actions) {
-  //   return actions.payment.create({
-  //     transactions: [
-  //       {
-  //         amount: { total: '0.01', currency: 'USD' }
-  //       }
-  //     ]
-  //   });
-  // }
-  //
-  //
-  // onAuthorize(data, actions) {
-  //   return actions.payment.execute().then(function(paymentData) {
-  //       // Show a success page to the buyer
-  //   });
-  // }
-
-
-
-
-
 
 
   // ***************************  RENDER  ********************************
   render() {
 
+
+
+
+
+
     let payment = (data, actions) => {
-      return actions.request.post('/api/createPayment')
-        .then((res) => {
-          // 3. Return res.id from the response
-          return res.id;
-        })
-        .catch((err) => {
-          console.log(err);
+
+      // GET ALL EXISTING PRODUCTS FROM SESSION STORAGE
+      let existingProducts = JSON.parse(sessionStorage.getItem('allProducts'));
+      console.log(existingProducts, '********* products from storage');
+
+      // CHECK SHOPPING CART FOR PRODUCTS
+      if (existingProducts.length > 0) {
+
+        // PAYLOAD ARRAY OF PRODUCT ID'S
+        let payload = {
+          productsIDs: []
+        };
+
+        // ITERATE THROUGH EXISTING PRODUCTS AND CREATE PAYLOAD
+        existingProducts.forEach((el) => {
+          return payload.productsIDs.push(el.productId);
         });
+
+
+        console.log(payload, '********* payload');
+
+        // GET PRODUCTS FROM DB
+        axios.post('/api/productQty', payload)
+          .then((prod) => {
+            console.log(prod, '***** products from DB');
+
+
+            // CHECK IF EACH PRODUCT HAS A QUANTITY > 0
+            
+
+
+            // return actions.request.post('/api/createPayment')
+            //   .then((res) => {
+            //     return res.id;
+            //   })
+            //   .catch((err) => {
+            //     console.log(err);
+            //   });
+
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+      } else {
+        console.log('No products');
+      }
+
+
+      // return actions.request.post('/api/createPayment')
+      //   .then((res) => {
+      //     return res.id;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     let onAuthorize = (data, actions) => {
-      console.log(data, '***** data');
-      console.log(actions, '******* actions');
       let payload = {
         paymentID: data.paymentID,
         payerID:   data.payerID
@@ -267,7 +289,7 @@ export default class Cart extends React.Component {
         .catch((err) => {
           console.log(err);
         });
-    }
+    };
 
     const checkProducts = () => {
       if (this.state.products.length > 0) {
@@ -301,6 +323,23 @@ export default class Cart extends React.Component {
       }
     };
 
+    const paypalCheckout = () => {
+      if (this.state.products.length > 0) {
+        return <div className="row">
+          <div className="col-sm-12">
+            <PayPalButton
+              commit={this.state.commit}
+              env={this.state.env}
+              payment={payment}
+              onAuthorize={onAuthorize}
+            />
+          </div>
+        </div>
+      }
+    };
+
+
+    // ***********************  JSX COMPONENT  ************************
     return (
       <div className="row">
         <div className="col-sm-12">
@@ -317,33 +356,21 @@ export default class Cart extends React.Component {
                 <th>Action</th>
               </tr>
             </thead>
+            <tbody>
+              {checkProducts()}
+            </tbody>
             <tfoot>
               <tr>
                 <td></td>
                 <td></td>
-                <td>Total: ${this.state.total}</td>
                 <td></td>
+                <td>Total: ${this.state.total}</td>
               </tr>
             </tfoot>
-            <tbody>
-              {checkProducts()}
-            </tbody>
-
           </Table>
         </div>
 
-        <div className="row">
-          <div className="col-sm-12">
-
-            <PayPalButton
-              commit={this.state.commit}
-              env={this.state.env}
-              payment={payment}
-              onAuthorize={onAuthorize}
-            />
-
-          </div>
-        </div>
+        {paypalCheckout()}
       </div>
     );
   }

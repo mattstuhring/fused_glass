@@ -8,6 +8,7 @@ exports.up = function(knex) {
     table.string('product_description', 500).defaultTo('');
     table.string('product_size').defaultTo('');
     table.string('product_image_public_id').defaultTo('');
+    table.integer('product_quantity').defaultTo(0);
     table.integer('category_id')
       .unsigned()
       .notNullable()

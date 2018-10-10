@@ -8,6 +8,7 @@ const PAYPAL_API = 'https://api.sandbox.paypal.com';
 const CLIENT = 'AX3x_CybpUYv5tqxs48pCnRO4yifsqtc8ZPnS_DHTfx9aXP5JkXeUMvXBM-Fn9W90WqMjwsTYLyX-4-k';
 const SECRET = 'EFOC5Fh4bd0bWLk9C-mGBh8HYQqAd-quiRkBOZgi6EdIcAJ70i9cEcmJ4OBG8B1JOuC1KPbU15gFu7go';
 
+
 router.post('/createPayment', (req, res, next) => {
     console.log('Create Payment!');
 
@@ -45,7 +46,6 @@ router.post('/createPayment', (req, res, next) => {
         });
     });
 });
-
 
 
 module.exports = router;
